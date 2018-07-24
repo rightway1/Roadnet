@@ -7,7 +7,7 @@
                               -------------------
         begin                : 2014-12-09
         git sha              : $Format:%H$
-        copyright            : (C) 2014 by thinkWhere
+        copyright            : (C) 2014-2018 by thinkWhere
         email                : support@thinkwhere.com
  ***************************************************************************/
 
@@ -20,15 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+# import os
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import (
-    QMessageBox,
-    QPixmap,
-    QIcon,
-    QDesktopServices)
-from PyQt4.QtSql import QSqlDatabase
+from PyQt5.QtCore import Qt, QSettings, QUrl
+from PyQt5.QtGui import QPixmap, QIcon, QDesktopServices
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtSql import QSqlDatabase
 from qgis.utils import *
 from qgis.core import *
 
@@ -47,7 +44,6 @@ from roadnet_dialog import (
     StreetBrowserDlg,
     StreetReportsDlg,
     ValidationDlg)
-from generic_functions import ipdb_breakpoint
 from street_browser.street_browser import StreetBrowser
 from exports.exports import (
     ExportDTF,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtGui import QMessageBox
-from PyQt4.Qt import Qt
-from PyQt4.QtSql import QSqlError
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtSql import QSqlError
 
 
 class QMessageBoxWarningError(Exception):
