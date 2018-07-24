@@ -24,6 +24,7 @@
 
 import config
 
+
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
     """Load Roadnet class from file Roadnet.

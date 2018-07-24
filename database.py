@@ -6,17 +6,18 @@ from datetime import datetime
 import os
 import re
 import shutil
-from PyQt4.QtSql import (
+from PyQt5.QtSql import (
     QSqlDatabase,
     QSqlQuery,
     QSqlRelation,
     QSqlRelationalTableModel,
     QSqlTableModel)
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox, QFileDialog, QPixmap, QIcon, QDialog
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtWidgets import QMessageBox, QFileDialog, QDialog
 from roadnet_dialog import DbPathDlg
 import config
-from generic_functions import ipdb_breakpoint
+# from generic_functions import ipdb_breakpoint
 
 __author__ = 'matthew.walsh'
 
@@ -84,12 +85,10 @@ class DbPathSelect:
         # Check name not backup
         self.new_db_path = self.db_path_dlg.ui.newPathLineEdit.text()
         new_db_filename = os.path.basename(self.new_db_path)
-        name_is_backup = re.search('^\D*_backup(\d|10)(.sqlite)\D*$',
-                                   new_db_filename)
+        name_is_backup = re.search('^\D*_backup(\d|10)(.sqlite)\D*$', new_db_filename)
         if name_is_backup:
-            backup_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                          "You cannot select a backup Database version",
-                                          QMessageBox.Ok, None, Qt.CustomizeWindowHint)
+            backup_msg_box = QMessageBox(QMessageBox.Warning, " ", "You cannot select a backup Database version",
+                                                                        QMessageBox.Ok, None, Qt.CustomizeWindowHint)
             backup_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             backup_msg_box.exec_()
             return False
@@ -156,21 +155,13 @@ def get_model(db):
     model.setEditStrategy(QSqlTableModel.OnManualSubmit)
 
     # Set up relational links to other tables
-    model.setRelation(STREET_REF_TYPE,
-        QSqlRelation("tlkpSTREET_REF_TYPE", "street_ref", "description"))
-    model.setRelation(LOC_REF,
-        QSqlRelation("tlkpLOCALITY", "loc_ref", "name"))
-    model.setRelation(TOWN_REF,
-        QSqlRelation("tlkpTOWN", "town_ref", "name"))
-    model.setRelation(COUNTY_REF,
-        QSqlRelation("tlkpCOUNTY", "county_ref", "name"))
-    model.setRelation(STREET_STATE,
-        QSqlRelation("tlkpSTREET_STATE", "state_ref", "state_desc"))
-    model.setRelation(STREET_CLASS,
-        QSqlRelation("tlkpSTREET_CLASS", "class_ref",
-                     "street_classification"))
-    model.setRelation(AUTHORITY,
-        QSqlRelation("tlkpAUTHORITY", "auth_code", "description"))
+    model.setRelation(STREET_REF_TYPE, QSqlRelation("tlkpSTREET_REF_TYPE", "street_ref", "description"))
+    model.setRelation(LOC_REF, QSqlRelation("tlkpLOCALITY", "loc_ref", "name"))
+    model.setRelation(TOWN_REF, QSqlRelation("tlkpTOWN", "town_ref", "name"))
+    model.setRelation(COUNTY_REF, QSqlRelation("tlkpCOUNTY", "county_ref", "name"))
+    model.setRelation(STREET_STATE, QSqlRelation("tlkpSTREET_STATE", "state_ref", "state_desc"))
+    model.setRelation(STREET_CLASS, QSqlRelation("tlkpSTREET_CLASS", "class_ref", "street_classification"))
+    model.setRelation(AUTHORITY, QSqlRelation("tlkpAUTHORITY", "auth_code", "description"))
 
     # Populate the model with data from the table
     model.select()
@@ -193,7 +184,7 @@ def check_file(db_file_path):
     Check database file exists and can be opened.  Passes without exception if
     successful.
 
-    :param file_path: Path of database file.
+    :param db_file_path: Path of database file.
     """
     if not os.path.isfile(db_file_path):
         raise IOError('File not found: {}'.format(db_file_path))
@@ -206,7 +197,7 @@ def _run_test_query(db_file_path):
     Runs SQL (sqlite) query to test database file is valid.  Returns
     True for success, False otherwise.
 
-    :param db: Open QSqlDatabase object
+    :param db_file_path: Path of database file.
     :return bool: True if query runs succesfully.
     """
     if config.DEBUG_MODE:
@@ -214,10 +205,10 @@ def _run_test_query(db_file_path):
     db = connect_and_open(db_file_path, 'test_connection')
     query = QSqlQuery(db=db)
     result = query.exec_("""SELECT * FROM sqlite_master""")
-    del(query)
+    del query
     connection_name = db.connectionName()
     db.close()
-    del(db)
+    del db
     QSqlDatabase.removeDatabase(connection_name)
     if config.DEBUG_MODE:
         print('DEBUG_MODE: closing QSqlDatabase {}'.format(
@@ -235,6 +226,8 @@ def open_working_copy(params):
     :return db: Open database object.
     """
     master_db_path = os.path.join(params['RNDataStorePath'], params['DbName'])
+    working_db_name = None
+
     if params['role'] == 'readonly':
         # Read only users work on a database named with their username.
         working_db_name = params['DbName'].replace('.sqlite',
@@ -245,10 +238,12 @@ def open_working_copy(params):
         working_db_name = params['DbName'].replace('.sqlite',
                                                    '_working.sqlite')
         create_lock_file(params)
+
     # Store the working database location, copy database, open working.
     working_db_path = os.path.join(params['RNDataStorePath'], working_db_name)
     params['working_db_path'] = working_db_path
     shutil.copy(master_db_path, working_db_path)
+
     if config.DEBUG_MODE:
         print('DEBUG_MODE: opening main database connection')
     # Open this connection with default name to save passing connection name
@@ -274,10 +269,11 @@ def update_sqlite_files(params):
         return
     # Assuming editor role, prompt to save.
     msg_box_save_confirm = QMessageBox(
+        QMessageBox.Question,
         "Save Changes",
         "Save changes to roadNet database?",
-        QMessageBox.Question, QMessageBox.Yes, QMessageBox.No,
-        QMessageBox.NoButton, None)
+        QMessageBox.Yes | QMessageBox.No
+    )
     msg_box_save_confirm.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
     click_btn = msg_box_save_confirm.exec_()
     # Check if save requested
@@ -366,8 +362,7 @@ def check_lock_file(params):
             lock_username = infile.readline().split(":")[1].strip()
         message = ('Database locked for editing by {} with lock file at:\n\n'
                    '{}\n\n'
-                   'Opening as read only.'.format(lock_username,
-                                                 lock_file_path))
+                   'Opening as read only.'.format(lock_username, lock_file_path))
         # Check for stray lock file.
         working_files = [f for f in os.listdir(params['RNDataStorePath'])
                          if f.endswith('_working.sqlite')]
@@ -449,9 +444,10 @@ def run_sql(sql, db):
         print(sql)
     active_query = QSqlQuery(sql, db)
     if active_query.isActive() is False:
-        raise StandardError('Database query problem: {}'.format(
+        raise Exception('Database query problem: {}'.format(
             active_query.lastError().text()))
     return active_query
+
 
 def get_from_gaz_metadata(db, column):
     """
