@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from qgis.core import QGis, QgsPoint, QgsGeometry
+from qgis.core import Qgis, QgsPoint, QgsProject, QgsGeometry, QgsWkbTypes
 from qgis.gui import QgsRubberBand, QgsVertexMarker
 
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QPushButton, QStackedWidget, QItemDelegate, QColor
-from PyQt4.QtSql import QSqlQuery
+from qgis.core import QgsFeatureRequest
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QPushButton, QStackedWidget, QItemDelegate
+from PyQt5.QtSql import QSqlQuery
 
 import config
 
@@ -90,7 +91,9 @@ class ZoomSelectCanvas:
         """
         Returns list of selected features give a list of esu's
         :rtype : QgsFeatureIterator
-        :param esu_list: ESU;s to find and select
+        :param value_list: List of values to select from data
+        :param field_n: Name of field to search for the values
+        :param layer_n: Name of layer to search for values
         :return: List of selected features
         """
         q_string = ""
@@ -98,8 +101,8 @@ class ZoomSelectCanvas:
             q_string += '"%s" = %s OR ' % (str(field_n), str(value))
         q_string = q_string[:-3]
         # Get ref to layer
-        layer = QgsMapLayerRegistry.instance().mapLayersByName(layer_n)[0]
-        # Select ESU's + get extent
+        layer = QgsProject.mapLayersByName(layer_n)[0]
+        # Select ESUs (or other features) and get extent
         feats = layer.getFeatures(QgsFeatureRequest().setFilterExpression(q_string))
         return feats
 
@@ -111,7 +114,7 @@ class ZoomSelectCanvas:
         :param layer_name: Name of layer in TOC
         :return: qgis bounding box
         """
-        layer = QgsMapLayerRegistry.instance().mapLayersByName(layer_name)[0]
+        layer = QgsProject.mapLayersByName(layer_name)[0]
         feat_ids = []
         for feature in feature_list:
             f_id = feature.id()
@@ -314,7 +317,7 @@ class ShowStreetCoordinates:
     """
     def __init__(self, iface):
         self.canvas = iface.mapCanvas()
-        self.rb_line = QgsRubberBand(self.canvas, QGis.Line)
+        self.rb_line = QgsRubberBand(self.canvas, QgsWkbTypes.LineString)
         self.rb_start = QgsVertexMarker(self.canvas)
         self.rb_end = QgsVertexMarker(self.canvas)
         self.style()
@@ -358,9 +361,10 @@ def ipdb_breakpoint():
     Otherwise returns an error.  Press 'c' to *continue* running code.
     """
     import ipdb 
-    from PyQt4.QtCore import pyqtRemoveInputHook
+    from PyQt5.QtCore import pyqtRemoveInputHook
     pyqtRemoveInputHook()
     ipdb.set_trace()
+
 
 def pydev_breakpoint():
     """
