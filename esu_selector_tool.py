@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import (
-    QAbstractItemView,
-    QCursor,
-    QSortFilterProxyModel,
-    QTableWidgetItem,
-    QColor)
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtCore import QSortFilterProxyModel, Qt
+from PyQt5.QtWidgets import QAbstractItemView, QTableWidgetItem
+from PyQt5.QtGui import QBrush, QCursor, QColor
+from PyQt5.QtSql import QSqlQuery
 
 from roadnet_dialog import StreetSelectorDlg
 from generic_functions import ZoomSelectCanvas
@@ -128,7 +122,7 @@ class EsuSelectorTool(QgsMapToolIdentify):
             type_ = query.value(1)
             desc = query.value(2)
             results.append((usrn, "Type " + str(type_), desc))
-        del(query)
+        del query
         return results
 
     def populate_usrn_table(self, esu_id):
@@ -153,7 +147,8 @@ class EsuSelectorTool(QgsMapToolIdentify):
                     t_item = QTableWidgetItem()
                     t_item.setText(str(item))
                     item_color = QColor(213, 234, 234)
-                    t_item.setBackgroundColor(item_color)
+                    brush = QBrush(item_color)
+                    t_item.setBackground(brush)
                     t_item.setSelected(True)
                     self.street_sel_dlg.ui.usrnTableWidget.setItem(row_count, col, t_item)
                     col += 1

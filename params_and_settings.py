@@ -2,13 +2,13 @@
 """Contains the ParamsFile class used to manipulate the parameters file."""
 import os
 import xml.etree.ElementTree as ETree
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 
 from roadnet_dialog import SettingsDlg
 import roadnet_exceptions as rn_except
 
-__author__ = 'Alessandro, john.stevenson'
+__author__ = 'Alessandro, john.stevenson, colin.wright'
 
 
 class ParamsFileHandler(object):
@@ -154,7 +154,7 @@ class SettingsDialogHandler(object):
             self.show_ramp_settings_changed_warning(checkbox_params)
 
         # Write updated values to params dictionary
-        for key, value in checkbox_params.iteritems():
+        for key, value in checkbox_params.items():
             self.params[key] = value
 
         return self.params
@@ -201,8 +201,7 @@ class SettingsDialogHandler(object):
                    "for changes to take effect.".format(ramp_status))
 
         # Show message box
-        msg_box = QMessageBox(QMessageBox.Information, " ", message,
-            QMessageBox.Ok, None)
+        msg_box = QMessageBox(QMessageBox.Information, " ", message, QMessageBox.Ok, None)
         msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         msg_box.exec_()
 

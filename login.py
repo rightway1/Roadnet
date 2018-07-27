@@ -4,12 +4,12 @@ Contains class and functions to create login dialog, query database to check
 username, password and role, and change password.
 """
 
-__author__ = 'john.stevenson, alessandro'
+__author__ = 'john.stevenson, alessandro, colin.wright'
 
 import os
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtSql import QSqlQuery, QSql, QSqlDatabase
-from PyQt4.Qt import Qt
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtSql import QSqlQuery, QSql, QSqlDatabase
+from PyQt5.QtCore import Qt
 from roadnet_dialog import LoginDlg
 import database
 import config
@@ -158,10 +158,10 @@ def check_credentials(params, password):
             role = 'init'
 
     # Close database
-    del(login_query)
+    del login_query
     connection_name = db.connectionName()
     db.close()
-    del(db)
+    del db
     QSqlDatabase.removeDatabase(connection_name)
     if config.DEBUG_MODE:
         print('DEBUG_MODE: closing QSqlDatabase {}'.format(
