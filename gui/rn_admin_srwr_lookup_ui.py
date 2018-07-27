@@ -1,93 +1,85 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui/rn_admin_srwr_lookup_ui.ui'
+# Form implementation generated from reading ui file 'rn_admin_srwr_lookup_ui.ui'
 #
-# Created: Sun Aug 16 11:54:17 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_srwrLookupDialog(object):
     def setupUi(self, srwrLookupDialog):
-        srwrLookupDialog.setObjectName(_fromUtf8("srwrLookupDialog"))
+        srwrLookupDialog.setObjectName("srwrLookupDialog")
         srwrLookupDialog.resize(372, 293)
-        srwrLookupDialog.setWindowFlags(QtCore.Qt.CustomizeWindowHint | QtCore.Qt.WindowTitleHint)
-        self.gridLayout_2 = QtGui.QGridLayout(srwrLookupDialog)
-        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.gridLayout = QtGui.QGridLayout()
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        spacerItem = QtGui.QSpacerItem(13, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_2 = QtWidgets.QGridLayout(srwrLookupDialog)
+        self.gridLayout_2.setContentsMargins(11, 11, 11, 11)
+        self.gridLayout_2.setSpacing(6)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setContentsMargins(11, 11, 11, 11)
+        self.gridLayout.setSpacing(6)
+        self.gridLayout.setObjectName("gridLayout")
+        spacerItem = QtWidgets.QSpacerItem(13, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
-        self.typeDescLineEdit = QtGui.QLineEdit(srwrLookupDialog)
+        self.typeDescLineEdit = QtWidgets.QLineEdit(srwrLookupDialog)
         self.typeDescLineEdit.setMinimumSize(QtCore.QSize(0, 25))
-        self.typeDescLineEdit.setObjectName(_fromUtf8("typeDescLineEdit"))
+        self.typeDescLineEdit.setObjectName("typeDescLineEdit")
         self.gridLayout.addWidget(self.typeDescLineEdit, 0, 2, 1, 1)
-        self.itemsListView = QtGui.QListView(srwrLookupDialog)
-        self.itemsListView.setObjectName(_fromUtf8("itemsListView"))
+        self.itemsListView = QtWidgets.QListView(srwrLookupDialog)
+        self.itemsListView.setObjectName("itemsListView")
         self.gridLayout.addWidget(self.itemsListView, 1, 0, 1, 3)
-        self.typeNoSpinBox = QtGui.QSpinBox(srwrLookupDialog)
+        self.typeNoSpinBox = QtWidgets.QSpinBox(srwrLookupDialog)
         self.typeNoSpinBox.setMinimumSize(QtCore.QSize(0, 25))
-        self.typeNoSpinBox.setButtonSymbols(QtGui.QAbstractSpinBox.NoButtons)
+        self.typeNoSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.typeNoSpinBox.setMinimum(0)
         self.typeNoSpinBox.setMaximum(999)
-        self.typeNoSpinBox.setObjectName(_fromUtf8("typeNoSpinBox"))
+        self.typeNoSpinBox.setObjectName("typeNoSpinBox")
         self.gridLayout.addWidget(self.typeNoSpinBox, 0, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 1, 0, 1, 1)
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.addButton = QtGui.QPushButton(srwrLookupDialog)
-        self.addButton.setObjectName(_fromUtf8("addButton"))
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setContentsMargins(11, 11, 11, 11)
+        self.verticalLayout_2.setSpacing(6)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.addButton = QtWidgets.QPushButton(srwrLookupDialog)
+        self.addButton.setObjectName("addButton")
         self.verticalLayout_2.addWidget(self.addButton)
-        spacerItem1 = QtGui.QSpacerItem(20, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.verticalLayout_2.addItem(spacerItem1)
-        self.removeButton = QtGui.QPushButton(srwrLookupDialog)
-        self.removeButton.setObjectName(_fromUtf8("removeButton"))
+        self.removeButton = QtWidgets.QPushButton(srwrLookupDialog)
+        self.removeButton.setObjectName("removeButton")
         self.verticalLayout_2.addWidget(self.removeButton)
-        self.amendButton = QtGui.QPushButton(srwrLookupDialog)
-        self.amendButton.setObjectName(_fromUtf8("amendButton"))
+        self.amendButton = QtWidgets.QPushButton(srwrLookupDialog)
+        self.amendButton.setObjectName("amendButton")
         self.verticalLayout_2.addWidget(self.amendButton)
-        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem2)
-        self.closeButton = QtGui.QPushButton(srwrLookupDialog)
-        self.closeButton.setObjectName(_fromUtf8("closeButton"))
+        self.closeButton = QtWidgets.QPushButton(srwrLookupDialog)
+        self.closeButton.setObjectName("closeButton")
         self.verticalLayout_2.addWidget(self.closeButton)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 1, 1, 1, 1)
-        self.groupBox = QtGui.QGroupBox(srwrLookupDialog)
-        self.groupBox.setObjectName(_fromUtf8("groupBox"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.groupBox = QtWidgets.QGroupBox(srwrLookupDialog)
+        self.groupBox.setObjectName("groupBox")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.groupBox)
+        self.horizontalLayout.setContentsMargins(11, 11, 11, 11)
+        self.horizontalLayout.setSpacing(6)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
-        self.desRadioButton = QtGui.QRadioButton(self.groupBox)
-        self.desRadioButton.setObjectName(_fromUtf8("desRadioButton"))
+        self.desRadioButton = QtWidgets.QRadioButton(self.groupBox)
+        self.desRadioButton.setObjectName("desRadioButton")
         self.horizontalLayout.addWidget(self.desRadioButton)
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem4)
-        self.reinsRadioButton = QtGui.QRadioButton(self.groupBox)
-        self.reinsRadioButton.setObjectName(_fromUtf8("reinsRadioButton"))
+        self.reinsRadioButton = QtWidgets.QRadioButton(self.groupBox)
+        self.reinsRadioButton.setObjectName("reinsRadioButton")
         self.horizontalLayout.addWidget(self.reinsRadioButton)
-        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem5)
-        self.statRadioButton = QtGui.QRadioButton(self.groupBox)
-        self.statRadioButton.setObjectName(_fromUtf8("statRadioButton"))
+        self.statRadioButton = QtWidgets.QRadioButton(self.groupBox)
+        self.statRadioButton.setObjectName("statRadioButton")
         self.horizontalLayout.addWidget(self.statRadioButton)
-        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem6)
         self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 2)
 
@@ -95,21 +87,22 @@ class Ui_srwrLookupDialog(object):
         QtCore.QMetaObject.connectSlotsByName(srwrLookupDialog)
 
     def retranslateUi(self, srwrLookupDialog):
-        srwrLookupDialog.setWindowTitle(_translate("srwrLookupDialog", "Edit SRWR Lookup", None))
-        self.addButton.setText(_translate("srwrLookupDialog", "Add", None))
-        self.removeButton.setText(_translate("srwrLookupDialog", "Remove", None))
-        self.amendButton.setText(_translate("srwrLookupDialog", "Amend", None))
-        self.closeButton.setText(_translate("srwrLookupDialog", "Close", None))
-        self.groupBox.setTitle(_translate("srwrLookupDialog", "Lookup Table:", None))
-        self.desRadioButton.setText(_translate("srwrLookupDialog", "Special Designation", None))
-        self.reinsRadioButton.setText(_translate("srwrLookupDialog", "Reinstatement", None))
-        self.statRadioButton.setText(_translate("srwrLookupDialog", "Road Status", None))
+        _translate = QtCore.QCoreApplication.translate
+        srwrLookupDialog.setWindowTitle(_translate("srwrLookupDialog", "Dialog"))
+        self.addButton.setText(_translate("srwrLookupDialog", "Add"))
+        self.removeButton.setText(_translate("srwrLookupDialog", "Remove"))
+        self.amendButton.setText(_translate("srwrLookupDialog", "Amend"))
+        self.closeButton.setText(_translate("srwrLookupDialog", "Close"))
+        self.groupBox.setTitle(_translate("srwrLookupDialog", "Lookup Table:"))
+        self.desRadioButton.setText(_translate("srwrLookupDialog", "Special Designation"))
+        self.reinsRadioButton.setText(_translate("srwrLookupDialog", "Reinstatement"))
+        self.statRadioButton.setText(_translate("srwrLookupDialog", "Road Status"))
 
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
-    srwrLookupDialog = QtGui.QDialog()
+    app = QtWidgets.QApplication(sys.argv)
+    srwrLookupDialog = QtWidgets.QDialog()
     ui = Ui_srwrLookupDialog()
     ui.setupUi(srwrLookupDialog)
     srwrLookupDialog.show()

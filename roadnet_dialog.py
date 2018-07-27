@@ -39,7 +39,7 @@ from gui.rn_street_selector_ui import Ui_streetSelectorDialog
 from gui.rn_export_sf_ui import Ui_selectedFeatures
 from gui.rn_export_lsg_shp_ui import Ui_exportLsgShpDialog
 from gui.rn_export_poly_shp_ui import Ui_exportPolyShpDialog
-from gui.rn_export_complete_ui import Ui_exportComplete
+from gui.rn_export_complete import Ui_exportComplete
 from gui.rn_admin_street_reports_ui import Ui_streetreports
 from gui.rn_admin_street_reports_alert_ui import Ui_strtAdminAlert
 from gui.rn_admin_metadata_ui import Ui_metadataDialog

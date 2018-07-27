@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os.path
 
-from PyQt4.QtCore import QSize, SIGNAL
-from PyQt4.QtGui import QMenuBar, QIcon, QAction, QToolTip, QCursor
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtWidgets import QMenuBar, QAction, QToolTip
 
 __author__ = 'matthew.walsh'
 
@@ -125,12 +126,9 @@ class RoadnetToolbar(object):
             lambda: self._actionHovered(self.mcl_auto_number_btn))
 
         # Select feature button
-        self.rdpoly_select_on_icon = QIcon(os.path.join(self.plugin_dir,
-                                                   "image", "edit_poly_on_icon.png"))
-        self.rdpoly_select_off_icon = QIcon(os.path.join(self.plugin_dir,
-                                                      "image", "edit_poly_off_icon.png"))
-        self.rdpoly_select_btn = QAction(self.rdpoly_select_off_icon, "",
-                                       self.iface.mainWindow())
+        self.rdpoly_select_on_icon = QIcon(os.path.join(self.plugin_dir, "image", "edit_poly_on_icon.png"))
+        self.rdpoly_select_off_icon = QIcon(os.path.join(self.plugin_dir, "image", "edit_poly_off_icon.png"))
+        self.rdpoly_select_btn = QAction(self.rdpoly_select_off_icon, "", self.iface.mainWindow())
         self.rdpoly_select_btn.setToolTip("Select RAMP polygon")
         self.rdpoly_select_btn.hovered.connect(
             lambda: self._actionHovered(self.rdpoly_select_btn))

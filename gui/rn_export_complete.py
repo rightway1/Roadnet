@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'rn_admin_street_reports_alert_ui.ui'
+# Form implementation generated from reading ui file 'rn_export_complete.ui'
 #
 # Created by: PyQt5 UI code generator 5.9
 #
@@ -8,13 +8,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_strtAdminAlert(object):
-    def setupUi(self, strtAdminAlert):
-        strtAdminAlert.setObjectName("strtAdminAlert")
-        strtAdminAlert.resize(258, 81)
-        self.gridLayout = QtWidgets.QGridLayout(strtAdminAlert)
+class Ui_exportComplete(object):
+    def setupUi(self, exportComplete):
+        exportComplete.setObjectName("exportComplete")
+        exportComplete.resize(197, 82)
+        exportComplete.setMinimumSize(QtCore.QSize(197, 82))
+        exportComplete.setMaximumSize(QtCore.QSize(197, 82))
+        exportComplete.setWindowTitle("")
+        self.gridLayout = QtWidgets.QGridLayout(exportComplete)
         self.gridLayout.setObjectName("gridLayout")
-        self.label_2 = QtWidgets.QLabel(strtAdminAlert)
+        self.label_2 = QtWidgets.QLabel(exportComplete)
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(False)
@@ -27,29 +30,28 @@ class Ui_strtAdminAlert(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.cancelPushButton = QtWidgets.QPushButton(strtAdminAlert)
+        self.cancelPushButton = QtWidgets.QPushButton(exportComplete)
         self.cancelPushButton.setObjectName("cancelPushButton")
         self.horizontalLayout.addWidget(self.cancelPushButton)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
-        self.retranslateUi(strtAdminAlert)
-        QtCore.QMetaObject.connectSlotsByName(strtAdminAlert)
+        self.retranslateUi(exportComplete)
+        QtCore.QMetaObject.connectSlotsByName(exportComplete)
 
-    def retranslateUi(self, strtAdminAlert):
+    def retranslateUi(self, exportComplete):
         _translate = QtCore.QCoreApplication.translate
-        strtAdminAlert.setWindowTitle(_translate("strtAdminAlert", "Dialog"))
-        self.label_2.setText(_translate("strtAdminAlert", "Please Select an Addtional Table"))
-        self.cancelPushButton.setText(_translate("strtAdminAlert", "OK"))
+        self.label_2.setText(_translate("exportComplete", "Export Complete "))
+        self.cancelPushButton.setText(_translate("exportComplete", "OK"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    strtAdminAlert = QtWidgets.QDialog()
-    ui = Ui_strtAdminAlert()
-    ui.setupUi(strtAdminAlert)
-    strtAdminAlert.show()
+    exportComplete = QtWidgets.QDialog()
+    ui = Ui_exportComplete()
+    ui.setupUi(exportComplete)
+    exportComplete.show()
     sys.exit(app.exec_())
 
