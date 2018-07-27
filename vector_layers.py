@@ -1,10 +1,8 @@
 import sqlite3
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox
 from qgis.core import (QgsCoordinateReferenceSystem,
-                       QgsMapLayerRegistry,
+                       QgsProject,
                        QgsVectorLayer,
-                       QgsDataSourceURI)
+                       QgsDataSourceUri)
 import roadnet_exceptions as rn_except
 
 
@@ -47,7 +45,7 @@ def load_spatialite_layer(vlayer_name, display_name, db_path):
     :param db_path: path of spatialite database file
     """
     # Add spatialite layer to canvas
-    uri = QgsDataSourceURI()
+    uri = QgsDataSourceUri()
     uri.setDatabase(db_path)
     schema = ''
     geom_column = 'geometry'
@@ -63,7 +61,7 @@ def set_crs_and_register(vlayer):
     """
     vlayer.setCrs(QgsCoordinateReferenceSystem(
         27700, QgsCoordinateReferenceSystem.EpsgCrsId), False)
-    QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+    QgsProject.addMapLayer(vlayer)
 
 
 def apply_layer_style(vlayer, style, db_path):
@@ -108,12 +106,11 @@ def remove_spatialite_layer(vlayer, iface):
     :param vlayer: QgsVectorLayer
     :param iface: QGIS iface instance
     """
-    registry = QgsMapLayerRegistry.instance()
     try:
-        registry.removeMapLayer(vlayer.id())
+        QgsProject.removeMapLayer(vlayer.id())
     except:
         # QGIS throws an error if you try to remove a layer that doesn't exist
-        msg = "Attempted to remove layer that is not in QgsMapLayerRegistry"
+        msg = "Attempted to remove layer that is not in QgsProject"
         raise rn_except.RemoveNonExistentLayerPopupError(msg)
     refresh_display(iface)
 
@@ -125,4 +122,3 @@ def refresh_display(iface):
     """
     iface.mapCanvas().clearCache()
     iface.mapCanvas().refresh()
-

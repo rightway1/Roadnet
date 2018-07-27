@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt
-from PyQt5.QtSql import QSqlError
 
 
 class QMessageBoxWarningError(Exception):
@@ -17,8 +16,7 @@ class QMessageBoxWarningError(Exception):
         """
         Show message box with message.
         """
-        msg_box = QMessageBox(QMessageBox.Warning, " ", self.message,
-                              QMessageBox.Ok, None)
+        msg_box = QMessageBox(QMessageBox.Warning, " ", self.message, QMessageBox.Ok)
         msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         msg_box.exec_()
 
@@ -69,7 +67,6 @@ class RampRdPolyAlreadyLinkedPopupError(QMessageBoxWarningError):
 
 class RampMclNumberingFailedPopupError(QMessageBoxWarningError):
     pass
-
 
 
 class RampNoLinkedPolyPopupError(QMessageBoxWarningError):
