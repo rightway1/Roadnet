@@ -2,13 +2,14 @@
 import datetime
 import operator
 
-from PyQt4.QtCore import Qt, QDate, QObject, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QColor, QListWidgetItem, QLineEdit, QDoubleValidator
-from PyQt4.QtSql import QSqlQuery
-from qgis.core import QgsMapLayerRegistry, QgsPoint, QgsFeatureRequest
+from PyQt5.QtCore import Qt, QDate, QObject, pyqtSignal
+from PyQt5.QtGui import QColor, QDoubleValidator
+from PyQt5.QtSql import QSqlQuery
+from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QLineEdit
+from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
-from mod_validation import ValidateDescription, ValidateStreetType
+from .mod_validation import ValidateDescription, ValidateStreetType
 from ..generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint
 from ..roadnet_dialog import SaveRecordDlg, EditCoordsDlg, EditEsuLinkDlg
 from .. import config
@@ -103,7 +104,7 @@ class EditRecord:
             self.street_browser_modify()
             if not self.esu_layer:
                 # Set the ESU layer to read only during modification of the record
-                self.esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
+                self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
             if config.DEBUG_MODE:
                 print("DEBUG_MODE: Setting ESU layer to read only for modify.")
             self.esu_layer.setReadOnly(True)
@@ -192,7 +193,7 @@ class EditRecord:
         """
         Set the combo index to match the current value.
         """
-        for idx, qitem in self.update_dict.iteritems():
+        for idx, qitem in self.update_dict.items():
             try:
                 combo = qitem[0]
                 line_edit = qitem[1]
@@ -271,7 +272,7 @@ class EditRecord:
         unmod_query.exec_(self.record_copy_sql)
         # Save changes from dropdowns by directly editing model
         current = self.mapper.currentIndex()
-        for idx, qitem in self.update_dict.iteritems():
+        for idx, qitem in self.update_dict.items():
             combo = qitem[0]
             try:
                 data = combo.itemData(combo.currentIndex())
@@ -427,14 +428,14 @@ class EditRecord:
                 else:
                     esu_ver = str(1)
                 # Create new links
-                insert_sql = "INSERT INTO lnkESU_STREET (esu_id, usrn, esu_version_no, usrn_version_no, currency_flag," \
-                             " entry_date, update_date) VALUES (%s, %s, %s, %s, 0, %s, %s)" \
+                insert_sql = "INSERT INTO lnkESU_STREET (esu_id, usrn, esu_version_no, usrn_version_no," \
+                             " currency_flag, entry_date, update_date) VALUES (%s, %s, %s, %s, 0, %s, %s)" \
                              % (esu, usrn, esu_ver, new_usrn_ver, date, date)
-                insert = QSqlQuery(insert_sql, self.db)
+                QSqlQuery(insert_sql, self.db)
             # Close existing links
             update_sql = "UPDATE lnkESU_STREET SET currency_flag=1, closure_date=%s WHERE usrn = %s " \
                          "AND usrn_version_no = %s" % (date, usrn, old_usrn_ver)
-            update = QSqlQuery(update_sql, self.db)
+            QSqlQuery(update_sql, self.db)
         except TypeError:
             # No esu's attached to record
             pass
@@ -444,7 +445,7 @@ class EditRecord:
         Populate all comboboxes from db lookup tables. Combos sorted alphabetically with a 0 (default None) value at
         the top.
         """
-        for query_str, combo in self.query_lst.iteritems():
+        for query_str, combo in self.query_lst.items():
             query = QSqlQuery(query_str)
             all_items = {}
             while query.next():
@@ -452,10 +453,10 @@ class EditRecord:
                 value = str(query.value(1))
                 all_items[text] = value
             if '0' in all_items.values():
-                sorted_items = sorted(all_items.iteritems(), key=operator.itemgetter(0), reverse=True)
+                sorted_items = sorted(all_items.items(), key=operator.itemgetter(0), reverse=True)
             else:
                 # The only lookup without a 0 as 'None' item is the street ref type, also this is sorted on the type
-                sorted_items = sorted(all_items.iteritems(), key=operator.itemgetter(1), reverse=True)
+                sorted_items = sorted(all_items.items(), key=operator.itemgetter(1), reverse=True)
             default_none = None
 
             for item in sorted_items:
@@ -502,7 +503,8 @@ class EditStartEndCoords(object):
         # sets coords limits in all line edits for validation
         self.coords_line_edit_list = None
         self.set_coords_limits()
-        self.coords_dlg.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+        self.coords_dlg.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint |
+                                       Qt.WindowStaysOnTopHint)
         # Connect buttons
         self.connect_buttons()
         self.selected_button = None
@@ -600,7 +602,7 @@ class EditStartEndCoords(object):
         :param button: Button enum
         """
         self.selected_button = button
-        self.tool_clickPoint.canvasClicked.connect(self.canvas_clicked)
+        self.tool_clickPoint.canvasClicked().connect(self.canvas_clicked)
         self.iface.mapCanvas().setMapTool(self.tool_clickPoint)
 
     def disconnect_click_point(self):
@@ -608,7 +610,7 @@ class EditStartEndCoords(object):
         Disconnect canvasClicked signal.
         """
         try:
-            self.tool_clickPoint.canvasClicked.disconnect()
+            self.tool_clickPoint.canvasClicked().disconnect()
         except TypeError:
             pass
 
@@ -741,8 +743,8 @@ class EditEsuLink(object):
         # Create instance of generic zoom/select functs
         self.gn_fnc = ZoomSelectCanvas(self.iface, self.street_browser, self.db)
         self.connect_buttons()
-        self.layer = QgsMapLayerRegistry.instance().mapLayersByName(self.layer_name)[0]
-        set_layer = self.iface.setActiveLayer(self.layer)
+        self.layer = QgsProject.instance().mapLayersByName(self.layer_name)[0]
+        self.iface.setActiveLayer(self.layer)
         # List widget
         self.list_widget = self.esu_dlg.ui.esuLinkListWidget
         self.list_widget.clear()
@@ -902,6 +904,7 @@ class UpdateEsuSymbology(object):
         """
         Main method to update symbology.
         :param usrn: usrn of current street being modified
+        :param esu_list: list of ESUs to be updated if a delete / close update.
         """
         if esu_list:
             # Its a delete/close update
@@ -996,7 +999,7 @@ class UpdateEsuSymbology(object):
                  ;""".format(symbol=symbol, esu_id=esu_id)
         if config.DEBUG_MODE:
             print("DEBUG_MODE: Updating ESU symbology for esu_id={}".format(esu_id))
-        query = QSqlQuery(sql, self.db)
+        QSqlQuery(sql, self.db)
 
     def get_esu_selection(self, usrn):
         """

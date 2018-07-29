@@ -2,25 +2,20 @@
 
 import os
 
-from PyQt4.QtSql import QSqlQueryModel, QSqlQuery
-from PyQt4.QtCore import Qt, pyqtSlot
-from PyQt4.QtGui import (
-    QDataWidgetMapper, 
-    QAbstractItemView,
-    QSortFilterProxyModel,
-    QListWidgetItem,
-    QMessageBox,
-    QPixmap,
-    QIcon)
-from qgis.core import QgsMapLayerRegistry
-from srwr_maintenance import MaintenanceTable
-from srwr_reinstatement_cat import ReinstatementCategoriesTable
-from srwr_special_designation import SpecialDesignationTable
+from PyQt5.QtSql import QSqlQueryModel, QSqlQuery
+from PyQt5.QtCore import Qt, pyqtSlot, QSortFilterProxyModel
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtWidgets import QDataWidgetMapper, QAbstractItemView, QListWidgetItem, QMessageBox
+
+from qgis.core import QgsProject
+from .srwr_maintenance import MaintenanceTable
+from .srwr_reinstatement_cat import ReinstatementCategoriesTable
+from .srwr_special_designation import SpecialDesignationTable
 from ..roadnet_dialog import FilterStreetRecordsDlg
-from filter_street_records import PopulateFilterTableView
-from edit import EditRecord
-from add import AddRecord
-from close import CloseRecord
+from .filter_street_records import PopulateFilterTableView
+from .edit import EditRecord
+from .add import AddRecord
+from .close import CloseRecord
 from ..generic_functions import ZoomSelectCanvas, DateMapperCustomDelegate, ShowStreetCoordinates
 from ..generic_functions import ipdb_breakpoint
 
@@ -225,8 +220,8 @@ class StreetBrowser:
         Checks if either the rd poly layer or esu layer are currently in editing state.
         :return: True if editing
         """
-        esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
-        rdpoly_layer = QgsMapLayerRegistry.instance().mapLayersByName('Road Polygons')[0]
+        esu_layer = QgsProject().mapLayersByName("ESU Graphic")[0]
+        rdpoly_layer = QgsProject().mapLayersByName('Road Polygons')[0]
         if esu_layer.isEditable() or rdpoly_layer.isEditable():
             no_add_esu_layer_msg_box = QMessageBox(QMessageBox.Warning, '',
                                                    'Cannot modify street record while editing layers',
@@ -448,7 +443,7 @@ class ScottishRoadWorksRegister:
         in case a street is linked to other categories
         :param usrn : [str] the usrn of the current record in widget mapper
         """
-        print " signal received " + str(usrn)
+        print(" signal received " + str(usrn))
         usrn_num_str = "SELECT (SELECT COUNT (usrn) FROM tblSPEC_DES WHERE usrn = {} AND currency_flag = 0) + " \
                        "(SELECT COUNT (usrn) FROM tblMAINT WHERE usrn = {} AND currency_flag = 0) + " \
                        "(SELECT COUNT (usrn) FROM tblREINS_CAT WHERE usrn = {} AND currency_flag = 0) AS NoUSRN"\

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtSql import QSqlQuery
 
 __author__ = 'matthew.walsh'
 

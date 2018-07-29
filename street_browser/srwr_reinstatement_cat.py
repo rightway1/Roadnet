@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtSql import QSqlRelation, QSqlQuery
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtSql import QSqlRelation, QSqlQuery
 
-from Roadnet.roadnet_dialog import SrwrReinsCatDlg
-from srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
-from srwr_maintenance import (
+from ..roadnet_dialog import SrwrReinsCatDlg
+from .srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
+from .srwr_maintenance import (
     SrwrAddMaintenanceRecord,
     SrwrModifyMaintenanceRecord,
     SrwrDeleteMaintenanceRecord)
-from srwr_special_designation import SpecialDesignationTable
+from .srwr_special_designation import SpecialDesignationTable
 
-import datetime
 
 class ReinstatementCategoriesTable(SpecialDesignationTable):
     """
@@ -304,7 +303,7 @@ class SrwrModifyReinstatementCatRecord(SrwrModifyMaintenanceRecord, SrwrAddReins
         :return : True if record is dirty
         """
         new_values = self.snapshot_record_values()
-        for idx, org_value in self.before_mod_values.iteritems():
+        for idx, org_value in self.before_mod_values.items():
             if org_value != new_values[idx]:
                 return True
         return False
@@ -332,9 +331,11 @@ class SrwrDeleteReinstatementCatRecord(SrwrDeleteMaintenanceRecord):
         """
         row = self.table_view.currentIndex().row()
         maint_id = self.model.data(self.model.index(row, self.id_col), Qt.DisplayRole)
-        confirm_delete_dlg = QMessageBox("", "Are you sure you want to delete record " + str(maint_id),
-                                         QMessageBox.Question, QMessageBox.Yes, QMessageBox.No,
-                                         QMessageBox.NoButton, None, Qt.Dialog)
+        confirm_delete_dlg = QMessageBox(QMessageBox.Question, "",
+                                         "Are you sure you want to delete record " + str(maint_id),
+                                         QMessageBox.Yes | QMessageBox.No
+                                         )
+        confirm_delete_dlg.setDefaultButton(QMessageBox.No)
         confirm_delete_result = confirm_delete_dlg.exec_()
         if confirm_delete_result == QMessageBox.Yes:
             self.close_record_db(maint_id, 'tblREINS_CAT', 'reins_cat_id')

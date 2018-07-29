@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtCore import Qt
+from PyQt5.QtSql import QSqlQuery
 
-from qgis.core import QgsMapLayerRegistry
+from qgis.core import QgsProject
 
-from Roadnet.roadnet_dialog import SaveRecordDlg
-from edit import UpdateEsuSymbology
+from roadnet_dialog import SaveRecordDlg
+from .edit import UpdateEsuSymbology
 
 __author__ = 'matthew.walsh'
 
@@ -58,7 +58,7 @@ class CloseRecord:
         :param usrn: current USRN
         """
         # Close database records
-        usrn = self.street_browser.ui.usrnLineEdit.text()
+        # usrn = self.street_browser.ui.usrnLineEdit.text()
         today = str(datetime.datetime.now().strftime("%Y%m%d"))
         self.close_current_record(usrn, today)
         self.close_esu_links(usrn, today)
@@ -70,7 +70,7 @@ class CloseRecord:
         while counter < self.street_browser.ui.linkEsuListWidget.count():
             esu_list.append(self.street_browser.ui.linkEsuListWidget.item(counter).text())
             counter += 1
-        esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
+        esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
         UpdateEsuSymbology(self.db, esu_layer).update(usrn, esu_list=esu_list)
 
         # Update display
@@ -85,7 +85,7 @@ class CloseRecord:
         """
         sql = """UPDATE lnkESU_STREET SET currency_flag=1, closure_date=%s WHERE usrn = %s AND currency_flag = 0""" \
               % (closure_date, usrn)
-        query = QSqlQuery(sql, self.db)
+        QSqlQuery(sql, self.db)
 
     def close_current_record(self, usrn, closure_date):
         """

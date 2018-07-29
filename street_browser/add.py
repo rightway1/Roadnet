@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from PyQt4.QtSql import QSqlQuery, QSqlQueryModel
-from PyQt4.QtGui import QMessageBox, QLineEdit, QComboBox
-from PyQt4.QtCore import Qt, QDate
+from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
+from PyQt5.QtWidgets import QMessageBox, QLineEdit, QComboBox
+from PyQt5.QtCore import Qt, QDate
 
-from qgis.core import QgsMapLayerRegistry
+from qgis.core import QgsProject
 
 from ..generic_functions import SwitchStreetBrowserMode, ZoomSelectCanvas, ipdb_breakpoint
 from ..roadnet_dialog import SaveRecordDlg
-from edit import EditEsuLink, EditStartEndCoords, UpdateEsuSymbology
-from mod_validation import ValidateDescription, ValidateStreetType
+from .edit import EditEsuLink, EditStartEndCoords, UpdateEsuSymbology
+from .mod_validation import ValidateDescription, ValidateStreetType
 
 __author__ = 'matthew.walsh'
 
@@ -31,7 +31,7 @@ class AddRecord:
         self.save_dlg.ui.savePushButton.clicked.connect(self.save_new_record)
         self.save_dlg.ui.revertPushButton.clicked.connect(self.cancel_new_record)
         self.save_dlg.ui.cancelPushButton.clicked.connect(lambda: self.save_dlg.close())
-        self.esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
+        self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
 
         self.lineedits = {1: self.street_browser.ui.usrnLineEdit,
                           8: self.street_browser.ui.startDateDateEdit,
@@ -224,7 +224,7 @@ class AddRecord:
             self.revert_sb_add()
             self.disconnect_esu_and_coords()
             # Update Esu Graphic symbology attribute for all linked Esu's
-            self.esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
+            self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
             UpdateEsuSymbology(self.db, self.esu_layer).update(usrn)
         else:
             self.failed_validation_msg(mandatory, unique_desc, esu_valid)
@@ -269,7 +269,7 @@ class AddRecord:
         record.setValue(23, self.username)
         # Set values from lineedits
         date_cols = [6, 7, 8, 18]
-        for idx, lineedit in self.lineedits.iteritems():
+        for idx, lineedit in self.lineedits.items():
             txt = str(lineedit.text())
             if txt:
                 # re-format dates for db
@@ -277,7 +277,7 @@ class AddRecord:
                     txt = self.database_dates(txt)
                 record.setValue(idx, txt)
         # Set values from comboboxes
-        for idx, combo in self.combos.iteritems():
+        for idx, combo in self.combos.items():
             combo_idx = combo.currentIndex()
             # if combo_idx != 0:
             record.setValue(idx, str(combo.itemData(combo_idx)))
@@ -347,10 +347,10 @@ class AddRecord:
                 else:
                     esu_ver = str(1)
                 # Create new links
-                insert_sql = "INSERT INTO lnkESU_STREET (esu_id, usrn, esu_version_no, usrn_version_no, currency_flag," \
-                             " entry_date, update_date) VALUES (%s, %s, %s, 1, 0, %s, %s)" \
+                insert_sql = "INSERT INTO lnkESU_STREET (esu_id, usrn, esu_version_no, usrn_version_no, " \
+                             "urrency_flag, entry_date, update_date) VALUES (%s, %s, %s, 1, 0, %s, %s)" \
                              % (esu, usrn, esu_ver, date, date)
-                new_lnk_query = QSqlQuery(insert_sql, self.db)
+                QSqlQuery(insert_sql, self.db)
         except TypeError:
             # No esu's attached to record
             pass

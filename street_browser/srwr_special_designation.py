@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtSql import QSqlRelation, QSqlQuery
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtSql import QSqlRelation, QSqlQuery
 
-from Roadnet.roadnet_dialog import SrwrSpecialDesDlg
-from Roadnet.generic_functions import ipdb_breakpoint
-from srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
-from srwr_maintenance import MaintenanceTable, SrwrAddMaintenanceRecord, SrwrModifyMaintenanceRecord, SrwrDeleteMaintenanceRecord
+from ..roadnet_dialog import SrwrSpecialDesDlg
+from ..generic_functions import ipdb_breakpoint
+from .srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
+from .srwr_maintenance import MaintenanceTable, SrwrAddMaintenanceRecord, SrwrModifyMaintenanceRecord, \
+    SrwrDeleteMaintenanceRecord
 
 
 class SpecialDesignationTable(MaintenanceTable):
@@ -31,6 +32,10 @@ class SpecialDesignationTable(MaintenanceTable):
         super(SpecialDesignationTable, self).__init__(street_browser, usrn, db, tv, iface, params)
 
         self.dlg = SrwrSpecialDesDlg()
+
+        self.add_i = None
+        self.view_i = None
+        self.delete_i = None
 
     def relate_lookup_tables(self, model):
         """
@@ -203,7 +208,7 @@ class SrwrAddSpecialDesRecord(SrwrAddMaintenanceRecord):
         Change the label colour to black if the date is not the default (01/01/2000)
         :param date: QDate from datepicker
         """
-        if date.getDate() != (2000, 01, 01):
+        if date.getDate() != (2000, 1, 1):
             self.view_dlg.ui.designationDateLabel.setStyleSheet("color : black")
         else:
             self.view_dlg.ui.designationDateLabel.setStyleSheet("color : red")
@@ -431,7 +436,7 @@ class SrwrModifySpecialDesRecord(SrwrModifyMaintenanceRecord, SrwrAddSpecialDesR
         :return : True if record is dirty
         """
         new_values = self.snapshot_record_values()
-        for idx, org_value in self.before_mod_values.iteritems():
+        for idx, org_value in self.before_mod_values.items():
             if org_value != new_values[idx]:
                 return True
         adopt_new = self.view_dlg.ui.designationDateDateEdit.text()
@@ -465,9 +470,10 @@ class SrwrDeleteSpecialDesRecord(SrwrDeleteMaintenanceRecord):
         """
         row = self.table_view.currentIndex().row()
         maint_id = self.model.data(self.model.index(row, self.id_col), Qt.DisplayRole)
-        confirm_delete_dlg = QMessageBox("", "Are you sure you want to delete record " + str(maint_id),
-                                         QMessageBox.Question, QMessageBox.Yes, QMessageBox.No,
-                                         QMessageBox.NoButton, None, Qt.Dialog)
+        confirm_delete_dlg = QMessageBox(QMessageBox.Question, "",
+                                         "Are you sure you want to delete record " + str(maint_id),
+                                         QMessageBox.Yes | QMessageBox.No)
+        confirm_delete_dlg.setDefaultButton(QMessageBox.No)
         confirm_delete_result = confirm_delete_dlg.exec_()
         if confirm_delete_result == QMessageBox.Yes:
             self.close_record_db(maint_id, 'tblSPEC_DES', 'spec_des_id')

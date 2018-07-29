@@ -2,23 +2,23 @@
 import datetime
 import operator
 
-from PyQt4.QtCore import Qt, QDate, QPyNullVariant, QObject, pyqtSignal
-from PyQt4.QtGui import QStackedWidget, QMessageBox, QListWidgetItem
-from PyQt4.QtSql import (
+from PyQt5.QtCore import Qt, QDate, QObject, pyqtSignal
+from PyQt5.QtWidgets import QStackedWidget, QMessageBox, QListWidgetItem
+from PyQt5.QtSql import (
     QSqlRelationalTableModel,
     QSqlTableModel,
     QSqlRelation,
     QSqlQuery)
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest
+from qgis.core import QgsProject, QgsFeatureRequest
 
-from Roadnet.roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
-from edit import EditStartEndCoords, EditEsuLink
-from srwr import (
+from roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
+from .edit import EditStartEndCoords, EditEsuLink
+from .srwr import (
     SetupMaintRecordOperationsButtons,
     WidgetInfoObject,
     WidgetTypeEnum,
     SrwrViewRecord)
-from Roadnet.generic_functions import ZoomSelectCanvas, ShowStreetCoordinates
+from generic_functions import ZoomSelectCanvas, ShowStreetCoordinates
 
 
 class MaintenanceTable(object):
@@ -145,8 +145,8 @@ class MaintenanceTable(object):
         if add:
             if not self.check_layer_editing():
                 self.add_i = SrwrAddMaintenanceRecord(self.model, self.iface, self.db, self.street_browser, self.dlg,
-                                                  self.whole_rd_col, self.currency_flag_col, self.usrn_col, widget_info,
-                                                  query_lst, self.params)
+                                                      self.whole_rd_col, self.currency_flag_col, self.usrn_col,
+                                                      widget_info, query_lst, self.params)
                 self.add_i.view(idx, self.usrn)
                 self.disable_sb_modifications()
                 self.rdpoly_layer.setReadOnly(True)
@@ -161,7 +161,7 @@ class MaintenanceTable(object):
         elif delete:
             if not self.check_layer_editing():
                 self.delete_i = SrwrDeleteMaintenanceRecord(self.street_browser, self.db, self.model, self.usrn,
-                                                        self.table_view)
+                                                            self.table_view)
                 self.delete_i.delete()
                 # emit the signal that checks for linked usrns
                 self.signals.current_usrn_links.emit(self.usrn)
@@ -178,12 +178,11 @@ class MaintenanceTable(object):
         Checks if either the rd poly layer is currently in editing state.
         :return: True if editing
         """
-        self.rdpoly_layer = QgsMapLayerRegistry.instance().mapLayersByName('Road Polygons')[0]
+        self.rdpoly_layer = QgsProject().instance().mapLayersByName('Road Polygons')[0]
         if self.rdpoly_layer.isEditable():
             msg_box = QMessageBox(QMessageBox.Warning, '',
-                                                       'Cannot modify a maintenance record while editing the Road '
-                                                       'Polygon layer',
-                                                   QMessageBox.Ok, None)
+                                  'Cannot modify a maintenance record while editing the Road Polygon layer',
+                                  QMessageBox.Ok, None)
             msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             msg_box.exec_()
             return True
@@ -361,7 +360,7 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
         self.query_lst = query_lst
 
         self.params = params
-        self.rdpoly_layer = QgsMapLayerRegistry.instance().mapLayersByName('Road Polygons')[0]
+        self.rdpoly_layer = QgsProject().instance().mapLayersByName('Road Polygons')[0]
 
         self.links = None
         self.usrn = None
@@ -464,7 +463,7 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
                 text = str(query.value(0))
                 value = str(query.value(1))
                 all_items[text] = value
-            sorted_items = sorted(all_items.iteritems(), key=operator.itemgetter(0), reverse=True)
+            sorted_items = sorted(all_items.items(), key=operator.itemgetter(0), reverse=True)
             default_none = None
             for item in sorted_items:
                 text = item[0]
@@ -506,10 +505,11 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
         ref_query = QSqlQuery(max_ref_query, db)
         ref_query.seek(0)
         ref = ref_query.value(0)
-        if type(ref) != QPyNullVariant:
-            ref_value = int(ref) + 1
-        else:
+        if ref.isNull():
             ref_value = 1
+        else:
+            ref_value = int(ref) + 1
+
         # Set values in gui
         self.id_lineedit.setText(str(maint_id))
         self.view_dlg.ui.refLineEdit.setText(str(ref_value))
@@ -624,7 +624,7 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
                     # Create the link if it doesnt exist already
                     sql = "INSERT INTO lnkMAINT_RD_POL (rd_pol_id, currency_flag, maint_id) VALUES (%s, 0, %s)" % \
                           (rd_poly, maint_id)
-                    insert_q = QSqlQuery(sql, self.db)
+                    QSqlQuery(sql, self.db)
 
     def existing_rd_poly_links(self, maint_id):
         """
@@ -1051,7 +1051,7 @@ class SrwrModifyMaintenanceRecord(SrwrAddMaintenanceRecord):
                 else:
                     for w_2 in self.widgets:
                         if w_2.widget_type == WidgetTypeEnum.dateedit and w.db_col == w_2.db_col:
-                            w_2.widget.setDate(QDate(00, 01, 01))
+                            w_2.widget.setDate(QDate(2000, 1, 1))
 
     def close_rd_poly_links(self, maint_id):
         """
@@ -1065,7 +1065,7 @@ class SrwrModifyMaintenanceRecord(SrwrAddMaintenanceRecord):
                 if org_rd_poly not in final_sel:
                     sql = "UPDATE lnkMAINT_RD_POL SET currency_flag=1 WHERE rd_pol_id = %s AND maint_id = %s" % \
                           (org_rd_poly, maint_id)
-                    query = QSqlQuery(sql, self.db)
+                    QSqlQuery(sql, self.db)
 
     def save_record_changes(self):
         """
@@ -1267,11 +1267,10 @@ class SrwrDeleteMaintenanceRecord(object):
         """
         row = self.table_view.currentIndex().row()
         maint_id = self.model.data(self.model.index(row, self.id_col), Qt.DisplayRole)
-        confirm_delete_dlg = QMessageBox(
-                                         " ",
-                                        "Are you sure you want to delete record " + str(maint_id),
-                                         QMessageBox.Warning, QMessageBox.Yes, QMessageBox.No,
-                                         QMessageBox.NoButton, None)
+        confirm_delete_dlg = QMessageBox(QMessageBox.Warning, " ",
+                                         "Are you sure you want to delete record " + str(maint_id),
+                                         QMessageBox.Yes | QMessageBox.No)
+        confirm_delete_dlg.setDefaultButton(QMessageBox.No)
         confirm_delete_dlg.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         confirm_delete_result = confirm_delete_dlg.exec_()
         # Check if save requested
@@ -1300,7 +1299,7 @@ class SrwrDeleteMaintenanceRecord(object):
         user = self.street_browser.ui.byLineEdit.text()
         sql = 'UPDATE %s SET currency_flag=1, closure_date=%s, closed_by="%s" WHERE usrn = %s AND %s = %s ' \
               'AND currency_flag = 0' % (table, today, user, self.usrn, id_col_name, id_)
-        query = QSqlQuery(sql, self.db)
+        QSqlQuery(sql, self.db)
 
     def any_existing_records(self, maint_id):
         """

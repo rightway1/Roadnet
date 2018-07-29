@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDataWidgetMapper, QSortFilterProxyModel
+from PyQt5.QtCore import Qt, QSortFilterProxyModel
+from PyQt5.QtWidgets import QDataWidgetMapper
 
 from qgis.core import QgsPoint, QgsGeometry
 
@@ -188,7 +188,7 @@ class SrwrViewRecord(object):
         """
         View a record details in a dialog
         :param idx: index of view in the model
-        :param usrn: usrn of current record
+        :param usrn: usrn of current record (not currently used)
         """
         row = idx.row()
         self.mapper.setCurrentIndex(row)
@@ -208,7 +208,7 @@ class SrwrViewRecord(object):
         # Only zoom if values are present
         if startx and starty:
             coords_f = [QgsPoint(float(startx), float(starty)), QgsPoint(float(endx), float(endy))]
-            geom = QgsGeometry().fromMultiPoint(coords_f)
+            geom = QgsGeometry().fromMultiPointXY(coords_f)
             bbox = geom.boundingBox()
             self.iface.mapCanvas().setExtent(bbox)
             self.iface.mapCanvas().refresh()

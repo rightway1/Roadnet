@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
-from PyQt4.QtGui import QSortFilterProxyModel, QComboBox, QAbstractItemView, QMessageBox, QIcon, QPixmap
-from PyQt4.QtSql import QSqlRelation, QSqlQuery
-from PyQt4.QtCore import Qt
-from PyQt4.Qt import Qt
-from qgis.core import QgsMapLayerRegistry, QgsFeatureRequest
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtSql import QSqlRelation, QSqlQuery
+from PyQt5.QtCore import Qt, QSortFilterProxyModel
+from PyQt5.QtWidgets import QComboBox, QAbstractItemView, QMessageBox
+from qgis.core import QgsProject, QgsFeatureRequest
 
 from ..roadnet_dialog import QuickFindDlg
 
@@ -124,7 +124,7 @@ class PopulateFilterTableView:
                     q_string += '"esu_id" = %s OR ' % str(query.value(0))
                 q_string = q_string[:-3]
                 # Get ref to ESU layer
-                esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
+                esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
                 # Select ESU's + get extent
                 feats = esu_layer.getFeatures(QgsFeatureRequest().setFilterExpression(q_string))
                 feat_ids = []
@@ -273,6 +273,7 @@ class MultiFilterProxyModel(QSortFilterProxyModel):
         Each row in the source model is passed to this func, return True to accept the row.
         :rtype : bool
         :param row_num: row number
+        :param parent:
         """
         # Number of filters
         num_filters = len(self.filters)
@@ -281,11 +282,11 @@ class MultiFilterProxyModel(QSortFilterProxyModel):
         # Only filter if we have to
         if self.filters:
             # Loop through items in dict and compare to value
-            for col, search_str in self.filters.iteritems():
+            for col, search_str in self.filters.items():
                 # index of the cell to be filtered
                 index = self.sourceModel().index(row_num, col, parent)
                 # Text from the cell
-                txt = unicode(index.data())
+                txt = str(index.data(), 'utf-8')
                 # If description lineedit use find rather than equality
                 if col == 5:
                     if txt.lower().find(search_str.lower()) != -1:
