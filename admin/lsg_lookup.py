@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4.QtSql import QSqlQuery, QSqlTableModel
-from PyQt4.QtCore import Qt, QPyNullVariant
-from PyQt4.QtGui import QMessageBox
-from Roadnet.generic_functions import ipdb_breakpoint
-from Roadnet import config
+from PyQt5.QtCore import Qt
+from PyQt5.QtSql import QSqlQuery, QSqlTableModel
+from PyQt5.QtWidgets import QMessageBox
+# from ..generic_functions import ipdb_breakpoint
+from roadnet import config
 
 __author__ = 'Alessandro Cristofori'
 
@@ -83,6 +83,8 @@ class LsgLookUp:
         :return: void
         """
         ui = self.lsg_lu_dia.ui
+        table = None
+        ref_col = None
         if ui.locRadioButton.isChecked():
             table = self.tables[0]
             ref_col = self.columns[0]
@@ -136,7 +138,7 @@ class LsgLookUp:
         query = QSqlQuery(sql_find_max_ref, self.db)
         query.first()
         max_ref = query.record().value('max_ref')
-        if isinstance(max_ref, QPyNullVariant):
+        if max_ref.isNull():
             max_ref = 0
 
         # Create the record to insert
@@ -155,8 +157,8 @@ class LsgLookUp:
             self.changes_made = True
         else:
             db_error_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                "Error: {} ".format(self.items_model.lastError().text()),
-                QMessageBox.Ok, None)
+                                           "Error: {} ".format(self.items_model.lastError().text()),
+                                           QMessageBox.Ok, None)
             db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
                                             Qt.WindowTitleHint)
             db_error_msg_box.exec_()
@@ -171,6 +173,8 @@ class LsgLookUp:
         """
         # Setup
         ui = self.lsg_lu_dia.ui
+        table = None
+        ref_col = None
         if ui.locRadioButton.isChecked():
             table = self.tables[0]
             ref_col = self.columns[0]
@@ -203,12 +207,10 @@ class LsgLookUp:
         # Get list of USRNs attached to record; get item_ref first
         item_name = selection_index.data()
         sql_get_item_ref = """SELECT {0} AS 'item_ref' FROM {1}
-                              WHERE name IS '{2}';""".format(ref_col,
-                                                            table,
-                                                            item_name)
+                              WHERE name IS '{2}';""".format(ref_col, table, item_name)
         if config.DEBUG_MODE:
-            print('DEBUG_MODE: sql_get_item_ref: {}'.format(
-                sql_get_item_ref))
+            print('DEBUG_MODE: sql_get_item_ref: {}'.format(sql_get_item_ref))
+
         query = QSqlQuery(sql_get_item_ref, self.db)
         query.first()
         item_ref = query.record().value('item_ref')  # Reference of item
@@ -234,10 +236,10 @@ class LsgLookUp:
             long_message = message + usrns_string
             # Display warning message in box, then exit
             item_not_deletable_msg_box = QMessageBox(QMessageBox.Warning,
-                                                    " ",
-                                                    long_message,
-                                                    QMessageBox.Ok,
-                                                    None)
+                                                     " ",
+                                                     long_message,
+                                                     QMessageBox.Ok,
+                                                     None)
             item_not_deletable_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
                                                       Qt.WindowTitleHint)
             item_not_deletable_msg_box.exec_()
@@ -262,8 +264,7 @@ class LsgLookUp:
         else:
             db_error_msg_box = QMessageBox(QMessageBox.Warning,
                                            " ",
-                                           "Error: {}".format(
-                                               table_model.lastError.text()),
+                                           "Error: {}".format(table_model.lastError.text()),
                                            QMessageBox.Ok,
                                            None)
             db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
@@ -316,10 +317,8 @@ class LsgLookUp:
                 self.changes_made = True
             return
         else:
-            db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                           " ",
-                                           "Error: {}".format(
-                                               table_model.lastError.text()),
+            db_error_msg_box = QMessageBox(QMessageBox.Warning, " ",
+                                           "Error: {}".format(table_model.lastError.text()),
                                            QMessageBox.Ok,
                                            None)
             db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)

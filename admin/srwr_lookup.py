@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 
-from PyQt4.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
-from PyQt4.QtGui import QMessageBox
-from PyQt4.Qt import Qt
-from Roadnet.generic_functions import ipdb_breakpoint
-from Roadnet import config
+from PyQt5.QtCore import Qt
+from PyQt5.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
+from PyQt5.QtWidgets import QMessageBox
+# from ..generic_functions import ipdb_breakpoint
+from roadnet import config
 
 __author__ = 'Alessandro Cristofori'
 
@@ -243,27 +243,31 @@ class SrwrLookup:
         :return: void
         """
         ui = self.srwr_lu_dia.ui
+        table = None
+        table_id = None
+        ref_col = None
+        sql_usrns = ""
         if ui.desRadioButton.isChecked():
             table_id = 0
             table = self.tables[table_id]
             ref_col = self.columns[0]
             sql_usrns = "SELECT usrn FROM tblSPEC_DES WHERE " \
-                         "(designation_code = {0} AND currency_flag=0);" \
-                         .format(str(ui.typeNoSpinBox.value()))
+                        "(designation_code = {0} AND currency_flag=0);" \
+                        .format(str(ui.typeNoSpinBox.value()))
         elif ui.reinsRadioButton.isChecked():
             table_id = 1
             table = self.tables[table_id]
             ref_col = self.columns[1]
             sql_usrns = "SELECT usrn FROM tblREINS_CAT WHERE " \
-                         "(reinstatement_code = {0} AND currency_flag=0);" \
-                         .format(str(ui.typeNoSpinBox.value()))
+                        "(reinstatement_code = {0} AND currency_flag=0);" \
+                        .format(str(ui.typeNoSpinBox.value()))
         elif ui.statRadioButton.isChecked():
             table_id = 2
             table = self.tables[table_id]
             ref_col = self.columns[2]
             sql_usrns = "SELECT usrn FROM tblMaint WHERE " \
-                         "(road_status_ref = {0} AND currency_flag=0);" \
-                         .format(str(ui.typeNoSpinBox.value()))
+                        "(road_status_ref = {0} AND currency_flag=0);" \
+                        .format(str(ui.typeNoSpinBox.value()))
 
         data_model = self.data_model
         item_text = ui.typeDescLineEdit.text()
@@ -303,10 +307,10 @@ class SrwrLookup:
             long_message = message + usrns_string
             # Display warning message in box, then exit
             item_not_deletable_msg_box = QMessageBox(QMessageBox.Warning,
-                                                    " ",
-                                                    long_message,
-                                                    QMessageBox.Ok,
-                                                    None)
+                                                     " ",
+                                                     long_message,
+                                                     QMessageBox.Ok,
+                                                     None)
             item_not_deletable_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
                                                       Qt.WindowTitleHint)
             item_not_deletable_msg_box.exec_()
@@ -323,7 +327,7 @@ class SrwrLookup:
         ui.typeDescLineEdit.clear()
 
         # Check the delete was successful
-        if query.numRowsAffected > 0:
+        if query.numRowsAffected() > 0:
             # Repopulate table and select previous item in list
             self.populate_list(table_id)
             if item_to_remove.row() == 0:
@@ -337,10 +341,10 @@ class SrwrLookup:
         else:
             db_error_msg_box = QMessageBox(QMessageBox.Warning,
                                            " ",
-                                           "Error: {}".format(
-                                               data_model.lastError.text(),
+                                           "Error: {}".format(data_model.lastError.text()),
                                            QMessageBox.Ok,
-                                           None))
+                                           None
+                                           )
             db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
                                             Qt.WindowTitleHint)
             db_error_msg_box.exec_()

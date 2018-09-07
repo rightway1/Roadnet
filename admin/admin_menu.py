@@ -2,10 +2,11 @@
 import datetime
 import os
 
-from PyQt4.QtGui import QFileDialog, QMessageBox, QPixmap, QIcon
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtCore import Qt
-from export_street_report import StreetReportsExport
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtSql import QSqlQuery
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from .export_street_report import StreetReportsExport
 
 __author__ = 'matthew.bradley'
 
@@ -144,5 +145,3 @@ class ExportStreetReport:
                                      self.street_dia, self.params)
         # run the export
         export.run_export()
-
-

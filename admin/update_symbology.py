@@ -1,8 +1,8 @@
-from PyQt4.QtCore import QThread, pyqtSignal, QObject, Qt, pyqtSlot
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt, pyqtSlot
+from PyQt5.QtSql import QSqlQuery
 
-from Roadnet.roadnet_dialog import SymbologyDlg
-from Roadnet.street_browser.edit import UpdateEsuSymbology
+from roadnet_dialog import SymbologyDlg
+from street_browser.edit import UpdateEsuSymbology
 
 __author__ = 'matthew.walsh'
 

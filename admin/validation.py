@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-from PyQt4.QtGui import (
-        QFileDialog,
-        QMessageBox,
-        QCheckBox,
-        QProgressDialog,
-        QIcon,
-        QPixmap)
-from Roadnet.exports.export_validation_threaded import (
+from PyQt5.QtCore import Qt, QRegExp, QThreadPool, pyqtSlot
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QCheckBox, QProgressDialog
+from ..exports.export_validation_threaded import (
         CheckAsdCoords,
         CheckMaintReins,
         CheckStartEnd,
@@ -23,12 +19,10 @@ from Roadnet.exports.export_validation_threaded import (
         StartReport,
         StreetsNoEsuDesc,
         Type3Desc)
-from Roadnet.exports.export_validation_report import ExportValidationReport
-from Roadnet.admin.validation_summary import ValidationSummary
-from PyQt4.QtCore import Qt, QRegExp, QThreadPool, pyqtSlot
-from PyQt4.QtSql import QSqlQuery
-from Roadnet.roadnet_dialog import ValidationSummaryDock
-from Roadnet import database
+from ..exports.export_validation_report import ExportValidationReport
+from ..admin.validation_summary import ValidationSummary
+from ..roadnet_dialog import ValidationSummaryDock
+from roadnet import database
 
 
 __author__ = 'Alessandro Cristofori'

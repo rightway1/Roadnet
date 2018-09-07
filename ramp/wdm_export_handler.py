@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
-from PyQt4.QtGui import QFileDialog
-import Roadnet.roadnet_exceptions as rn_except
-from Roadnet.roadnet_dialog import ExportCompleteDia
-from Roadnet.ramp import wdm
-from Roadnet import config
+from PyQt5.QtWidgets import QFileDialog
+import roadnet_exceptions as rn_except
+from roadnet_dialog import ExportCompleteDia
+from ramp import wdm
+import config
 
 
 class WdmExportHandler(object):

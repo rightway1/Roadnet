@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from PyQt4.QtCore import QPyNullVariant
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtSql import QSqlQuery
 
 __author__ = 'Alessandro Cristofori'
 
@@ -82,8 +81,8 @@ class Metadata:
         self.meta_dia.ui.classLineEdit.setText(self.meta_values[8])
         self.meta_dia.ui.stateLineEdit.setText(self.meta_values[9])
         self.meta_dia.ui.custLineEdit.setText(self.meta_values[10])
-        self.meta_dia.ui.langCheckBox.setChecked(self.populate_check_boxes(self.meta_values[11]))
-        self.meta_dia.ui.charCheckBox.setChecked(self.populate_check_boxes(self.meta_values[12]))
+        self.meta_dia.ui.langCheckBox.setChecked(self.language_check_boxes(self.meta_values[11]))
+        self.meta_dia.ui.charCheckBox.setChecked(self.language_check_boxes(self.meta_values[12]))
 
     def close_browser(self):
         # close the dialog window
@@ -94,6 +93,9 @@ class Metadata:
         get the last update date from db to show in LSG label
         :return: string
         """
+        date_lsg_obj = None
+        date_esu_closure_obj = None
+        date_esu_entry_obj = None
         qry_lsg = QSqlQuery(self.get_last_street, self.db)  # THIS
         while qry_lsg.next():
             try:
@@ -132,11 +134,11 @@ class Metadata:
             rec = query.record()
             last_entry, last_close = (rec.value('LastEntry'), rec.value('LastClose'))
 
-            if not isinstance(last_entry, QPyNullVariant):
+            if not last_entry.isNull():
                 if int(last_entry) > last_update:
                     last_update = last_entry
 
-            if not isinstance(last_close, QPyNullVariant):
+            if not last_close.isNull():
                 if int(last_close) > last_update:
                     last_update = last_close
 
@@ -200,11 +202,12 @@ class Metadata:
         modified = (changed_text["scope"], changed_text["territory"], changed_text["owner"], changed_text["custodian"],
                     changed_text["language"], changed_text["character"])
         str_update = self.set_update_values + separator.join(modified)
-        qry_update = QSqlQuery(str_update, self.db)
+        QSqlQuery(str_update, self.db)
         self.close_browser()
         return
 
-    def populate_check_boxes(self, value):
+    @staticmethod
+    def language_check_boxes(value):
         """
         check if text boxes need to be checked or not
         :param value: string
@@ -216,7 +219,3 @@ class Metadata:
             return True
         else:
             return False
-
-
-
-

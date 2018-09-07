@@ -317,7 +317,7 @@ class ShowStreetCoordinates:
     """
     def __init__(self, iface):
         self.canvas = iface.mapCanvas()
-        self.rb_line = QgsRubberBand(self.canvas, QgsWkbTypes.LineString)
+        self.rb_line = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
         self.rb_start = QgsVertexMarker(self.canvas)
         self.rb_end = QgsVertexMarker(self.canvas)
         self.style()

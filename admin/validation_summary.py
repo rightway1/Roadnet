@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtGui import QTableWidgetItem, QResizeEvent, QTableWidget, QMessageBox
-from PyQt4.QtCore import QSize, Qt, QModelIndex
-from ..generic_functions import ipdb_breakpoint, ZoomSelectCanvas
+from PyQt5.QtGui import QResizeEvent
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QMessageBox
+from generic_functions import ipdb_breakpoint, ZoomSelectCanvas
 
 __author__ = 'Alessandro Cristofori'
 
@@ -58,6 +59,7 @@ class ValidationSummary:
         this method accesses the passed lists and gets the data to populate
         the respective table on the dock window
         :param content_list: list[string] report items
+        :param table_id: id of output table to write to
         :return: void
         """
         # get the number of rows
@@ -104,14 +106,14 @@ class ValidationSummary:
         ref_table = self.tables[table_id]
         # handles the special case of the start/end list
         if table_id == 8:
-            l = 1
-            while l <= len(content_list) - 1:
+            lst = 1
+            while lst <= len(content_list) - 1:
                 m = 0
-                while m <= len(content_list[l]) - 1:
-                    table_item = QTableWidgetItem(str(content_list[l][m]).replace(",", ""), 0)
-                    ref_table.setItem(l, m, table_item)
+                while m <= len(content_list[lst]) - 1:
+                    table_item = QTableWidgetItem(str(content_list[lst][m]).replace(",", ""), 0)
+                    ref_table.setItem(lst, m, table_item)
                     m += 1
-                l += 1
+                lst += 1
             ref_table.removeRow(0)
         else:
             if table_id == 2 and self.include_footpath:
@@ -202,7 +204,7 @@ class ValidationSummary:
         elif dict_has_esu_id and dict_has_usrn:
             self.zoom_to_feature("ESU ID", useful_data["ESU ID"])
         else:
-            for key, value in useful_data.iteritems():
+            for key, value in useful_data.items():
                 self.zoom_to_feature(key, value)
 
     def zoom_to_feature(self, column_name, item_id):
@@ -238,4 +240,3 @@ class ValidationSummary:
                                             "No map feature exists to zoom to.", QMessageBox.Ok, None)
         no_feat_found_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         no_feat_found_msg_box.exec_()
-

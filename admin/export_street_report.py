@@ -2,12 +2,12 @@
 import csv
 from datetime import datetime
 
-from PyQt4.QtSql import QSqlQuery, QSqlQueryModel
-from PyQt4.QtCore import QModelIndex, Qt
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtCore import QModelIndex, Qt
+from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
+from PyQt5.QtWidgets import QMessageBox
 
-from Roadnet.roadnet_dialog import StreetReportsAlert
-from Roadnet import database
+from ..roadnet_dialog import StreetReportsAlert
+from ..roadnet import database
 
 __author__ = 'matthew.bradley'
 
@@ -248,7 +248,8 @@ class StreetReportsExport:
 
                 self.csv.writerow(line)
 
-    def format_dates(self, input_date):
+    @staticmethod
+    def format_dates(input_date):
         if input_date is "NULL" or input_date == "0":
             output_date = ""
             return output_date

@@ -1,11 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import csv
-import os
-import shutil
 import subprocess
 import sys
-import tempfile
 
 """
 Script to get attributes from shapefile

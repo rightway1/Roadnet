@@ -4,18 +4,18 @@ Functions to export shapefiles from RAMP for WDM.
 """
 import os
 from qgis.core import (
-    QGis,
+    Qgis,
     QgsCoordinateReferenceSystem,
     QgsFeature,
     QgsField,
     QgsGeometry,
     QgsVectorFileWriter,
     QgsVectorLayer)
-from PyQt4.QtCore import QVariant
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtCore import QVariant
+from PyQt5.QtSql import QSqlQuery
 
-import Roadnet.roadnet_exceptions as rn_except
-from Roadnet import config
+import roadnet_exceptions as rn_except
+import config
 
 
 ELEMENT_CODE_MAP = {'ACARPK': 'Adopted Carpark',
@@ -223,7 +223,7 @@ def open_shapefile_writer(vlayer, shapefile_path):
 
     # Create writer
     writer = QgsVectorFileWriter(
-        shapefile_path, "utf-8", fields, QGis.WKBMultiPolygon,
+        shapefile_path, "utf-8", fields, Qgis.WKBMultiPolygon,
         QgsCoordinateReferenceSystem(27700, QgsCoordinateReferenceSystem.EpsgCrsId),
         'ESRI Shapefile')
 
