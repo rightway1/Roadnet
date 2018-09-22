@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Alessandro'
 
-from PyQt4.QtSql import QSqlQuery, QSql
-from PyQt4.QtGui import QMessageBox
-from  PyQt4.Qt import Qt
+from PyQt5.QtSql import QSqlQuery, QSql
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import Qt
 
 
 class ChangePwd:
@@ -74,9 +74,9 @@ class ChangePwd:
         pwd_changed = self.change_pwd(self.db)
         if pwd_changed:
             pwd_change_info = QMessageBox(QMessageBox.Information, " ",
-                    "Password updated in database.  Save changes at the end of"
-                    " session to new password next login.",
-                    QMessageBox.Ok, None)
+                                          "Password updated in database.  Save changes at the end of"
+                                          " session to new password next login.",
+                                          QMessageBox.Ok, None)
             pwd_change_info.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             pwd_change_info.exec_()
             self.old_input_pwd = self.change_pwd_dia.ui.oldPwdLineEdit.setText("")
@@ -129,6 +129,3 @@ class ChangePwd:
             return False
         else:
             return True
-
-
-

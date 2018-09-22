@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Alessandro'
 import os
-from PyQt4.QtGui import QPixmap, QDesktopServices
-from PyQt4.QtCore import QUrl
+from PyQt5.QtGui import QPixmap
+
+
 class About:
     """
     class holding the general functions for
