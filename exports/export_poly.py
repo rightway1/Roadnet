@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import os
-from PyQt4 import QtCore
-from PyQt4.QtCore import QVariant, Qt, QByteArray, QDate
-from PyQt4.QtGui import QProgressDialog, QMessageBox
-from PyQt4.QtSql import QSqlQuery
+from PyQt5 import QtCore
+from PyQt5.QtCore import QVariant, Qt, QByteArray, QDate
+from PyQt5.QtWidgets import QProgressDialog, QMessageBox
+from PyQt5.QtSql import QSqlQuery
 from qgis.core import (
     QgsField,
     QgsCoordinateReferenceSystem,
@@ -12,10 +11,9 @@ from qgis.core import (
     QgsGeometry,
     QgsFeature,
     QgsVectorFileWriter,
-    QgsFields,
-    QGis)
-from qgis.gui import *
-from Roadnet import config
+    QgsWkbTypes,
+    QgsFields)
+from roadnet import config
 
 __author__ = 'matthew.bradley'
 
@@ -40,6 +38,9 @@ class ExportPolyShapes(QtCore.QObject):
         self.progresswin.setWindowModality(Qt.WindowModal)
         self.progresswin.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         self.progresswin.setWindowModality(Qt.WindowModal)
+
+        self.fields = []
+        self.sql_queries = {}
 
     def kill_export(self):
         self.killed = True
@@ -83,8 +84,8 @@ class ExportPolyShapes(QtCore.QObject):
         for table in ['maint_records']:
             # Drop tables if left behind from last export
             args = {'table': table}
-            query = self.run_sql('drop_table', args)
-        query = self.run_sql('create_maint_records')
+            self.run_sql('drop_table', args)
+        self.run_sql('create_maint_records')
 
         # Run the main query
         if config.DEBUG_MODE:
@@ -93,7 +94,7 @@ class ExportPolyShapes(QtCore.QObject):
         query.setForwardOnly(True)
         query.exec_(polyexportsql)
         if query.isActive() is False:
-            raise StandardError('Database query problem: {}'.format(
+            raise Exception('Database query problem: {}'.format(
                 query.lastError().text()))
 
         # create layer
@@ -176,11 +177,12 @@ class ExportPolyShapes(QtCore.QObject):
             field_map.append(field)
 
         writer = QgsVectorFileWriter(str(self.export_path), "utf-8", field_map,
-                                     QGis.WKBMultiLineString, None, "ESRI Shapefile")
+                                     QgsWkbTypes.MultiLineString, None, "ESRI Shapefile")
         if writer.hasError() != QgsVectorFileWriter.NoError:
             file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
                                                                       "(possibly in another application).\n"
-                                                                      "Close the file and try again".format(str(self.export_path)),
+                                                                      "Close the file and try again"
+                                            .format(str(self.export_path)),
                                             QMessageBox.Ok, None)
             file_open_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             file_open_msg_box.exec_()
@@ -246,7 +248,7 @@ class ExportPolyShapes(QtCore.QObject):
             print(sql)
         active_query = QSqlQuery(sql, self.db)
         if active_query.isActive() is False:
-            raise StandardError('Database query problem: {}'.format(
+            raise Exception('Database query problem: {}'.format(
                 active_query.lastError().text()))
         return active_query
 

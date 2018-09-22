@@ -4,17 +4,17 @@ import datetime
 import os
 import re
 
-from PyQt4.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, Qt
-from PyQt4.QtGui import *
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, Qt
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-from export_csv import ExportCSV
-from export_esu_lines import ExportESUShapes
-from export_lor import ExportListOfRoads
-from export_poly import ExportPolyShapes
-from Roadnet.roadnet_dialog import ExportCompleteDia, ExportExporting
-from Roadnet import database
-from Roadnet.generic_functions import ipdb_breakpoint
+from .export_csv import ExportCSV
+from .export_esu_lines import ExportESUShapes
+from .export_lor import ExportListOfRoads
+from .export_poly import ExportPolyShapes
+from roadnet_dialog import ExportCompleteDia, ExportExporting
+from roadnet import database
+# from generic_functions import ipdb_breakpoint
 
 
 class ExportsThread(QThread):
@@ -261,7 +261,7 @@ class ExportDTF:
         """
         pyqt slot informing the users the file they are trying to export to is opened
         or used by another process
-        :param csv_filename [str]: the name of the open file
+        :param csv_filename: the name of the open file
         :return:
         """
         file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
@@ -368,7 +368,7 @@ class ExportSRWR:
         """
         pyqt slot informing the users the file they are trying to export to is opened
         or used by another process
-        :param csv_filename [str]: the name of the open file
+        :param csv_filename : the name of the open file
         :return:
         """
         file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "

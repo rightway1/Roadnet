@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import os
 from multiprocessing.pool import ThreadPool
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFileDialog, QProgressDialog, QMessageBox
-from PyQt4.QtCore import QVariant, Qt, QByteArray
+from PyQt5.QtSql import QSqlQuery
+from PyQt5.QtWidgets import QProgressDialog, QMessageBox
+from PyQt5.QtCore import QVariant, Qt, QByteArray
 
 from qgis.core import (
     QgsField,
@@ -14,12 +12,13 @@ from qgis.core import (
     QgsGeometry,
     QgsFeature,
     QgsVectorFileWriter,
-    QGis,
+    QgsWkbTypes,
+    Qgis,
     QgsFields)
 
 from qgis.gui import *
-from Roadnet import config
-from Roadnet.generic_functions import ipdb_breakpoint
+from roadnet import config
+# from generic_functions import ipdb_breakpoint
 
 __author__ = 'matthew.bradley'
 
@@ -55,6 +54,9 @@ class ExportESUShapes:
         self.progresswin.setWindowModality(Qt.WindowModal)
         self.progresswin.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         self.progresswin.setWindowTitle(" ")
+
+        self.fields = []
+        self.sql_queries = {}
 
     def kill_export(self):
         self.killed = True
@@ -97,10 +99,10 @@ class ExportESUShapes:
         for table in ['qryType12', 'qryType3', 'qryType4']:
             # Drop tables if left behind from last export
             args = {'table': table}
-            query = self.run_sql('drop_table', args)
-        query = self.run_sql('create_qryType12')
-        query = self.run_sql('create_qryType3')
-        query = self.run_sql('create_qryType4')
+            self.run_sql('drop_table', args)
+        self.run_sql('create_qryType12')
+        self.run_sql('create_qryType3')
+        self.run_sql('create_qryType4')
 
         # Run the main query
         if config.DEBUG_MODE:
@@ -109,7 +111,7 @@ class ExportESUShapes:
         query.setForwardOnly(True)
         query.exec_(nsgexportsql)
         if query.isActive() is False:
-            raise StandardError('Database query problem: {}'.format(
+            raise Exception('Database query problem: {}'.format(
                 query.lastError().text()))
 
         # create layer
@@ -166,8 +168,8 @@ class ExportESUShapes:
             return False
 
         vlayer.updateExtents()
-        result = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8",
-                                                         None, "ESRI Shapefile")
+        result = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8", vlayer.crs(),
+                                                         "ESRI Shapefile")
         # checks for completed export
         if result == 0:
             self.progresswin.close()
@@ -188,11 +190,12 @@ class ExportESUShapes:
             field_map.append(field)
 
         writer = QgsVectorFileWriter(str(self.export_path), "utf-8", field_map,
-                                     QGis.WKBMultiLineString, None, "ESRI Shapefile")
+                                     QgsWkbTypes.MultiLineString, None, "ESRI Shapefile")
         if writer.hasError() != QgsVectorFileWriter.NoError:
             file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
                                                                       "(possibly in another application).\n"
-                                                                      "Close the file and try again".format(str(self.export_path)),
+                                                                      "Close the file and try again"
+                                            .format(str(self.export_path)),
                                             QMessageBox.Ok, None)
             file_open_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             file_open_msg_box.exec_()
@@ -251,7 +254,7 @@ class ExportESUShapes:
             print(sql)
         active_query = QSqlQuery(sql, self.db)
         if active_query.isActive() is False:
-            raise StandardError('Database query problem: {}'.format(
+            raise Exception('Database query problem: {}'.format(
                 active_query.lastError().text()))
         return active_query
 

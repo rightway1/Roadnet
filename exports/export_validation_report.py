@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from math import sqrt
 
-from PyQt4.QtSql import QSqlQueryModel
-from PyQt4.QtCore import *
-from PyQt4.QtGui import QMessageBox, QProgressDialog
+from PyQt5.QtSql import QSqlQueryModel
+from PyQt5.QtCore import Qt, QModelIndex
+from PyQt5.QtWidgets import QMessageBox, QProgressDialog
 
-from qgis.core import QgsMapLayerRegistry, QgsPoint, QgsFeatureRequest
+from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
 
-from Roadnet.generic_functions import ipdb_breakpoint
+# from generic_functions import ipdb_breakpoint
 
 __author__ = 'Alessandro Cristofori'
 
@@ -28,8 +28,8 @@ class ExportValidationReport:
         self.report_file = None
         self.start_point = QgsPoint()
         self.end_point = QgsPoint()
-        self.esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
-        self.poly_layer = QgsMapLayerRegistry.instance().mapLayersByName('Road Polygons')[0]
+        self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+        self.poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
         self.filter = None
         self.queries = {}
         self.headers = {}
@@ -39,7 +39,7 @@ class ExportValidationReport:
         self.init_queries()
         self.validation_dia = None
         self.progress_win = None
-        self.progress_win = QProgressDialog("", None, 0, 13, self.validation_dia)
+        self.progress_win = QProgressDialog("", "", 0, 13, self.validation_dia)
         self.progress_win.setFixedSize(380, 100)
         self.progress_win.setModal(True)
         self.progress_win.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
@@ -54,7 +54,7 @@ class ExportValidationReport:
                             'of streets that are part public and part private'],
                         3: ['Duplicate ESU References : ',
                             'The following ESUs have duplicate ESU references. '
-                            'It is important that these are unique values \n' \
+                            'It is important that these are unique values \n'
                             'These references are based on the esu midpoint and are used when exporting to DTF'],
                         4: 'ESUs not linked to Streets :',
                         5: 'ESUs incorrectly linked to Type 1 and Type 2 Streets :',
@@ -127,7 +127,6 @@ class ExportValidationReport:
             query_model.setQuery(self.queries[query_id])
         while query_model.canFetchMore():
             query_model.fetchMore()
-        parent_model_index = QModelIndex()
         # if the path is not specified sends data to function creating a list
         if self.file_path is None:
             assert isinstance(columns_name_id, object)
@@ -185,7 +184,6 @@ class ExportValidationReport:
     def dup_esu_ref(self):
         """
         duplicate ESU references report section
-        :param include_subtitle: include or not a header subtitle
         :return: void if the report is to text
                 list[string] if the report is to screen, the subtitile is
                 included by default
@@ -234,8 +232,6 @@ class ExportValidationReport:
         # initialises two virtual objects points (start and end point)
         start_point = self.start_point
         end_point = self.end_point
-        # uses the qgis python api to access the ESU Graphic Layer
-        esu_layer = self.esu_layer
         # runs the query number 8 to retrieve all streets from the Database
         streets_model = QSqlQueryModel()
         streets_model.setQuery(self.queries[8])
@@ -271,8 +267,10 @@ class ExportValidationReport:
             usrn = col_info[0]
             ref_type = col_info[2]
             desc = col_info[1]
-            start_point.set(float(col_info[3]), float(col_info[4]))
-            end_point.set(float(col_info[5]), float(col_info[6]))
+            start_point.setX(float(col_info[3]))
+            start_point.setY(float(col_info[4]))
+            end_point.setX(float(col_info[5]))
+            end_point.setY(float(col_info[6]))
             # filter the layer "ESU Graphic" for the ESUs Ids returned from the list
             # deal just with the arcs part of multi arcs street
             esus_list = self.get_linked_esu_list(usrn)
@@ -330,8 +328,8 @@ class ExportValidationReport:
         """
         check distance of start and end point of the street with each ESU
         if it is greater or smaller than the set tolerance
-        :param start_point: start point of each street to which the ESU is linked
-        :param end_point: endpoint of each street to which the ESU is linked
+        :param start_point_street: start point of each street to which the ESU is linked
+        :param end_point_street: endpoint of each street to which the ESU is linked
         :param feature: the ESU to test
         :param tolerance: distance in metres expressed by the user, over which we flag up a problem
         :return int result: integer that expresses if the distance of the start end point of the ESU
@@ -406,32 +404,31 @@ class ExportValidationReport:
             i += 1
         return str_esu
 
-    def check_tiny_esus(self, type, tolerance):
+    def check_tiny_esus(self, layer_type, tolerance):
         """
         function that checks for empty geometries and for features smaller than a set
         tolerance dimension expressed in metres
-        :param type: string, indicates which layer is to check ("ESUS or polygons")
+        :param layer_type: string, indicates which layer is to check ("ESUS or polygons")
         :param tolerance: int, the tolerance
         :return:
         """
         check_layer = None
         field_name = None
-        check_geom = None
         check_geom_dim = None
         empty_geoms = []
         tiny_shapes = []
-        if type == "esu":
+        if layer_type == "esu":
             # self.progress_win.setLabelText("Checking tiny and empty ESUs geometries...")
             check_layer = self.esu_layer
             field_name = "esu_id"
             # self.progress_win.setValue(8)
-        if type == "rd_poly":
+        if layer_type == "rd_poly":
             # self.progress_win.setLabelText("Checking tiny and empty polygons geometries...")
             check_layer = self.poly_layer
             field_name = "rd_pol_id"
             # self.progress_win.setValue(13)
         if not check_layer:
-            no_layer_msg_box = QMessageBox(QMessageBox.Warning, " ", "Cannot retrieve {} Layer".format(type),
+            no_layer_msg_box = QMessageBox(QMessageBox.Warning, " ", "Cannot retrieve {} Layer".format(layer_type),
                                            QMessageBox.Ok, None)
             no_layer_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             no_layer_msg_box.exec_()
@@ -463,19 +460,19 @@ class ExportValidationReport:
                         empty_geoms.append(check_geom_id)
                     # check for feature dimensions smaller than tolerance
                     else:
-                        if type == 'esu':
+                        if layer_type == 'esu':
                             check_geom_dim = check_geom.length()
-                        if type == 'rd_poly':
+                        if layer_type == 'rd_poly':
                             check_geom_dim = check_geom.area()
                         if check_geom_dim < tolerance:
                             tiny_shapes.append(check_geom_id)
             tiny_content = []
             empty_content = []
             check_list = []
-            if type == "esu":
+            if layer_type == "esu":
                 tiny_content.append(self.column_names[4])
                 empty_content.append(self.column_names[4])
-            if type == "rd_poly":
+            if layer_type == "rd_poly":
                 tiny_content.append(self.column_names[9])
                 empty_content.append(self.column_names[9])
             # if there are any problems with tiny shapes
@@ -487,7 +484,7 @@ class ExportValidationReport:
             if len(tiny_shapes) == 0:
                 last_item = []
                 tiny_content.append(last_item)
-                last_item.append(str(self.headers_no_items[9].format(type)))
+                last_item.append(str(self.headers_no_items[9].format(layer_type)))
                 # return tiny_content
                 check_list.append(tiny_content)
             # if there are any problems with empty geometries
@@ -499,7 +496,7 @@ class ExportValidationReport:
             if len(empty_geoms) == 0:
                 last_item = []
                 empty_content.append(last_item)
-                last_item.append(str(self.headers_no_items[10].format(type)))
+                last_item.append(str(self.headers_no_items[10].format(layer_type)))
                 check_list.append(empty_content)
         return check_list
 
@@ -561,6 +558,7 @@ class ExportValidationReport:
         from mixed sources (db + features)
         :param query_model: QtSqlQueryModel model of the query if all data comes from db
         :param columns_name_id: int index of the column names dictionary to print column names on tables
+        :param no_content_id: int index of the no content message dictionary to include in report
         """
         if content_list is None:
             parent_model_index = QModelIndex()
@@ -751,4 +749,3 @@ class ExportValidationReport:
                 "Where (((lnkMAINT_RD_POL.Currency_flag) = 0) And ((tblMAINT.Currency_flag) = 0)) "
                 "ORDER BY mp.rd_pol_id, tblMAINT.USRN;"
         }
-

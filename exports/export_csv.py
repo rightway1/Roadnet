@@ -4,7 +4,7 @@ import datetime
 import math
 import re
 
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtSql import QSqlQuery
 
 from qgis.core import QgsGeometry, QgsFeature
 
@@ -96,6 +96,8 @@ class ExportCSV:
         :rtype: datetime
         :return: Most recent date
         """
+        street_max = None
+        esu_max = None
         # sqlite has no date data type so max works due to formatting YYYYMMDD
         max_tblstreet = "SELECT MAX(update_date) FROM tblSTREET"
         max_tblesu = "SELECT MAX(update_date) FROM tblESU"
@@ -338,7 +340,7 @@ class ExportCSV:
         esu_record = list()
         for feat in self.esu_features:
             if feat['result'] > 0:
-                str(feat['esu_id'] + "(" + str(feat['ESUXYID']) + ")")
+                str(feat['esu_id']) + "(" + str(feat['ESUXYID']) + ")"
             else:
                 self.line_count += 1
                 if self.version == 6:

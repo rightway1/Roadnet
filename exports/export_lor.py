@@ -2,7 +2,7 @@
 import os
 import csv
 
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtSql import QSqlQuery
 
 
 class ExportListOfRoads:
@@ -114,8 +114,7 @@ class ExportListOfRoads:
                 else:
                     line = str()
                     for v in vals:
-                        if type(v) != unicode:
-                            v = unicode(v)
+                        v = str(v)
 
                         line += v + " "
                     line += "\n"
@@ -124,4 +123,3 @@ class ExportListOfRoads:
             return None
         except IOError:
             return self.csv_filename
-

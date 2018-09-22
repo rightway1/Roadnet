@@ -3,9 +3,9 @@ __author__ = 'Alessandro'
 
 import os
 from math import sqrt
-from PyQt4.QtSql import QSqlQueryModel, QSqlQuery
-from PyQt4.QtCore import QObject, QRunnable, pyqtSignal, QModelIndex
-from qgis.core import QgsMapLayerRegistry, QgsPoint, QgsFeatureRequest
+from PyQt5.QtSql import QSqlQueryModel, QSqlQuery
+from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QModelIndex
+from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
 from datetime import datetime
 
 report_file = None
@@ -159,6 +159,7 @@ def content_to_screen(content_list=None, query_model=None, columns_name_id=None,
     from mixed sources (db + features)
     :param query_model: QtSqlQueryModel model of the query if all data comes from db
     :param columns_name_id: int index of the column names dictionary to print column names on tables
+    :param no_content_id: int index of the no content message dictionary for printing on report
     """
     global passing_list
     if content_list is None:
@@ -199,8 +200,8 @@ def start_end_proximity(start_point_street, end_point_street, feature, tolerance
     """
     check distance of start and end point of the street with each ESU
     if it is greater or smaller than the set tolerance
-    :param start_point: start point of each street to which the ESU is linked
-    :param end_point: endpoint of each street to which the ESU is linked
+    :param start_point_street: start point of each street to which the ESU is linked
+    :param end_point_street: endpoint of each street to which the ESU is linked
     :param feature: the ESU to test
     :param tolerance: distance in metres expressed by the user, over which we flag up a problem
     :return int result: integer that expresses if the distance of the start end point of the ESU
@@ -296,7 +297,7 @@ class StartReport(QRunnable):
         self.signals.result.emit(self.task, self.progress)
         global report_file
         # create the file and prints the header
-        report_file = open(self.file_path, 'wb')
+        report_file = open(self.file_path, 'w')
         report_file.write(str(self.report_title) + ' for {0} \n'.format(self.org_name))
         report_file.write('Created on : {0} at {1} By : {2} \n'.format(datetime.today().strftime("%d/%m/%Y"),
                                                                        datetime.now().strftime("%H:%M"),
@@ -347,7 +348,7 @@ class DupStreetDesc(QRunnable):
         if report_file is None:
             write_content(0, 0, 0, 0)
             global passing_list
-            self.signals.list.emit(passing_list,'dupStreetCheckBox')
+            self.signals.list.emit(passing_list, 'dupStreetCheckBox')
 
         else:
             write_content(0, 0, 0, 0)
@@ -371,7 +372,7 @@ class StreetsNoEsuDesc(QRunnable):
         if report_file is None:
             write_content(1, 1, 1, 1)
             global passing_list
-            self.signals.list.emit(passing_list,'notStreetEsuCheckBox')
+            self.signals.list.emit(passing_list, 'notStreetEsuCheckBox')
 
         else:
             write_content(1, 1, 1, 1)
@@ -559,8 +560,10 @@ class CheckStartEnd(QRunnable):
             usrn = col_info[0]
             ref_type = col_info[2]
             desc = col_info[1]
-            start_point.set(float(col_info[3]), float(col_info[4]))
-            end_point.set(float(col_info[5]), float(col_info[6]))
+            start_point.setX(float(col_info[3]))
+            start_point.setY(float(col_info[4]))
+            end_point.setX(float(col_info[5]))
+            end_point.setY(float(col_info[6]))
             # filter the layer "ESU Graphic" for the ESUs Ids returned from the list
             # deal just with the arcs part of multi arcs street
             esus_list = get_linked_esu_list(usrn)
@@ -631,7 +634,7 @@ class CheckStartEnd(QRunnable):
                 start_end_content.insert(0, column_names[5])
                 global passing_list
                 content_to_screen(content_list=start_end_content, query_model=None, columns_name_id=None,
-                                         no_content_id=8)
+                                  no_content_id=8)
                 self.signals.list.emit(passing_list, 'startEndCheckBox')
 
 
@@ -639,7 +642,7 @@ class CheckTinyEsus(QRunnable):
     """
     runnable that checks for empty geometries and for features smaller than a set
     tolerance dimension expressed in metres
-    :param type: string, indicates which layer is to check ("ESUS or polygons")
+    :param geom_type: string, indicates which layer is to check ("ESUS or polygons")
     :param tolerance: int, the tolerance
     :return:
     """
@@ -778,7 +781,7 @@ class CheckTinyEsus(QRunnable):
             if self.geom_type == 'esu':
                 self.signals.list.emit(check_list, 'tinyEsuCheckBox')
             if self.geom_type == 'rd_poly':
-                self.signals.list.emit(check_list,'tinyPolysCheckBox')
+                self.signals.list.emit(check_list, 'tinyPolysCheckBox')
 
     @staticmethod
     def _write_to_report_file(open_report_file, text):
@@ -944,9 +947,9 @@ class InitGlobals:
         user = params["UserName"]
         # initialises layers
         global esu_layer
-        esu_layer = QgsMapLayerRegistry.instance().mapLayersByName('ESU Graphic')[0]
+        esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
         global poly_layer
-        poly_layer = QgsMapLayerRegistry.instance().mapLayersByName('Road Polygons')[0]
+        poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
         # initialises db queries
         global queries
         queries = {
@@ -968,27 +971,27 @@ class InitGlobals:
 
             2: "SELECT (ifnull(q12.esu_id,'') ||', '|| ifnull(q12.street_ref_type,'') ||', '|| "
                "ifnull(q12.USRN,'') ||', '|| ifnull(q12.Description,'')) "
-                "AS type3_not_linked "
-                "FROM (SELECT DISTINCT lnkESU_STREET.esu_id, "
+               "AS type3_not_linked "
+               "FROM (SELECT DISTINCT lnkESU_STREET.esu_id, "
                "tblSTREET.Street_ref_type, tblStreet.Description,tblStreet.USRN "
-                "FROM (lnkESU_STREET INNER JOIN tblSTREET "
-                "ON (lnkESU_STREET.usrn_version_no = tblSTREET.Version_No) "
-                "AND (lnkESU_STREET.usrn = tblSTREET.USRN)) "
-                "INNER JOIN tblMAINT "
-                "ON (tblSTREET.USRN = tblMAINT.USRN) "
-                "WHERE (((tblSTREET.street_ref_type = 1) "
-                "OR (tblSTREET.street_ref_type = 2)) "
-                "AND (lnkESU_STREET.Currency_flag = 0) AND (tblSTREET.Currency_flag = 0) "
-                "AND (tblMAINT.Road_Status_Ref = 1)) "
-                "ORDER BY lnkESU_STREET.esu_id) "
-                "AS q12 "
-                "LEFT JOIN (SELECT lnkESU_STREET.esu_id, tblSTREET.Street_ref_type "
-                "FROM lnkESU_STREET INNER JOIN tblSTREET "
-                "ON (lnkESU_STREET.usrn_version_no = tblSTREET.Version_No) "
-                "AND (lnkESU_STREET.usrn = tblSTREET.USRN) "
-                "WHERE ((tblSTREET.street_ref_type = 3) "
-                "AND (lnkESU_STREET.Currency_flag = 0) AND (tblSTREET.Currency_flag = 0)) "
-                "ORDER BY lnkESU_STREET.esu_id) AS q3 ON q12.esu_id = q3.esu_id WHERE (q3.esu_id IS Null)",
+               "FROM (lnkESU_STREET INNER JOIN tblSTREET "
+               "ON (lnkESU_STREET.usrn_version_no = tblSTREET.Version_No) "
+               "AND (lnkESU_STREET.usrn = tblSTREET.USRN)) "
+               "INNER JOIN tblMAINT "
+               "ON (tblSTREET.USRN = tblMAINT.USRN) "
+               "WHERE (((tblSTREET.street_ref_type = 1) "
+               "OR (tblSTREET.street_ref_type = 2)) "
+               "AND (lnkESU_STREET.Currency_flag = 0) AND (tblSTREET.Currency_flag = 0) "
+               "AND (tblMAINT.Road_Status_Ref = 1)) "
+               "ORDER BY lnkESU_STREET.esu_id) "
+               "AS q12 "
+               "LEFT JOIN (SELECT lnkESU_STREET.esu_id, tblSTREET.Street_ref_type "
+               "FROM lnkESU_STREET INNER JOIN tblSTREET "
+               "ON (lnkESU_STREET.usrn_version_no = tblSTREET.Version_No) "
+               "AND (lnkESU_STREET.usrn = tblSTREET.USRN) "
+               "WHERE ((tblSTREET.street_ref_type = 3) "
+               "AND (lnkESU_STREET.Currency_flag = 0) AND (tblSTREET.Currency_flag = 0)) "
+               "ORDER BY lnkESU_STREET.esu_id) AS q3 ON q12.esu_id = q3.esu_id WHERE (q3.esu_id IS Null)",
 
             3: "SELECT (ifnull(qryID.esu_id,'') ||', '|| ifnull(qryID.esuxy,'')) as dup_esu_ref FROM "
                "(SELECT Count(tblESU.esu_id) AS CountOfesu_id, "
