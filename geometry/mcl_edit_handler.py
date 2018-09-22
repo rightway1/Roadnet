@@ -3,11 +3,11 @@ import datetime
 
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
 from qgis.gui import QgsMessageBar
-from Roadnet.geometry.edit_handler import (EditHandler,
-                                           DatabaseHandler,
-                                           IntersectionHandler)
-from Roadnet.generic_functions import ipdb_breakpoint
-import Roadnet.config as config
+from .edit_handler import (EditHandler,
+                           DatabaseHandler,
+                           IntersectionHandler)
+from generic_functions import ipdb_breakpoint
+import roadnet.config as config
 
 __author__ = "john.stevenson"
 
@@ -104,7 +104,7 @@ class MclDatabaseHandler(DatabaseHandler):
 
     def add_feature(self, feature):
         # Collect input data
-        mcl_ref = self.mcl_ref_generator.next()
+        mcl_ref = next(self.mcl_ref_generator)
         today = datetime.datetime.now().strftime("%Y%m%d")
         args = {'mcl_ref': mcl_ref,
                 'entry_date': today,

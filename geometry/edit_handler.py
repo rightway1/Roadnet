@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import pprint
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtSql import QSqlQuery
 
-from qgis.core import QgsFeatureRequest, QGis
+from qgis.core import QgsFeatureRequest, Qgis
 from qgis.gui import QgsMessageBar
-from Roadnet.generic_functions import ipdb_breakpoint
-import Roadnet.config as config
+from generic_functions import ipdb_breakpoint
+import roadnet.config as config
 
 __author__ = "john.stevenson"
 
@@ -92,7 +92,7 @@ class EditHandler(object):
             except IntersectionHandlerError as e:
                 # Log error and continue.  Database should be unchanged at this point.
                 if config.DEBUG_MODE:
-                    print e.args[0]
+                    print(e.args[0])
 
     def changes_committed(self, layer_id, changed_geometries):
         """
@@ -124,7 +124,7 @@ class EditHandler(object):
             except IntersectionHandlerError as e:
                 # Log error and continue.  Database should be unchanged at this point.
                 if config.DEBUG_MODE:
-                    print e.args[0]
+                    print(e.args[0])
 
     def handle_intersections(self, fid, is_modify=False):
         """
@@ -309,7 +309,7 @@ class EditHandler(object):
         when editing already edited features.
         :param toggle_state: boolean sent by the signal.
         """
-        if QGis.QGIS_VERSION_INT > 20900:
+        if Qgis.QGIS_VERSION_INT > 20900:
             # Problem doesn't affect new versions
             return
 
@@ -393,8 +393,8 @@ class DatabaseHandler(object):
         """
         if config.DEBUG_MODE:
             print('Updating database internal statistics.')
-        query = self.run_sql('invalidate_old_statistics')
-        query = self.run_sql('update_statistics')
+        self.run_sql('invalidate_old_statistics')
+        self.run_sql('update_statistics')
 
     def prepare_sql_queries(self):
         """
@@ -413,7 +413,7 @@ class DatabaseHandler(object):
             'check_db': """SELECT * FROM sqlite_master;""",
             'check_table': """SELECT * FROM {table};"""}
 
-    def run_sql(self, query, kwargs={}):
+    def run_sql(self, query, kwargs=[]):
         """
         Run SQL query (defined with key 'query' in self.sql_queries) on the
         database.
@@ -426,7 +426,7 @@ class DatabaseHandler(object):
             print(sql)
         active_query = QSqlQuery(sql, self.db)
         if active_query.isActive() is False:
-            raise StandardError('Database query problem: {}'.format(
+            raise Exception('Database query problem: {}'.format(
                 active_query.lastError().text()))
         return active_query
 

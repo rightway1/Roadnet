@@ -3,15 +3,15 @@ import datetime
 
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
 from qgis.gui import QgsMessageBar
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 
-from edit_handler import (EditHandler,
+from .edit_handler import (EditHandler,
                           DatabaseHandler,
                           IntersectionHandler,
                           IntersectionHandlerError)
-from Roadnet.generic_functions import ipdb_breakpoint
-from Roadnet import config
+from generic_functions import ipdb_breakpoint
+from roadnet import config
 
 __author__ = "john.stevenson"
 
@@ -111,7 +111,7 @@ class RdpolyDatabaseHandler(DatabaseHandler):
     def add_feature(self, feature):
         # Collect input data
         today = datetime.datetime.now().strftime("%Y%m%d")
-        rd_pol_id = self.rd_pol_id_generator.next()
+        rd_pol_id = next(self.rd_pol_id_generator)
         symbol = 'NULL'  # Default symbol for unassigned
         args = {'rd_pol_id': rd_pol_id, 'symbol': symbol,
                 'pk_uid': feature.id(), 'entry_date': today}
@@ -123,7 +123,7 @@ class RdpolyDatabaseHandler(DatabaseHandler):
     def add_feature_parent(self, feature, parent_fid):
         # Collect input data
         today = datetime.datetime.now().strftime("%Y%m%d")
-        rd_pol_id = self.rd_pol_id_generator.next()
+        rd_pol_id = next(self.rd_pol_id_generator)
         parent_rd_pol_id = self.original_attributes[parent_fid]['rd_pol_id']
         symbol = 'NULL'  # Default symbol for unassigned
         args = {'rd_pol_id': rd_pol_id, 'symbol': symbol,
@@ -298,7 +298,7 @@ class RdpolyIntersectionHandler(IntersectionHandler):
 
         # Find parts with non-tiny area
         for part in parts:
-            area = QgsGeometry.fromPolygon(part).area()
+            area = QgsGeometry.fromPolygonXY(part).area()
             if area > 0.01:
                 non_tiny_parts.append(part)
             else:
@@ -311,7 +311,7 @@ class RdpolyIntersectionHandler(IntersectionHandler):
             raise IntersectionHandlerError(msg)
 
         # A multiPolygon is just a list of polygons
-        clean_geometry = QgsGeometry.fromMultiPolygon(non_tiny_parts)
+        clean_geometry = QgsGeometry.fromMultiPolygonXY(non_tiny_parts)
 
         return clean_geometry
 
