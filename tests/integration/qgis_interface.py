@@ -20,6 +20,7 @@ and mocked.  Details below:
 ***************************************************************************
 """
 
+import os
 import sys
 #  Mock is not from standard library in Python 2.7, but can be installed
 #  via pip
@@ -30,8 +31,8 @@ import qgis.core
 from qgis.gui import QgisInterface, QgsMapCanvas
 from qgis.core import QgsApplication, QgsProviderRegistry
 
-from PyQt4.QtGui import QMainWindow
-from PyQt4.QtCore import QSize, QCoreApplication
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import QSize, QCoreApplication
 
 __author__ = 'Matthias Kuhn'
 __date__ = 'January 2016'
@@ -52,12 +53,19 @@ def start_app(gui_flag=False):
     """
     global QGISAPP
     QCoreApplication.setOrganizationName('QGIS')
-    QCoreApplication.setApplicationName('QGIS2')
-    QgsApplication.setPrefixPath("/usr/share/", True)
+    QCoreApplication.setApplicationName('QGIS3')
+    QgsApplication.setPrefixPath('/usr/share/', True)
+
+    # In python3 we need to convert to a bytes object (or should
+    # QgsApplication accept a QString instead of const char* ?)
+    try:
+        argvb = list(map(os.fsencode, sys.argv))
+    except AttributeError:
+        argvb = sys.argv
 
     # Note: QGIS_PREFIX_PATH is evaluated in QgsApplication -
     # no need to mess with it here.
-    QGISAPP = QgsApplication(sys.argv, gui_flag)
+    QGISAPP = QgsApplication(argvb, gui_flag)
     QGISAPP.initQgis()
 
     if len(QgsProviderRegistry.instance().providerList()) == 0:

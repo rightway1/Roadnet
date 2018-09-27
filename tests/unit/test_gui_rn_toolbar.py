@@ -8,6 +8,7 @@ from tests.integration.roadnet_test_cases import QgisTestCase
 
 class TestRoadnetToolbar(QgisTestCase):
     def setUp(self):
+        print('Setup Roadnet Toolbar Tests')
         super(TestRoadnetToolbar, self).setUp()
         self.rn_buttons = ['sb_btn', 'street_sel_btn']
         self.ramp_buttons = ['mcl_select_btn', 'mcl_auto_number_btn',
@@ -33,6 +34,7 @@ class TestRoadnetToolbar(QgisTestCase):
         self.editor_items += self.ramp_buttons
 
     def test_toolbar_buttons_with_ramp(self):
+        print('test_toolbar_buttons_with_ramp')
         with_ramp = True
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for button in self.rn_buttons + self.ramp_buttons:
@@ -41,6 +43,7 @@ class TestRoadnetToolbar(QgisTestCase):
                              "{} button has not been set".format(button))
 
     def test_menu_items_with_ramp(self):
+        print('test_menu_items_with_ramp')
         with_ramp = True
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for item in self.rn_menu_items + self.ramp_menu_items:
@@ -49,6 +52,7 @@ class TestRoadnetToolbar(QgisTestCase):
                              "{} menu item has not been set.".format(item))
 
     def test_toolbar_buttons_without_ramp(self):
+        print('test_toolbar_buttons_without_ramp')
         with_ramp = False
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for button in self.rn_buttons:
@@ -57,6 +61,7 @@ class TestRoadnetToolbar(QgisTestCase):
                              "{} button has not been set".format(button))
 
     def test_menu_items_without_ramp(self):
+        print('test_menu_items_without_ramp')
         with_ramp = False
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for item in self.rn_menu_items:
@@ -65,6 +70,7 @@ class TestRoadnetToolbar(QgisTestCase):
                              "{} menu item has not been set.".format(item))
 
     def test_set_state_editor(self):
+        print('test_set_state_editor')
         with_ramp = True
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         all_buttons = self.rn_buttons + self.ramp_buttons
@@ -79,6 +85,7 @@ class TestRoadnetToolbar(QgisTestCase):
             current.assert_has_calls(expected_calls)
 
     def test_set_state_init(self):
+        print('test_set_state_init')
         with_ramp = True
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for attr in self.init_items:
@@ -93,6 +100,7 @@ class TestRoadnetToolbar(QgisTestCase):
             current.assert_has_calls(expected_calls)
 
     def test_set_state_readonly(self):
+        print('test_set_state_readonly')
         with_ramp = True
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for attr in self.readonly_items:
@@ -106,7 +114,8 @@ class TestRoadnetToolbar(QgisTestCase):
             print('Testing {}'.format(attr))
             current_attr.assert_has_calls(expected_calls)
 
-    def test_set_state_editor(self):
+    def test_editor_set_state_editor(self):
+        print('test_editor_set_state_editor')
         with_ramp = True
         tb = RoadnetToolbar(self.iface, './', with_ramp)
         for attr in self.editor_items:

@@ -85,10 +85,10 @@ class DbPathSelect:
         # Check name not backup
         self.new_db_path = self.db_path_dlg.ui.newPathLineEdit.text()
         new_db_filename = os.path.basename(self.new_db_path)
-        name_is_backup = re.search('^\D*_backup(\d|10)(.sqlite)\D*$', new_db_filename)
+        name_is_backup = re.search(r'^\D*_backup(\d|10)(.sqlite)\D*$', new_db_filename)
         if name_is_backup:
             backup_msg_box = QMessageBox(QMessageBox.Warning, " ", "You cannot select a backup Database version",
-                                                                        QMessageBox.Ok, None, Qt.CustomizeWindowHint)
+                                         QMessageBox.Ok, None, Qt.CustomizeWindowHint)
             backup_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
             backup_msg_box.exec_()
             return False

@@ -10,9 +10,9 @@ from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 from .mod_validation import ValidateDescription, ValidateStreetType
-from ..generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint
-from ..roadnet_dialog import SaveRecordDlg, EditCoordsDlg, EditEsuLinkDlg
-from .. import config
+from generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint
+from roadnet_dialog import SaveRecordDlg, EditCoordsDlg, EditEsuLinkDlg
+import config
 
 __author__ = 'matthew.walsh'
 

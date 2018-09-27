@@ -149,7 +149,7 @@ class TestDeploy(unittest.TestCase):
         line_start = 'change_me'
         replacement = 'line is changed'
         m = mock_open(read_data=file_lines)
-        with patch('Roadnet.bin.deploy.open', m, create=True):
+        with patch('bin.deploy.open', m, create=True):
             print(__name__)
             deploy.replace_line_in_file(filename, line_start, replacement)
 
@@ -167,7 +167,7 @@ class TestDeploy(unittest.TestCase):
         handle = m()  # Handle required to access write method
         output_lines = [line[0][0] for line in handle.write.call_args_list]
         expected = ['one\n', replacement + '\n', 'two']
-        self.assertItemsEqual(
+        self.assertCountEqual(
             output_lines, expected,
             "Output lines were not'{}' ({})".format(expected, output_lines))
 
@@ -176,7 +176,7 @@ class TestDeploy(unittest.TestCase):
             deploy.clean_up()
             remove_calls = [arg[0][0] for arg in mock_remove.call_args_list]
             expected = ['Roadnet.zip', 'plugins.xml']
-            self.assertItemsEqual(
+            self.assertCountEqual(
                 remove_calls, expected,
                 'Files removed were not {} ({})'.format(expected, remove_calls))
 

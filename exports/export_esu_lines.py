@@ -17,7 +17,7 @@ from qgis.core import (
     QgsFields)
 
 from qgis.gui import *
-from roadnet import config
+import config
 # from generic_functions import ipdb_breakpoint
 
 __author__ = 'matthew.bradley'
@@ -31,8 +31,8 @@ def thread(func):
     """
     def wrap(*args, **kwargs):
         pool = ThreadPool(processes=1)
-        async = pool.apply(func, args, kwargs)
-        return async
+        async_thread = pool.apply(func, args, kwargs)
+        return async_thread
     return wrap
 
 

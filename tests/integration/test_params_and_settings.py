@@ -4,8 +4,8 @@ import xml.etree.ElementTree as ETree
 
 from mock import call, patch, MagicMock, mock_open, sentinel
 
-from Roadnet.tests.integration.roadnet_test_cases import QgisTestCase
-import Roadnet.params_and_settings as p_and_s
+from tests.integration.roadnet_test_cases import QgisTestCase
+import params_and_settings as p_and_s
 
 
 class TestParamsFileHandler(unittest.TestCase):
@@ -68,7 +68,7 @@ class TestParamsFileHandler(unittest.TestCase):
                     "UserName": 'thinkwhere',
                     "ShouldNotBeUsed": 'should not appear in output'}
         m = mock_open()
-        with patch('Roadnet.params_and_settings.open', m, create=True):
+        with patch('params_and_settings.open', m, create=True):
             pfh.update_xml_file(test_params)
             # Check that the file is opened
             m.assert_called_once_with(file_path, 'w')
@@ -230,6 +230,7 @@ class TestSettingsDialogHandler(QgisTestCase):
             self.assertEqual(expected[key], params[key],
                              "{} checkbox was not {} ({})".format(
                                  key, expected[key], params[key]))
+
 
 if __name__ == '__main__':
     unittest.main()

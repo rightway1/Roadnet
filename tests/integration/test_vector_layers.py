@@ -2,11 +2,11 @@ from mock import MagicMock, call, patch
 import os
 import unittest
 
-from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer
-from Roadnet.tests.integration.roadnet_test_cases import QgisTestCase
-from Roadnet import vector_layers
-import Roadnet.roadnet_exceptions as rn_except
+from PyQt5.QtWidgets import QMessageBox
+from qgis.core import QgsProject, QgsVectorLayer
+from tests.integration.roadnet_test_cases import QgisTestCase
+import vector_layers
+import roadnet_exceptions as rn_except
 
 
 class TestVectorLayers(QgisTestCase):
@@ -14,7 +14,7 @@ class TestVectorLayers(QgisTestCase):
         """
         Remove vector layers that have been added by tests.
         """
-        registry = QgsMapLayerRegistry.instance()
+        registry = QgsProject.instance()
         registry.removeAllMapLayers()
 
     def test_add_styled_spatialite_layer(self):
@@ -28,7 +28,7 @@ class TestVectorLayers(QgisTestCase):
             db_path=db_path,
             iface=self.iface)
 
-        registry = QgsMapLayerRegistry.instance()
+        registry = QgsProject.instance()
         layers = registry.mapLayersByName(display_name)
         layer_count = len(layers)
         layer_name = layers[0].name()
@@ -51,7 +51,7 @@ class TestVectorLayers(QgisTestCase):
             iface=self.iface,
             style='This does not exist')
 
-        registry = QgsMapLayerRegistry.instance()
+        registry = QgsProject.instance()
         layers = registry.mapLayersByName(display_name)
         self.assertEqual(len(layers), 1,
                          "Failed to load layer with invalid style")
@@ -86,7 +86,7 @@ class TestVectorLayers(QgisTestCase):
     def test_remove_spatialite_layer(self):
         # Add a new layer to remove
         display_name = 'esu'
-        registry = QgsMapLayerRegistry.instance()
+        registry = QgsProject.instance()
         roadnet_dir = os.path.dirname(os.path.abspath(vector_layers.__file__))
         db_path = os.path.join(roadnet_dir, 'database_files', 'roadnet_demo.sqlite')
         vl = vector_layers.add_styled_spatialite_layer(
@@ -108,7 +108,7 @@ class TestVectorLayers(QgisTestCase):
     def test_remove_spatialite_layer_non_existent(self, mock_error):
         # Add a new layer to remove
         display_name = 'esu'
-        registry = QgsMapLayerRegistry.instance()
+        registry = QgsProject.instance()
         roadnet_dir = os.path.dirname(os.path.abspath(vector_layers.__file__))
         db_path = os.path.join(roadnet_dir, 'database_files', 'roadnet_demo.sqlite')
         vl = vector_layers.add_styled_spatialite_layer(

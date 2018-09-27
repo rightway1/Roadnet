@@ -3,8 +3,8 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import QMessageBox
-# from ..generic_functions import ipdb_breakpoint
-from roadnet import config
+from generic_functions import ipdb_breakpoint
+import config
 
 __author__ = 'Alessandro Cristofori'
 

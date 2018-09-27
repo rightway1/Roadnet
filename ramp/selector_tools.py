@@ -6,7 +6,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, QObject
 from PyQt4.QtGui import QCursor, QDialogButtonBox
 
 from Roadnet.roadnet_dialog import RampEditLinkedPolysDlg
-from Roadnet import config
+from roadnet import config
 from Roadnet.generic_functions import ipdb_breakpoint
 
 

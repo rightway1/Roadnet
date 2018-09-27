@@ -3,10 +3,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlRelation, QSqlQuery
 
-from ..roadnet_dialog import SrwrSpecialDesDlg
-from ..generic_functions import ipdb_breakpoint
-from .srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
-from .srwr_maintenance import MaintenanceTable, SrwrAddMaintenanceRecord, SrwrModifyMaintenanceRecord, \
+from roadnet_dialog import SrwrSpecialDesDlg
+from generic_functions import ipdb_breakpoint
+from street_browser.srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
+from street_browser.srwr_maintenance import MaintenanceTable, SrwrAddMaintenanceRecord, SrwrModifyMaintenanceRecord, \
     SrwrDeleteMaintenanceRecord
 
 

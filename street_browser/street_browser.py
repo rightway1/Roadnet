@@ -8,16 +8,15 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QDataWidgetMapper, QAbstractItemView, QListWidgetItem, QMessageBox
 
 from qgis.core import QgsProject
-from .srwr_maintenance import MaintenanceTable
-from .srwr_reinstatement_cat import ReinstatementCategoriesTable
-from .srwr_special_designation import SpecialDesignationTable
-from ..roadnet_dialog import FilterStreetRecordsDlg
-from .filter_street_records import PopulateFilterTableView
-from .edit import EditRecord
-from .add import AddRecord
-from .close import CloseRecord
-from ..generic_functions import ZoomSelectCanvas, DateMapperCustomDelegate, ShowStreetCoordinates
-from ..generic_functions import ipdb_breakpoint
+from street_browser.srwr_maintenance import MaintenanceTable
+from street_browser.srwr_reinstatement_cat import ReinstatementCategoriesTable
+from street_browser.srwr_special_designation import SpecialDesignationTable
+from roadnet_dialog import FilterStreetRecordsDlg
+from street_browser.filter_street_records import PopulateFilterTableView
+from street_browser.edit import EditRecord
+from street_browser.add import AddRecord
+from street_browser.close import CloseRecord
+from generic_functions import ZoomSelectCanvas, DateMapperCustomDelegate, ShowStreetCoordinates, ipdb_breakpoint
 
 __author__ = 'matthew.walsh'
 

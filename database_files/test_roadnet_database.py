@@ -99,7 +99,7 @@ class TestDatabaseStructure(unittest.TestCase):
                  'tlkpTOWN': (u'PK_UID', u'town_ref', u'name', u'alt_name'),
                  'tlkpWHOLE_ROAD': (u'PK_UID', u'whole_road', u'description')}
 
-        for table, required_cols in specs.iteritems():
+        for table, required_cols in specs.items():
             cols, types = self.get_table_columns_and_types(table)
             self.assertEqual(cols, required_cols)
 
@@ -164,7 +164,7 @@ class TestDatabaseStructure(unittest.TestCase):
                  'tlkpTOWN': (u'INTEGER', u'INTEGER', u'TEXT', u'TEXT'),
                  'tlkpWHOLE_ROAD': (u'INTEGER', u'INTEGER', u'TEXT')}
 
-        for table, required_types in specs.iteritems():
+        for table, required_types in specs.items():
             cols, types = self.get_table_columns_and_types(table)
             self.assertEqual(types, required_types)
 
@@ -204,7 +204,7 @@ class TestDatabaseStructure(unittest.TestCase):
             'tblREINS_CAT':  ('reins_cat_id', 'version_no', 'currency_flag', 'usrn'),
             'tblSPEC_DES': ('spec_des_id', 'version_no', 'currency_flag', 'usrn'),
             'tblSTREET': ('usrn', 'version_no', 'currency_flag', 'start_date'),
-            'tblUsers': ('username'),
+            'tblUsers': ('username',),
             'tlkpAUTHORITY': ('auth_code',),
             'tlkpCOUNTY': ('county_ref',),
             'tlkpLOCALITY': ('loc_ref',),
@@ -218,7 +218,7 @@ class TestDatabaseStructure(unittest.TestCase):
             'tlkpTOWN': ('town_ref',),
             'tlkpWHOLE_ROAD': ('whole_road',)}
 
-        for table, columns in cols_to_check.iteritems():
+        for table, columns in cols_to_check.items():
             for column in columns:
                     self.assertEqual(
                         self.contains_nulls_or_empty_cells(table, column), False,
@@ -244,6 +244,7 @@ class TestDatabaseStructure(unittest.TestCase):
             return True
         else:
             return False
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

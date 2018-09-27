@@ -4,8 +4,8 @@ import re
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
 from PyQt5.QtWidgets import QMessageBox
-# from ..generic_functions import ipdb_breakpoint
-from roadnet import config
+from generic_functions import ipdb_breakpoint
+import config
 
 __author__ = 'Alessandro Cristofori'
 
@@ -155,7 +155,7 @@ class SrwrLookup:
             # extracts just the id from the string
             sel_items = sel_model.selectedIndexes()[0]
             item_data = str(sel_items.data())
-            p = re.compile("([0-9]{1,3})(?=\s:)")
+            p = re.compile(r"([0-9]{1,3})(?=\s:)")
             src = p.search(item_data)
             item_id = int(src.group(1))
             if item_id == add_code:
@@ -226,10 +226,10 @@ class SrwrLookup:
         sel_items = sel_model.selectedIndexes()[0]
         item_data = str(sel_items.data())
         # split text from the code number
-        p = re.compile("\:(.*)")
+        p = re.compile(r"\:(.*)")
         src = p.search(item_data)
         item_text = str(src.group(1)[1:])
-        p = re.compile("([0-9]{1,3})(?=\s:)")
+        p = re.compile(r"([0-9]{1,3})(?=\s:)")
         src = p.search(item_data)
         item_id = int(src.group(1))
         self.srwr_lu_dia.ui.typeNoSpinBox.setValue(item_id)

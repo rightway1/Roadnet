@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QDataWidgetMapper
 
 from qgis.core import QgsPoint, QgsGeometry
 
-from ..generic_functions import DateMapperCustomDelegate
+from generic_functions import DateMapperCustomDelegate
 
 __author__ = 'matthew.walsh'
 

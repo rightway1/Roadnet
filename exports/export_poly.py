@@ -13,7 +13,7 @@ from qgis.core import (
     QgsVectorFileWriter,
     QgsWkbTypes,
     QgsFields)
-from roadnet import config
+import config
 
 __author__ = 'matthew.bradley'
 

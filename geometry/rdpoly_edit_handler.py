@@ -7,9 +7,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 
 from .edit_handler import (EditHandler,
-                          DatabaseHandler,
-                          IntersectionHandler,
-                          IntersectionHandlerError)
+                           DatabaseHandler,
+                           IntersectionHandler,
+                           IntersectionHandlerError)
 from generic_functions import ipdb_breakpoint
 from roadnet import config
 

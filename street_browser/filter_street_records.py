@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt, QSortFilterProxyModel
 from PyQt5.QtWidgets import QComboBox, QAbstractItemView, QMessageBox
 from qgis.core import QgsProject, QgsFeatureRequest
 
-from ..roadnet_dialog import QuickFindDlg
+from roadnet_dialog import QuickFindDlg
 
 __author__ = 'matthew.walsh'
 

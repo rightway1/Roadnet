@@ -16,7 +16,7 @@ except ImportError:
           'the 32bit OSGeo4W shell with GDAL installed.')
     sys.exit(1)
 
-import sql_scripts
+from database_files.sql_scripts import populate_layer_styles, populate_lookup_tables
 
 OUTPUT_DB_PATH = 'roadnet_migrated.sqlite'
 INPUT_DB_PATH = 'C:\dev\Roadnet.mdb'
@@ -82,6 +82,15 @@ class MdbMigrator(object):
         self.mdb_cursor = None
         self.sqlite_conn = None
         self.sqlite_cursor = None
+        self.db_tables = []
+        self.sql_create = {}
+        self.sql_create_spatial_indexes = {}
+        self.sql_populate_geometry_tables = {}
+        self.sql_geometry = {}
+        self.sql_get_from_mdb = {}
+        self.sql_populate_non_geometry_tables = {}
+        self.new_col_names = {}
+        self.custom_table_amendments = {}
 
     def create_new_spatialite_db(self):
         """
@@ -122,7 +131,7 @@ class MdbMigrator(object):
                     ['ogr2ogr', self.output_db_path, self.input_db_path,
                      table, '-nln', 'tmp_{}'.format(table),
                      '-f', 'Sqlite', '-update', '-append'])
-            except CalledProcessError, e:
+            except CalledProcessError:
                 print("WARNING: Table {} was not copied".format(table))
 
     def populate_geometry_tables(self):
@@ -137,7 +146,7 @@ class MdbMigrator(object):
             try:
                 self.sqlite_cursor.execute(
                     self.sql_populate_geometry_tables[table])
-            except OperationalError, e:
+            except OperationalError as e:
                 print("Table structure error: {}".format(e))
                 self.print_row_count(table)
                 continue
@@ -163,7 +172,7 @@ class MdbMigrator(object):
             print('\nCopying data into table {}'.format(table))
             try:
                 self.mdb_cursor.execute(self.sql_get_from_mdb[table])
-            except pyodbc.Error, e:
+            except pyodbc.Error as e:
                 print('Failed to get data from table {} because:\n{}'.format(
                     table, e))
                 continue
@@ -174,7 +183,7 @@ class MdbMigrator(object):
 
             try:
                 self.print_columns_dropped_or_renamed(table)
-            except AttributeError, e:
+            except AttributeError:
                 print("Table {} not found".format(table))
 
             self.print_row_count(table)
@@ -268,7 +277,7 @@ class MdbMigrator(object):
         """
         print('Adding style definitions to table layer_styles')
         self.open_sqlite_connection_and_cursor()
-        self.sqlite_cursor.executescript(sql_scripts.populate_layer_styles)
+        self.sqlite_cursor.executescript(populate_layer_styles)
         self.commit_and_close_sqlite()
 
     def create_spatial_indexes(self):
@@ -377,7 +386,7 @@ class MdbMigrator(object):
         """
         query = "SELECT * FROM {}".format(table_name)
         first_row = self.mdb_cursor.execute(query).fetchone()
-        columns = zip(*first_row.cursor_description)[0]
+        columns = list(zip(*first_row.cursor_description))[0]
         return columns
 
     def list_sqlite_table_columns(self, table_name):
@@ -389,7 +398,7 @@ class MdbMigrator(object):
         """
         query = "SELECT * FROM {}".format(table_name)
         cursor = self.sqlite_conn.execute(query)
-        columns = zip(*cursor.description)[0]
+        columns = list(zip(*cursor.description))[0]
         return columns
 
     def open_mdb_connection_and_cursor(self):
@@ -758,7 +767,7 @@ class MdbMigrator(object):
                 FROM tlkpTOWN;""",
             'tlkpWHOLE_ROAD': """
                 SELECT whole_road, description
-                FROM tlkpWHOLE_ROAD;""" }
+                FROM tlkpWHOLE_ROAD;"""}
 
         self.sql_populate_non_geometry_tables = {
             'lnkESU_STREET': """
@@ -871,7 +880,6 @@ class MdbMigrator(object):
             'tlkpWHOLE_ROAD': """
                INSERT INTO tlkpWHOLE_ROAD (whole_road, description)
                 VALUES (?, ?);"""}
-
 
     def prepare_new_col_names(self):
         """
@@ -990,7 +998,7 @@ class MdbMigrator(object):
         """
         print('Populating lookup tables')
         self.open_sqlite_connection_and_cursor()
-        self.sqlite_cursor.executescript(sql_scripts.populate_lookup_tables)
+        self.sqlite_cursor.executescript(populate_lookup_tables)
         self.commit_and_close_sqlite()
 
 

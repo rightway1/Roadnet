@@ -6,8 +6,8 @@ from PyQt5.QtCore import QModelIndex, Qt
 from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
 from PyQt5.QtWidgets import QMessageBox
 
-from ..roadnet_dialog import StreetReportsAlert
-from ..roadnet import database
+from roadnet_dialog import StreetReportsAlert
+import database
 
 __author__ = 'matthew.bradley'
 

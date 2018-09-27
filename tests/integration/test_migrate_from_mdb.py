@@ -2,9 +2,7 @@ import os
 import unittest
 
 # The test migration script isn't in a package directory so add to path
-import sys
-sys.path.append(os.path.join(os.getcwd(), 'database_files'))
-import migrate_from_mdb as mgr8
+import database_files.migrate_from_mdb as mgr8
 
 
 class DatabaseMigrationTestCase(unittest.TestCase):
@@ -20,6 +18,7 @@ class DatabaseMigrationTestCase(unittest.TestCase):
         self.migrator.create_new_spatialite_db()
         self.assertTrue(os.path.isfile(self.output_db_path),
                         'No file created at {}'.format(self.output_db_path))
+
 
 if __name__ == '__main__':
     unittest.main()
