@@ -1,7 +1,7 @@
 import unittest
 from mock import patch, Mock
 
-import Roadnet.admin.update_symbology as sym
+import admin.update_symbology as sym
 UpdateSymbologyThread = sym.UpdateSymbologyThread
 
 
@@ -9,6 +9,7 @@ MAINT_IDS_LIST = {
             'unassigned': [],
             'single': [99],
             'multiple': [1, 2, 3]}
+
 
 class TestUpdateSymbologyFeatureCount(unittest.TestCase):
     def setUp(self):
@@ -136,6 +137,7 @@ class TestUpdateSymbologyGetRoadStatusRef(unittest.TestCase):
             road_status_ref = 5
             self.update_symbology.fail_if_invalid_road_status_ref(
                 maint_id, road_status_ref)
+
 
 if __name__ == '__main__':
     unittest.main()

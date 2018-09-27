@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ETree
 
 import boto3
 from mock import MagicMock, mock_open, Mock, patch, call
-import Roadnet.bin.deploy as deploy
+import bin.deploy as deploy
 
 
 class TestDeploy(unittest.TestCase):

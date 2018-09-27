@@ -1,8 +1,8 @@
 import unittest
 from mock import patch, Mock, MagicMock, sentinel
 from qgis.core import QgsVectorLayer
-from PyQt4.QtSql import QSqlDatabase
-from Roadnet.street_browser.edit import UpdateEsuSymbology
+from PyQt5.QtSql import QSqlDatabase
+from street_browser.edit import UpdateEsuSymbology
 
 
 class TestUpdateSymbologyFeatureCount(unittest.TestCase):

@@ -2,8 +2,9 @@ import unittest
 
 from mock import MagicMock, call
 
-from Roadnet.gui.toolbar import RoadnetToolbar
-from Roadnet.tests.integration.roadnet_test_cases import QgisTestCase
+from gui.toolbar import RoadnetToolbar
+from tests.integration.roadnet_test_cases import QgisTestCase
+
 
 class TestRoadnetToolbar(QgisTestCase):
     def setUp(self):
@@ -118,6 +119,7 @@ class TestRoadnetToolbar(QgisTestCase):
             expected_calls = [call.setEnabled(False), call.setEnabled(True)]
             print('Testing {}'.format(attr))
             current_attr.assert_has_calls(expected_calls)
+
 
 if __name__ == '__main__':
     unittest.main()
