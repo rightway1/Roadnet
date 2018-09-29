@@ -137,7 +137,7 @@ def add_features_to_vlayer(features_query, vlayer):
         record = features_query.record()
         try:
             feature = create_feature_from_record(record, vlayer)
-        except rn_except.RdPolyNullGeometryError, e:
+        except rn_except.RdPolyNullGeometryError as e:
             if config.DEBUG_MODE:
                 print("DEBUG_MODE: " + e.args[0])
             continue

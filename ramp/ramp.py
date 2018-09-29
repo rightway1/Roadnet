@@ -3,22 +3,22 @@ import os
 import weakref
 import collections
 
-from PyQt4.QtCore import Qt, QSettings
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtCore import Qt, QSettings
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtSql import QSqlQuery
 
-from qgis.core import QgsMapLayerRegistry
+from qgis.core import QgsProject
 
-from Roadnet import config
-from Roadnet.generic_functions import ipdb_breakpoint
-from Roadnet import vector_layers
-from Roadnet.geometry.mcl_edit_handler import MclEditHandler
-from Roadnet.ramp.wdm_export_handler import WdmExportHandler
-from Roadnet.ramp.length_of_roads_export_handler import LengthOfRoadsExportHandler
-from Roadnet.ramp.selector_tools import MclSelectorTool, RampSelectorTool
-from Roadnet.ramp.record_editors import MclRecordEditor, RdpolyRecordEditor
-from Roadnet.ramp.mcl_auto_numbering_tool import MclAutoNumberingTool
-import Roadnet.roadnet_exceptions as rn_except
+import config
+from generic_functions import ipdb_breakpoint
+import vector_layers
+from geometry.mcl_edit_handler import MclEditHandler
+from ramp.wdm_export_handler import WdmExportHandler
+from ramp.length_of_roads_export_handler import LengthOfRoadsExportHandler
+from ramp.selector_tools import MclSelectorTool, RampSelectorTool
+from ramp.record_editors import MclRecordEditor, RdpolyRecordEditor
+from ramp.mcl_auto_numbering_tool import MclAutoNumberingTool
+import roadnet_exceptions as rn_except
 
 
 def show_messagebox(message, message_type=QMessageBox.Information):
@@ -103,7 +103,7 @@ class Ramp(object):
                                           ('Element', 'rdpoly'),
                                           ('MCL', 'mcl')])
 
-        registry = QgsMapLayerRegistry.instance()
+        registry = QgsProject.instance()
 
         for key, vlayer in layers.items():
             pointer = key.lower()
@@ -166,7 +166,7 @@ class Ramp(object):
         # Calculate length of roads
         try:
             lor_export_handler.export_length_of_roads()
-        except rn_except.BadSpatialiteVersionPopupError, e:
+        except rn_except.BadSpatialiteVersionPopupError:
             return
 
         # Save directory for later
@@ -276,7 +276,7 @@ class Ramp(object):
                     'adoption_status', 'mcl_ref', 'street_classification',
                     'in_pilot', 'carriageway', 'geometry']}
 
-        for table, good_cols in table_structures.iteritems():
+        for table, good_cols in table_structures.items():
             actual_names = self.get_table_column_names(table)
             if actual_names[:len(good_cols)] != good_cols:
                 msg = "Table {} is not suitable for RAMP.  ".format(table)
@@ -299,4 +299,3 @@ class Ramp(object):
             col_names.append(record.value('name'))
 
         return col_names
-

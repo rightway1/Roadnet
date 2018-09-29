@@ -35,5 +35,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     #
     if config.DEBUG_MODE:
         print('DEBUG_MODE: __init__.py called, plugin attached to QGIS')
-    from roadnet import Roadnet
+    from .roadnet import Roadnet
     return Roadnet(iface)

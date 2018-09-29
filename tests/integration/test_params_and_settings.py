@@ -60,13 +60,13 @@ class TestParamsFileHandler(unittest.TestCase):
         pfh.root = self.test_root
         pfh.tree = MagicMock()
         test_params = {"RNDataStorePath": '/home/tw-johns/Roadnet/database_files',
-                    "DbName": 'roadnet_demo.sqlite',
-                    "RNPolyEdit": 'true',
-                    "Language": 'ENG',
-                    "RNsrwr": 'true',
-                    "Blank": 'true',
-                    "UserName": 'thinkwhere',
-                    "ShouldNotBeUsed": 'should not appear in output'}
+                       "DbName": 'roadnet_demo.sqlite',
+                       "RNPolyEdit": 'true',
+                       "Language": 'ENG',
+                       "RNsrwr": 'true',
+                       "Blank": 'true',
+                       "UserName": 'thinkwhere',
+                       "ShouldNotBeUsed": 'should not appear in output'}
         m = mock_open()
         with patch('params_and_settings.open', m, create=True):
             pfh.update_xml_file(test_params)

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from qgis.gui import QgsMapToolIdentifyFeature
-from qgis.core import QgsMapLayerRegistry, QgsExpression, QgsFeatureRequest
-from PyQt4.QtCore import pyqtSignal, Qt, QObject
-from PyQt4.QtGui import QCursor, QDialogButtonBox
+from qgis.core import QgsProject, QgsExpression, QgsFeatureRequest
+from PyQt5.QtCore import pyqtSignal, Qt, QObject
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QDialogButtonBox
 
-from Roadnet.roadnet_dialog import RampEditLinkedPolysDlg
-from roadnet import config
-from Roadnet.generic_functions import ipdb_breakpoint
+from roadnet_dialog import RampEditLinkedPolysDlg
+import config
+from generic_functions import ipdb_breakpoint
 
 
 class MclSelectorTool(QgsMapToolIdentifyFeature):
@@ -228,7 +229,7 @@ def get_pointers_to_ramp_vector_layers():
     Get links to vector layer instances, MCL, Element and Hierarchy
     :return: QgsVectorLayers
     """
-    reg = QgsMapLayerRegistry.instance()
+    reg = QgsProject.instance()
     mcl = reg.mapLayersByName('MCL')[0]
     element = reg.mapLayersByName('Element')[0]
     hierarchy = reg.mapLayersByName('Hierarchy')[0]

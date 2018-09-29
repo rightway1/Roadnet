@@ -11,7 +11,7 @@ from .edit_handler import (EditHandler,
                            IntersectionHandler,
                            IntersectionHandlerError)
 from generic_functions import ipdb_breakpoint
-from roadnet import config
+import config
 
 __author__ = "john.stevenson"
 

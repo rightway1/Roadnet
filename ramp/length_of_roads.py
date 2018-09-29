@@ -6,10 +6,9 @@ Functions to export Length of Roads report from RAMP.
 from collections import OrderedDict
 from textwrap import dedent
 import qgis.core  # Required to have access to correct QVariants
-import PyQt4
-from PyQt4.QtSql import QSqlQuery
+from PyQt5.QtSql import QSqlQuery
 import re
-import Roadnet.roadnet_exceptions as rn_except
+import roadnet_exceptions as rn_except
 
 # These queries generate a like-for-like with the old roadNet, but note that
 # the numbers for Total are wrong as they include NULLs.
@@ -80,7 +79,7 @@ def get_road_length_from_db(sql, db):
     # Get result from query
     record = query.record()
     road_length = record.value('length')
-    if isinstance(road_length, PyQt4.QtCore.QPyNullVariant):
+    if query.isNull('length'):
         # Replace NULL from database with zero length
         road_length = 0
 

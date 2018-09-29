@@ -4,8 +4,7 @@ import datetime
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
 from geometry.edit_handler import EditHandler, DatabaseHandler, IntersectionHandler
 from generic_functions import ipdb_breakpoint
-import roadnet.config as config
-
+import config
 __author__ = "john.stevenson"
 
 

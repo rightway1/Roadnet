@@ -4,12 +4,12 @@ from copy import copy
 from qgis.core import QgsFeatureRequest, QgsExpression
 from qgis.gui import QgsMessageBar
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialogButtonBox
-from PyQt4.QtSql import QSqlQuery
-from Roadnet.roadnet_dialog import RampMclAutoNumberingDlg
-import Roadnet.roadnet_exceptions as rn_except
-from Roadnet.generic_functions import ipdb_breakpoint
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialogButtonBox
+from PyQt5.QtSql import QSqlQuery
+from roadnet_dialog import RampMclAutoNumberingDlg
+import roadnet_exceptions as rn_except
+from generic_functions import ipdb_breakpoint
 
 
 class MclAutoNumberingTool(object):

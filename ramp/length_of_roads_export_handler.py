@@ -2,11 +2,11 @@
 import datetime as dt
 import os
 
-from PyQt4.QtGui import QFileDialog
-import Roadnet.roadnet_exceptions as rn_except
-from Roadnet.roadnet_dialog import RampLengthOfRoadsDlg
-from Roadnet.ramp import length_of_roads as lor
-from Roadnet import config
+from PyQt5.QtWidgets import QFileDialog
+import roadnet_exceptions as rn_except
+from roadnet_dialog import RampLengthOfRoadsDlg
+from ramp import length_of_roads as lor
+import config
 
 
 class LengthOfRoadsExportHandler(object):
@@ -34,11 +34,11 @@ class LengthOfRoadsExportHandler(object):
         try:
             try:
                 lor_text = self.get_length_of_roads_text()
-            except rn_except.BadSpatialiteVersionError, e:
+            except rn_except.BadSpatialiteVersionError as e:
                 raise rn_except.BadSpatialiteVersionPopupError(e.args[0])
         # this section allows development to continue on 14.04
         # Remove final try-except block before production
-        except rn_except.BadSpatialiteVersionPopupError, e:
+        except rn_except.BadSpatialiteVersionPopupError as e:
             lor_text = e.args[0]
 
         # Add header and footer to text

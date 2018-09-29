@@ -2,22 +2,18 @@
 
 import qgis.core  # required to get QPyNullVariant to work
 
-from PyQt4.QtSql import (
+from PyQt5.QtSql import (
     QSqlQuery,
     QSqlTableModel)
-from PyQt4.QtGui import (
-    QDataWidgetMapper,
-    QDialogButtonBox,
-    QItemDelegate,
-    QRegExpValidator,
-    QTextCursor)
-from PyQt4.QtCore import Qt, QRegExp, QPyNullVariant
-from Roadnet.roadnet_dialog import (RampMclEditorDlg, RampRdpolyEditorDlg)
-import Roadnet.ramp.length_of_roads as lor
-from Roadnet.ramp.selector_tools import EditLinkedPolysTool
-import Roadnet.roadnet_exceptions as rn_except
-from Roadnet.generic_functions import ipdb_breakpoint
-from Roadnet import config
+from PyQt5.QtGui import QRegExpValidator, QTextCursor
+from PyQt5.QtWidgets import QDataWidgetMapper, QDialogButtonBox, QItemDelegate
+from PyQt5.QtCore import Qt, QRegExp
+from roadnet_dialog import (RampMclEditorDlg, RampRdpolyEditorDlg)
+import ramp.length_of_roads as lor
+from ramp.selector_tools import EditLinkedPolysTool
+import roadnet_exceptions as rn_except
+from generic_functions import ipdb_breakpoint
+import config
 
 # Create 'enum' like aliases for column names
 # mcl
@@ -628,7 +624,7 @@ class RdpolyRecordEditor(object):
             raise rn_except.RampNoLinkedPolyPopupError(msg)
 
         mcl_ref = query.record().value('mcl_cref')
-        if isinstance(mcl_ref, QPyNullVariant):
+        if query.isNull('mcl_cref'):
             msg = "No MCLs are linked to polygon {}".format(rd_pol_id)
             raise rn_except.RampNoLinkedPolyPopupError(msg)
 
@@ -776,7 +772,7 @@ def get_key(dictionary, value):
     if value == '':
         return ''
 
-    for k, v in dictionary.iteritems():
+    for k, v in dictionary.items():
         if v == value:
             return k
 
@@ -882,7 +878,7 @@ def set_model_value_from_combobox(editor, model, index, code_map):
     display_text = editor.currentText()
 
     if display_text == '':
-        model.setData(index, QPyNullVariant)
+        model.setData(index, None)
         return
 
     # Loop back through dictionary to find model key
