@@ -29,8 +29,8 @@ from PyQt5.QtSql import QSqlDatabase
 from qgis.utils import *
 from qgis.core import *
 
-from esu_selector_tool import EsuSelectorTool
-from roadnet_dialog import (
+from Roadnet.esu_selector_tool import EsuSelectorTool
+from Roadnet.roadnet_dialog import (
     AdminMetadataDlg,
     ChPwdDlg,
     AboutDlg,
@@ -44,31 +44,31 @@ from roadnet_dialog import (
     StreetBrowserDlg,
     StreetReportsDlg,
     ValidationDlg)
-from street_browser.street_browser import StreetBrowser
-from exports.exports import (
+from Roadnet.street_browser.street_browser import StreetBrowser
+from Roadnet.exports.exports import (
     ExportDTF,
     ExportSRWR,
     ExportLOR,
     ExportLsgShp,
     ExportPoly)
-from admin.admin_menu import ExportStreetReport
-from admin.metadata import Metadata
-from admin.lsg_lookup import LsgLookUp
-from admin.srwr_lookup import SrwrLookup
-from admin.validation import Validation
-from admin.update_symbology import UpdateSymbology
-from gui.toolbar import RoadnetToolbar
-from geometry.esu_edit_handler import EsuEditHandler
-from geometry.rdpoly_edit_handler import RdpolyEditHandler
-from rn_menu.change_pwd import ChangePwd
-from rn_menu.about import About
-from ramp.ramp import Ramp
-import config
-import database
-import login
-import params_and_settings
-import roadnet_exceptions as rn_except
-import vector_layers
+from Roadnet.admin.admin_menu import ExportStreetReport
+from Roadnet.admin.metadata import Metadata
+from Roadnet.admin.lsg_lookup import LsgLookUp
+from Roadnet.admin.srwr_lookup import SrwrLookup
+from Roadnet.admin.validation import Validation
+from Roadnet.admin.update_symbology import UpdateSymbology
+from Roadnet.gui.toolbar import RoadnetToolbar
+from Roadnet.geometry.esu_edit_handler import EsuEditHandler
+from Roadnet.geometry.rdpoly_edit_handler import RdpolyEditHandler
+from Roadnet.rn_menu.change_pwd import ChangePwd
+from Roadnet.rn_menu.about import About
+from Roadnet.ramp.ramp import Ramp
+from Roadnet import config
+from Roadnet import database
+from Roadnet import login
+from Roadnet import params_and_settings
+from Roadnet import roadnet_exceptions as rn_except
+from Roadnet import vector_layers
 
 __author__ = 'matthew.walsh'
 

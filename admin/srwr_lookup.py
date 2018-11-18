@@ -4,8 +4,8 @@ import re
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
 from PyQt5.QtWidgets import QMessageBox
-from generic_functions import ipdb_breakpoint
-import config
+from Roadnet.generic_functions import ipdb_breakpoint
+from Roadnet import config
 
 __author__ = 'Alessandro Cristofori'
 

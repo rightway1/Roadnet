@@ -17,7 +17,7 @@ from qgis.core import (
     QgsFields)
 
 from qgis.gui import *
-import config
+import Roadnet.config
 # from generic_functions import ipdb_breakpoint
 
 __author__ = 'matthew.bradley'
@@ -105,7 +105,7 @@ class ExportESUShapes:
         self.run_sql('create_qryType4')
 
         # Run the main query
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print(nsgexportsql)
         query = QSqlQuery(self.db)
         query.setForwardOnly(True)
@@ -173,7 +173,7 @@ class ExportESUShapes:
         # checks for completed export
         if result == 0:
             self.progresswin.close()
-            if config.DEBUG_MODE:
+            if Roadnet.config.DEBUG_MODE:
                 print('DEBUG_MODE: {} features exported'.format(vlayer.featureCount()))
             return True
 
@@ -183,7 +183,7 @@ class ExportESUShapes:
         This check only works in Windows.
         :return: boolean
         """
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print('DEBUG_MODE: Checking if output file in use.')
         field_map = QgsFields()
         for field in self.fields:
@@ -250,7 +250,7 @@ class ExportESUShapes:
         """
         query = self.sql_queries[query]
         sql = query.format(**kwargs)
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print(sql)
         active_query = QSqlQuery(sql, self.db)
         if active_query.isActive() is False:

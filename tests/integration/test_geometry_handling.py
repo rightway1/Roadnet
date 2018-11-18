@@ -4,7 +4,7 @@ nosetests -q -s tests.integration.test_geometry_handling
 """
 import unittest
 
-from qgis.core import QgsGeometry, QgsPoint, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import QgsGeometry, QgsPointXY, QgsFeature, QgsVectorLayer, QgsField
 from PyQt5.QtCore import QVariant
 
 from geometry.esu_edit_handler import EsuIntersectionHandler
@@ -117,7 +117,7 @@ def prepare_features_and_vector_layer(geometries):
     provider = vlayer.dataProvider()
     features = {}
     fields = provider.fields()
-    for key, value in geometries.iteritems():
+    for key, value in geometries.items():
         feature = QgsFeature(fields)
         feature.setGeometry(value)
         feature.setAttribute('name', key)
@@ -264,8 +264,8 @@ class TestIntersectionFinding(QgisTestCase):
 
     def test_convert_to_points_list(self):
         # Arrange
-        expected = [QgsPoint(278350.0, 694750.0),
-                    QgsPoint(278350.0, 694700.0)]
+        expected = [QgsPointXY(278350.0, 694750.0),
+                    QgsPointXY(278350.0, 694700.0)]
         # Act and assert
         for key in ['touches_end', 'multi_touches_end']:
             geometry = self.geometries[key]
@@ -276,7 +276,7 @@ class TestIntersectionFinding(QgisTestCase):
         result = edit_handler.touch_is_ends_only(self.geometries['touches_end'],
                                                  self.geometries['main'])
         self.assertTrue(result,
-                        "End-touching geometry not recognised.")
+                        "End-touchin g geometry not recognised.")
 
     def test_touch_is_ends_only_false(self):
         result = edit_handler.touch_is_ends_only(self.geometries['touches'],
@@ -305,7 +305,7 @@ class TestIntersectionFinding(QgisTestCase):
         print(expected_names)
         print('\nResult:')
         print(result_names)
-        self.assertEquals(expected_names, result_names)
+        self.assertEqual(expected_names, result_names)
 
 
 class TestDropTinyGeometryParts(unittest.TestCase):
@@ -319,10 +319,10 @@ class TestDropTinyGeometryParts(unittest.TestCase):
         clean_geom = RdpolyIntersectionHandler.clean_up_geometry(dirty_geom)
 
         # Assert
-        print(dirty_geom.exportToWkt())
-        print(clean_geom.exportToWkt())
-        self.assertEqual(clean_geom.exportToWkt(),
-                         clean_multi_geom.exportToWkt())
+        print(dirty_geom.asWkt())
+        print(clean_geom.asWkt())
+        self.assertEqual(clean_geom.asWkt(),
+                         clean_multi_geom.asWkt())
 
     def test_tiny_only_raises_error(self):
         # Arrange
@@ -342,8 +342,8 @@ class TestDropTinyGeometryParts(unittest.TestCase):
         clean_geom = RdpolyIntersectionHandler.clean_up_geometry(dirty_geom)
 
         # Assert
-        self.assertEqual(clean_geom.exportToWkt(),
-                         clean_multi_geom.exportToWkt())
+        self.assertEqual(clean_geom.asWkt(),
+                         clean_multi_geom.asWkt())
 
 
 if __name__ == '__main__':

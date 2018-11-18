@@ -10,9 +10,9 @@ import os
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlQuery, QSql, QSqlDatabase
 from PyQt5.QtCore import Qt
-from roadnet_dialog import LoginDlg
-import database
-import config
+from Roadnet.roadnet_dialog import LoginDlg
+from . import database
+from . import config
 
 
 class CredentialGetter(object):

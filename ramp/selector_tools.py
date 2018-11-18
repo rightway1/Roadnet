@@ -6,9 +6,9 @@ from PyQt5.QtCore import pyqtSignal, Qt, QObject
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QDialogButtonBox
 
-from roadnet_dialog import RampEditLinkedPolysDlg
-import config
-from generic_functions import ipdb_breakpoint
+from Roadnet.roadnet_dialog import RampEditLinkedPolysDlg
+from Roadnet import config
+from Roadnet.generic_functions import ipdb_breakpoint
 
 
 class MclSelectorTool(QgsMapToolIdentifyFeature):

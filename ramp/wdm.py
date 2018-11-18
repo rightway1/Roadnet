@@ -14,8 +14,8 @@ from qgis.core import (
 from PyQt5.QtCore import QVariant
 from PyQt5.QtSql import QSqlQuery
 
-import roadnet_exceptions as rn_except
-import config
+from Roadnet import roadnet_exceptions as rn_except
+from Roadnet import config
 
 
 ELEMENT_CODE_MAP = {'ACARPK': 'Adopted Carpark',

@@ -8,12 +8,12 @@ from PyQt5.QtSql import (
 from PyQt5.QtGui import QRegExpValidator, QTextCursor
 from PyQt5.QtWidgets import QDataWidgetMapper, QDialogButtonBox, QItemDelegate
 from PyQt5.QtCore import Qt, QRegExp
-from roadnet_dialog import (RampMclEditorDlg, RampRdpolyEditorDlg)
-import ramp.length_of_roads as lor
-from ramp.selector_tools import EditLinkedPolysTool
-import roadnet_exceptions as rn_except
-from generic_functions import ipdb_breakpoint
-import config
+from Roadnet.roadnet_dialog import (RampMclEditorDlg, RampRdpolyEditorDlg)
+from Roadnet.ramp import length_of_roads as lor
+from Roadnet.ramp.selector_tools import EditLinkedPolysTool
+import Roadnet.roadnet_exceptions as rn_except
+from Roadnet.generic_functions import ipdb_breakpoint
+from Roadnet import config
 
 # Create 'enum' like aliases for column names
 # mcl

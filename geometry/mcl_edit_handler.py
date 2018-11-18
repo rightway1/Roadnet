@@ -3,11 +3,9 @@ import datetime
 
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
 from qgis.gui import QgsMessageBar
-from .edit_handler import (EditHandler,
-                           DatabaseHandler,
-                           IntersectionHandler)
-from generic_functions import ipdb_breakpoint
-import config as config
+from Roadnet.geometry.edit_handler import (EditHandler, DatabaseHandler, IntersectionHandler)
+from Roadnet.generic_functions import ipdb_breakpoint
+from Roadnet import config
 
 __author__ = "john.stevenson"
 

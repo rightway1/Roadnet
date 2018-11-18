@@ -8,7 +8,7 @@ from textwrap import dedent
 import qgis.core  # Required to have access to correct QVariants
 from PyQt5.QtSql import QSqlQuery
 import re
-import roadnet_exceptions as rn_except
+from Roadnet import roadnet_exceptions as rn_except
 
 # These queries generate a like-for-like with the old roadNet, but note that
 # the numbers for Total are wrong as they include NULLs.
@@ -136,6 +136,6 @@ def get_spatialite_version_as_int(db):
     # Get the version number and convert to int
     record = query.record()
     version = record.value('version')
-    version_as_int = int(re.sub('\D', '', version))
+    version_as_int = int(re.sub(r'\D', '', version))
 
     return version_as_int

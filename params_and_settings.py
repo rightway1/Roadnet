@@ -5,8 +5,8 @@ import xml.etree.ElementTree as ETree
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 
-from roadnet_dialog import SettingsDlg
-import roadnet_exceptions as rn_except
+from Roadnet.roadnet_dialog import SettingsDlg
+from . import roadnet_exceptions as rn_except
 
 __author__ = 'Alessandro, john.stevenson, colin.wright'
 

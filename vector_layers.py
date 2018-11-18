@@ -3,7 +3,7 @@ from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsProject,
                        QgsVectorLayer,
                        QgsDataSourceUri)
-import roadnet_exceptions as rn_except
+from Roadnet import roadnet_exceptions as rn_except
 
 
 def add_styled_spatialite_layer(vlayer_name, display_name, db_path,

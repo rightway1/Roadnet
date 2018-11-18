@@ -15,8 +15,8 @@ from PyQt5.QtSql import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QMessageBox, QFileDialog, QDialog
-from roadnet_dialog import DbPathDlg
-import config
+from Roadnet.roadnet_dialog import DbPathDlg
+from Roadnet import config
 # from generic_functions import ipdb_breakpoint
 
 __author__ = 'matthew.walsh'

@@ -13,7 +13,7 @@ from qgis.core import (
     QgsVectorFileWriter,
     QgsWkbTypes,
     QgsFields)
-import config
+import Roadnet.config
 
 __author__ = 'matthew.bradley'
 
@@ -88,7 +88,7 @@ class ExportPolyShapes(QtCore.QObject):
         self.run_sql('create_maint_records')
 
         # Run the main query
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print(polyexportsql)
         query = QSqlQuery(self.db)
         query.setForwardOnly(True)
@@ -160,7 +160,7 @@ class ExportPolyShapes(QtCore.QObject):
         # checks for completed export
         if result == 0:
             self.progresswin.close()
-            if config.DEBUG_MODE:
+            if Roadnet.config.DEBUG_MODE:
                 print('DEBUG_MODE: {} features exported'.format(vlayer.featureCount()))
             return True
 
@@ -170,7 +170,7 @@ class ExportPolyShapes(QtCore.QObject):
         This check only works in Windows.
         :return: boolean
         """
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print('DEBUG_MODE: Checking if output file in use.')
         field_map = QgsFields()
         for field in self.fields:
@@ -244,7 +244,7 @@ class ExportPolyShapes(QtCore.QObject):
         """
         query = self.sql_queries[query]
         sql = query.format(**kwargs)
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print(sql)
         active_query = QSqlQuery(sql, self.db)
         if active_query.isActive() is False:

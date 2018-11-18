@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import QAbstractItemView, QTableWidgetItem
 from PyQt5.QtGui import QBrush, QCursor, QColor
 from PyQt5.QtSql import QSqlQuery
 
-from roadnet_dialog import StreetSelectorDlg
-from generic_functions import ZoomSelectCanvas
+from Roadnet.roadnet_dialog import StreetSelectorDlg
+from Roadnet.generic_functions import ZoomSelectCanvas
 from qgis.gui import QgsMapToolIdentify
 
 

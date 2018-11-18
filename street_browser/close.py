@@ -6,8 +6,8 @@ from PyQt5.QtSql import QSqlQuery
 
 from qgis.core import QgsProject
 
-from roadnet_dialog import SaveRecordDlg
-from .edit import UpdateEsuSymbology
+from Roadnet.roadnet_dialog import SaveRecordDlg
+from Roadnet.street_browser.edit import UpdateEsuSymbology
 
 __author__ = 'matthew.walsh'
 

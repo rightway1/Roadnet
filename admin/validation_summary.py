@@ -2,7 +2,7 @@
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget, QMessageBox
-from generic_functions import ipdb_breakpoint, ZoomSelectCanvas
+from Roadnet.generic_functions import ipdb_breakpoint, ZoomSelectCanvas
 
 __author__ = 'Alessandro Cristofori'
 

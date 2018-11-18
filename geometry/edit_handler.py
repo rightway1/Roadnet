@@ -4,8 +4,8 @@ from PyQt5.QtSql import QSqlQuery
 
 from qgis.core import QgsFeatureRequest, Qgis
 from qgis.gui import QgsMessageBar
-from generic_functions import ipdb_breakpoint
-import config
+from Roadnet.generic_functions import ipdb_breakpoint
+from Roadnet import config
 
 __author__ = "john.stevenson"
 

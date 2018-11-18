@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtSql import QSqlQuery
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
-from .export_street_report import StreetReportsExport
+from Roadnet.admin.export_street_report import StreetReportsExport
 
 __author__ = 'matthew.bradley'
 

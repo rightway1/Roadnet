@@ -9,10 +9,10 @@ from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QLineEdit
 from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
-from .mod_validation import ValidateDescription, ValidateStreetType
-from generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint
-from roadnet_dialog import SaveRecordDlg, EditCoordsDlg, EditEsuLinkDlg
-import config
+from Roadnet.street_browser.mod_validation import ValidateDescription, ValidateStreetType
+from Roadnet.generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint
+from Roadnet.roadnet_dialog import SaveRecordDlg, EditCoordsDlg, EditEsuLinkDlg
+import Roadnet.config
 
 __author__ = 'matthew.walsh'
 
@@ -96,7 +96,7 @@ class EditRecord:
         """
         modify_text = str(self.street_browser.ui.modifyPushButton.text())
         if modify_text.lower() == "modify":
-            if config.DEBUG_MODE:
+            if Roadnet.config.DEBUG_MODE:
                 print('DEBUG MODE: Modify pressed')
             # Begin edit + connect esu button
             self.street_browser.ui.editEsuPushButton.clicked.connect(self.edit_esu_link)
@@ -105,14 +105,14 @@ class EditRecord:
             if not self.esu_layer:
                 # Set the ESU layer to read only during modification of the record
                 self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
-            if config.DEBUG_MODE:
+            if Roadnet.config.DEBUG_MODE:
                 print("DEBUG_MODE: Setting ESU layer to read only for modify.")
             self.esu_layer.setReadOnly(True)
         else:
-            if config.DEBUG_MODE:
+            if Roadnet.config.DEBUG_MODE:
                 print('DEBUG_MODE: Complete pressed')
             self.save_dlg.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-            if config.DEBUG_MODE:
+            if Roadnet.config.DEBUG_MODE:
                 print("DEBUG_MODE: Setting ESU layer to writable after modify.")
             self.esu_layer.setReadOnly(False)
             self.save_dlg.exec_()
@@ -823,7 +823,6 @@ class EditEsuLink(object):
         """
         prov = self.layer.dataProvider()
         for fid in selected:
-            esu_id = None
             feat = self.layer.getFeatures(
                 QgsFeatureRequest().setFilterFid(fid)).next()
             esu_id = int(feat.attribute(self.dis_attr))
@@ -833,7 +832,6 @@ class EditEsuLink(object):
                                                              self.list_widget)
 
         for fid in deselected:
-            esu_id = None
             feat = self.layer.getFeatures(
                 QgsFeatureRequest().setFilterFid(fid)).next()
             esu_id = int(feat.attribute(self.dis_attr))
@@ -997,7 +995,7 @@ class UpdateEsuSymbology(object):
                  SET symbol={symbol}
                  WHERE esu_id IS {esu_id}
                  ;""".format(symbol=symbol, esu_id=esu_id)
-        if config.DEBUG_MODE:
+        if Roadnet.config.DEBUG_MODE:
             print("DEBUG_MODE: Updating ESU symbology for esu_id={}".format(esu_id))
         QSqlQuery(sql, self.db)
 

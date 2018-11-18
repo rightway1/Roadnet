@@ -3,13 +3,13 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlRelation, QSqlQuery
 
-from roadnet_dialog import SrwrReinsCatDlg
-from street_browser.srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
-from street_browser.srwr_maintenance import (
+from Roadnet.roadnet_dialog import SrwrReinsCatDlg
+from Roadnet.street_browser.srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
+from Roadnet.street_browser.srwr_maintenance import (
     SrwrAddMaintenanceRecord,
     SrwrModifyMaintenanceRecord,
     SrwrDeleteMaintenanceRecord)
-from street_browser.srwr_special_designation import SpecialDesignationTable
+from Roadnet.street_browser.srwr_special_designation import SpecialDesignationTable
 
 
 class ReinstatementCategoriesTable(SpecialDesignationTable):

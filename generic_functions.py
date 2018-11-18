@@ -10,8 +10,6 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QPushButton, QStackedWidget, QItemDelegate
 from PyQt5.QtSql import QSqlQuery
 
-import config
-
 __author__ = 'matthew.walsh'
 
 

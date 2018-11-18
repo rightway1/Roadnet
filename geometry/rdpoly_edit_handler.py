@@ -6,12 +6,9 @@ from qgis.gui import QgsMessageBar
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 
-from .edit_handler import (EditHandler,
-                           DatabaseHandler,
-                           IntersectionHandler,
-                           IntersectionHandlerError)
-from generic_functions import ipdb_breakpoint
-import config
+from Roadnet.geometry.edit_handler import (EditHandler, DatabaseHandler, IntersectionHandler, IntersectionHandlerError)
+from Roadnet.generic_functions import ipdb_breakpoint
+from Roadnet import config
 
 __author__ = "john.stevenson"
 

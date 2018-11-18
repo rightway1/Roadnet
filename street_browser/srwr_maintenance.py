@@ -11,14 +11,14 @@ from PyQt5.QtSql import (
     QSqlQuery)
 from qgis.core import QgsProject, QgsFeatureRequest
 
-from roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
-from .edit import EditStartEndCoords, EditEsuLink
-from .srwr import (
+from Roadnet.roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
+from Roadnet.street_browser.edit import EditStartEndCoords, EditEsuLink
+from Roadnet.street_browser.srwr import (
     SetupMaintRecordOperationsButtons,
     WidgetInfoObject,
     WidgetTypeEnum,
     SrwrViewRecord)
-from generic_functions import ZoomSelectCanvas, ShowStreetCoordinates
+from Roadnet.generic_functions import ZoomSelectCanvas, ShowStreetCoordinates
 
 
 class MaintenanceTable(object):
