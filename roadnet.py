@@ -207,7 +207,7 @@ class Roadnet:
 
         # Remove layers
         for vlayer in [self.esu, self.rdpoly]:
-            vlayer.layerDeleted.disconnect()  # Disconnect auto-reload signal
+            vlayer.destroyed.disconnect()  # Disconnect auto-reload signal
             try:
                 vector_layers.remove_spatialite_layer(vlayer, self.iface)
             except rn_except.RemoveNonExistentLayerPopupError:
@@ -488,7 +488,7 @@ class Roadnet:
             style='rdpoly')
         self.rdpoly.editingStarted.connect(self.editing_rdpoly_begin)
         self.rdpoly.editingStopped.connect(self.editing_rdpoly_end)
-        self.rdpoly.layerDeleted.connect(self.add_rdpoly_layer)
+        self.rdpoly.destroyed.connect(self.add_rdpoly_layer)
 
     def add_esu_layer(self):
         """
@@ -502,7 +502,7 @@ class Roadnet:
             style='esu')
         self.esu.editingStarted.connect(self.editing_esu_begin)
         self.esu.editingStopped.connect(self.editing_esu_end)
-        self.esu.layerDeleted.connect(self.add_esu_layer)  # Reload if removed
+        self.esu.destroyed.connect(self.add_esu_layer)  # Reload if removed
         # Create the selector tool instance
         if self.roadnet_started:
             if config.DEBUG_MODE:

@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox
 
 from Roadnet.roadnet_dialog import SettingsDlg
-from . import roadnet_exceptions as rn_except
+from Roadnet import roadnet_exceptions as rn_except
 
 __author__ = 'Alessandro, john.stevenson, colin.wright'
 
@@ -99,7 +99,7 @@ class ParamsFileHandler(object):
             key = xml_param.attrib['name']
             xml_param.text = input_params[key]
 
-        with open(self.xmlfile_path, 'w') as outfile:
+        with open(self.xmlfile_path, 'wb') as outfile:
             self.tree.write(outfile)
 
     def _update_tree(self):

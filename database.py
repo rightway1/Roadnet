@@ -101,7 +101,7 @@ class DbPathSelect:
         self.params_file.update_xml_file(self.params)  # Changes written to file
 
     def select_path(self):
-        path = self.choose_file_dialog.getOpenFileName(
+        path, _filter = self.choose_file_dialog.getOpenFileName(
             self.db_path_dlg, "Select Database Directory",
             self.db_path, "(*.sqlite)")
         self.new_db_path = path

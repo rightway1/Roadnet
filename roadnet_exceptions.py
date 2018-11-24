@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import Qt
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import Qt
 
 
 class QMessageBoxWarningError(Exception):
@@ -10,6 +10,7 @@ class QMessageBoxWarningError(Exception):
     def __init__(self, message):
         # Call the base class constructor with the parameters it needs
         super(QMessageBoxWarningError, self).__init__(message)
+        self.message = message
         self.show_message_box()
 
     def show_message_box(self):

@@ -3,6 +3,7 @@ from qgis.core import (QgsCoordinateReferenceSystem,
                        QgsProject,
                        QgsVectorLayer,
                        QgsDataSourceUri)
+from qgis.PyQt.QtXml import QDomDocument
 from Roadnet import roadnet_exceptions as rn_except
 
 
@@ -61,7 +62,7 @@ def set_crs_and_register(vlayer):
     """
     vlayer.setCrs(QgsCoordinateReferenceSystem(
         27700, QgsCoordinateReferenceSystem.EpsgCrsId), False)
-    QgsProject.addMapLayer(vlayer)
+    QgsProject().instance().addMapLayer(vlayer)
 
 
 def apply_layer_style(vlayer, style, db_path):
@@ -72,7 +73,9 @@ def apply_layer_style(vlayer, style, db_path):
     :param db_path: location of database table
     """
     style_qml = get_style_qml(style, db_path)
-    vlayer.applyNamedStyle(style_qml)
+    style_doc = QDomDocument()
+    style_doc.setContent(style_qml)
+    vlayer.importNamedStyle(style_doc)
 
 
 def get_style_qml(style, db_path):

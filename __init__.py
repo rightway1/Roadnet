@@ -22,7 +22,7 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-# import config
+from Roadnet import config
 
 
 # noinspection PyPep8Naming
@@ -33,7 +33,7 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-#    if config.DEBUG_MODE:
-#        print('DEBUG_MODE: __init__.py called, plugin attached to QGIS')
+    if config.DEBUG_MODE:
+        print('DEBUG_MODE: __init__.py called, plugin attached to QGIS')
     from .roadnet import Roadnet
     return Roadnet(iface)
