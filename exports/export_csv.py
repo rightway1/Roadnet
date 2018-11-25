@@ -4,7 +4,7 @@ import datetime
 import math
 import re
 
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt.QtSql import QSqlQuery
 
 from qgis.core import QgsGeometry, QgsFeature
 
@@ -309,13 +309,13 @@ class ExportCSV:
                 streets = format_floats_and_strings(streets)
                 self.csv.writerow(streets)
                 self.tmp_streets.append(streets)
-                self.xref_sts.append(long(streets[1]))
+                self.xref_sts.append(int(streets[1]))
             else:
                 streets_first = self.set_state(opts.get(self.version)['street'])
                 streets_first = format_floats_and_strings(streets_first)
                 self.csv.writerow(streets_first)
                 self.tmp_streets.append(streets_first)
-                self.xref_sts.append(long(streets_first[3]))
+                self.xref_sts.append(int(streets_first[3]))
 
                 streets = self.clean_street(opts.get(self.version)['streetdesc'], query.value(aval[2]))
                 self.line_count += 1
@@ -1002,9 +1002,9 @@ def format_floats_and_strings(row):
         if isinstance(data[i], float):
             # Round up to match ESRI output
             data[i] = round(data[i], 2)
-            data[i] = '{:.2f}'.format(data[i])
+            # data[i] = '{:.2f}'.format(data[i])
         if not isinstance(data[i], float) and not isinstance(data[i], int):
-            fix_title_text = False
+            fix_title_text = True
             if fix_title_text:  # Disabled for now because it segfaults
                 data[i] = convert_to_title_case(data[i])
 

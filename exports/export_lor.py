@@ -90,13 +90,13 @@ class ExportListOfRoads:
             if self.csv_chx:
                 self.csv_filename = os.path.join(self.path,
                                                  "{}LOR.csv".format(self.code))
-                output_file = open(self.csv_filename, "wb")
+                output_file = open(self.csv_filename, "wt")
                 self.csv = csv.writer(output_file, delimiter=',', quotechar='"',
                                       quoting=csv.QUOTE_NONNUMERIC, lineterminator='\r')
             else:
                 self.csv_filename = os.path.join(self.path,
                                                  "{}.txt".format(self.code))
-                output_file = open(self.csv_filename, "wb")
+                output_file = open(self.csv_filename, "wt")
         # loop over each result and write it the text or CSV
             while query.next():
                 vals = [

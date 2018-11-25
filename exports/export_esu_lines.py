@@ -48,6 +48,7 @@ class ExportESUShapes:
         self.db = db
         self.unassigned = unassigned
         self.export_path = export_path
+        self.sql_queries = {}
         self.prepare_sql_queries()
 
         self.progresswin = QProgressDialog("Exporting Shapefile...", "Abort", 0, 100)
@@ -56,7 +57,6 @@ class ExportESUShapes:
         self.progresswin.setWindowTitle(" ")
 
         self.fields = []
-        self.sql_queries = {}
 
     def kill_export(self):
         self.killed = True
@@ -190,7 +190,7 @@ class ExportESUShapes:
             field_map.append(field)
 
         writer = QgsVectorFileWriter(str(self.export_path), "utf-8", field_map,
-                                     QgsWkbTypes.MultiLineString, None, "ESRI Shapefile")
+                                     QgsWkbTypes.MultiLineString, QgsCoordinateReferenceSystem(), "ESRI Shapefile")
         if writer.hasError() != QgsVectorFileWriter.NoError:
             file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
                                                                       "(possibly in another application).\n"

@@ -241,14 +241,12 @@ class ExportDTF:
                 self.export_to_dtf.dtf_format = "sdtf"
             self.export_to_dtf.start()
 
-    @pyqtSlot()
     def task_started(self):
         """
         pyqt slot for the task started signal, shows the export in progress window
         """
         self.running.show()
 
-    @pyqtSlot()
     def task_finished(self):
         """
         pyqt slot for the task finished signal, shows the export finished window
@@ -256,7 +254,6 @@ class ExportDTF:
         self.running.close()
         self.complete.show()
 
-    @pyqtSlot(str)
     def file_is_already_open_warning(self, csv_filename):
         """
         pyqt slot informing the users the file they are trying to export to is opened
@@ -348,14 +345,12 @@ class ExportSRWR:
             self.export_srwr_dk.close()
             self.export_to_srwr.start()
 
-    @pyqtSlot()
     def task_started(self):
         """
         pyqt slot for the task started signal, shows the export in progress window
         """
         self.running.show()
 
-    @pyqtSlot()
     def task_finished(self):
         """
         pyqt slot for the task finished signal, shows the export finished window
@@ -363,7 +358,6 @@ class ExportSRWR:
         self.running.close()
         self.complete.show()
 
-    @pyqtSlot(str)
     def file_open_warning(self, csv_filename):
         """
         pyqt slot informing the users the file they are trying to export to is opened
@@ -541,7 +535,7 @@ class ExportLsgShp:
         self.export_path = QFileDialog.getSaveFileName(dialog, "Export LSG ",
                                                        esu_file_path,
                                                        filter="ESRI Shapefile (*.shp *.)")
-        self.export_lsg_shp_dlg.ui.fileLineEdit.setText(self.export_path)
+        self.export_lsg_shp_dlg.ui.fileLineEdit.setText(self.export_path[0])
 
     def submit_export(self):
         """
@@ -621,7 +615,7 @@ class ExportPoly:
         self.export_path = QFileDialog.getSaveFileName(dialog, "Export Maintenance Polygons ",
                                                        esu_file_path,
                                                        filter="ESRI Shapefile (*.shp *.)")
-        self.export_poly_shp_dlg.ui.fileLineEdit.setText(self.export_path)
+        self.export_poly_shp_dlg.ui.fileLineEdit.setText(self.export_path[0])
 
     def submit_export(self):
         """

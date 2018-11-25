@@ -31,6 +31,7 @@ class ExportPolyShapes(QtCore.QObject):
         self.unassigned = unassigned
         self.public_only = public_only
         self.export_path = export_path
+        self.sql_queries = {}
         self.prepare_sql_queries()
         self.percent_complete = None
 
@@ -40,7 +41,6 @@ class ExportPolyShapes(QtCore.QObject):
         self.progresswin.setWindowModality(Qt.WindowModal)
 
         self.fields = []
-        self.sql_queries = {}
 
     def kill_export(self):
         self.killed = True
