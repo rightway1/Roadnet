@@ -134,11 +134,11 @@ class Metadata:
             rec = query.record()
             last_entry, last_close = (rec.value('LastEntry'), rec.value('LastClose'))
 
-            if not last_entry.isNull():
+            if not rec.isNull('LastEntry'):
                 if int(last_entry) > last_update:
                     last_update = last_entry
 
-            if not last_close.isNull():
+            if not rec.isNull('LastClose'):
                 if int(last_close) > last_update:
                     last_update = last_close
 

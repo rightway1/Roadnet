@@ -437,7 +437,7 @@ class EsuIntersectionHandler(IntersectionHandler):
         # Create new features from parts
         future_features = []
         for part in parts:
-            future_feature = QgsFeature(self.vlayer.pendingFields())
+            future_feature = QgsFeature(self.vlayer.fields())
             future_feature.setGeometry(part)
             future_features.append(future_feature)
 
@@ -478,7 +478,7 @@ class EsuIntersectionHandler(IntersectionHandler):
             future_features = []
 
             for part in parts:
-                future_feature = QgsFeature(self.vlayer.pendingFields())
+                future_feature = QgsFeature(self.vlayer.fields())
                 future_feature.setGeometry(part)
                 # Copy attributes from victim feature
                 field_map = provider.fieldNameMap()

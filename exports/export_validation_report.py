@@ -28,8 +28,8 @@ class ExportValidationReport:
         self.report_file = None
         self.start_point = QgsPoint()
         self.end_point = QgsPoint()
-        self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
-        self.poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
+        self.esu_layer = QgsProject().instance().mapLayersByName('ESU Graphic')[0]
+        self.poly_layer = QgsProject().instance().mapLayersByName('Road Polygons')[0]
         self.filter = None
         self.queries = {}
         self.headers = {}
@@ -435,7 +435,7 @@ class ExportValidationReport:
             return
         else:
             # checks the field index exists
-            fields = check_layer.pendingFields().toList()
+            fields = check_layer.fields().toList()
             field_names_list = []
             for field in fields:
                 field_names_list.append(field.name())

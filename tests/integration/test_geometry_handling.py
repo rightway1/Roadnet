@@ -7,10 +7,10 @@ import unittest
 from qgis.core import QgsGeometry, QgsPointXY, QgsFeature, QgsVectorLayer, QgsField
 from PyQt5.QtCore import QVariant
 
-from geometry.esu_edit_handler import EsuIntersectionHandler
-from geometry.rdpoly_edit_handler import RdpolyIntersectionHandler, IntersectionHandlerError
-from geometry import edit_handler
-from tests.integration.roadnet_test_cases import QgisTestCase
+from Roadnet.geometry.esu_edit_handler import EsuIntersectionHandler
+from Roadnet.geometry.rdpoly_edit_handler import RdpolyIntersectionHandler, IntersectionHandlerError
+from Roadnet.geometry import edit_handler
+from Roadnet.tests.integration.roadnet_test_cases import QgisTestCase
 
 MULTI_WITH_TINY = u'MultiPolygon (((286666.19960006879409775 680663.14264002745039761, ' \
                   u'286667.41464883968001232 680660.57753706665243953, ' \
@@ -351,8 +351,8 @@ if __name__ == '__main__':
         import sys
         from os import path
         print(path.abspath(__file__))
-        sys.path.append(path.dirname( path.dirname(path.abspath(__file__))))
-        from geometry.esu_edit_handler import EsuIntersectionHandler
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+        from Roadnet.geometry.esu_edit_handler import EsuIntersectionHandler
     else:
-        from geometry.esu_edit_handler import EsuIntersectionHandler
+        from Roadnet.geometry.esu_edit_handler import EsuIntersectionHandler
     unittest.main()

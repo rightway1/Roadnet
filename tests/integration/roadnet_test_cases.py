@@ -1,6 +1,6 @@
 import unittest
 
-import tests.integration.qgis_interface as qgis_interface
+import Roadnet.tests.integration.qgis_interface as qgis_interface
 
 
 class QgisTestCase(unittest.TestCase):
@@ -19,7 +19,8 @@ class RoadnetTestCase(QgisTestCase):
         self.setup_roadnet()
 
     def setup_roadnet(self):
-        self.rn = Roadnet.classFactory(self.iface)
+        from Roadnet import classFactory
+        self.rn = classFactory(self.iface)
 
     def tearDown(self):
         super(RoadnetTestCase, self).tearDown()

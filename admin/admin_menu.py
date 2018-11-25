@@ -80,8 +80,9 @@ class ExportStreetReport:
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setDirectory(self.home_dir)
-        self.street_dia.ui.fileLineEdit.setText(
-            dialog.getSaveFileName(dialog, "Street Report", os.path.join(self.home_dir, "RNStreetReport")))
+        save_file_path, save_extension = dialog.getSaveFileName(dialog, "Street Report",
+                                                                os.path.join(self.home_dir, "RNStreetReport"))
+        self.street_dia.ui.fileLineEdit.setText(save_file_path)
 
     def disable_streets(self):
         # disable the additional tables reporting option

@@ -358,7 +358,7 @@ class DatabaseHandler(object):
         self.original_attributes[fid][attribute_col]
         """
         original_attributes = {}
-        attribute_cols = [f.name() for f in self.vlayer.pendingFields()]
+        attribute_cols = [f.name() for f in self.vlayer.fields()]
         request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
 
         for feature in self.vlayer.getFeatures(request):

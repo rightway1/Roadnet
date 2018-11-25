@@ -680,7 +680,7 @@ class CheckTinyEsus(QRunnable):
             return
         else:
             # checks the field index exists
-            fields = self.check_layer.pendingFields().toList()
+            fields = self.check_layer.fields().toList()
             field_names_list = []
             for field in fields:
                 field_names_list.append(field.name())

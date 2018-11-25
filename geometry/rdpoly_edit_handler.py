@@ -251,7 +251,7 @@ class RdpolyIntersectionHandler(IntersectionHandler):
         result = provider.deleteFeatures([fid])
 
         # Create new feature
-        new_feature = QgsFeature(self.vlayer.pendingFields())
+        new_feature = QgsFeature(self.vlayer.fields())
         new_feature.setGeometry(new_geometry)
 
         # Add new feature

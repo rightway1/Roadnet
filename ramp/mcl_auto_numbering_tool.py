@@ -189,7 +189,7 @@ class MclAutoNumberingTool(object):
         expression = QgsExpression("mcl_ref IN ({})".format(mcls_text))
         request = QgsFeatureRequest(expression)
         mcls_ids = [f.id() for f in self.mcl.getFeatures(request)]
-        self.mcl.setSelectedFeatures(mcls_ids)
+        self.mcl.selectByIds(mcls_ids)
 
     def populate_mcl_sections_box(self, items):
         """

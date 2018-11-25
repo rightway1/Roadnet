@@ -35,7 +35,7 @@ class MclSelectorTool(QgsMapToolIdentifyFeature):
         self.selected_id.emit(mcl_ref_as_str)
         if config.DEBUG_MODE:
             print("DEBUG MODE: MCL {} selected".format(mcl_ref_as_str))
-        self.vlayer.setSelectedFeatures([feature.id()])
+        self.vlayer.selectByIds([feature.id()])
 
     def toolName(self):
         return "MCL Selector Tool"
@@ -78,7 +78,7 @@ class RampSelectorTool(QgsMapToolIdentifyFeature):
         self.selected_id.emit(rd_pol_id_as_str)
         if config.DEBUG_MODE:
             print("DEBUG MODE: RAMP rdpoly {} selected".format(rd_pol_id_as_str))
-        self.vlayer.setSelectedFeatures([feature.id()])
+        self.vlayer.selectByIds([feature.id()])
 
     def toolName(self):
         return "Ramp Polygon Selector Tool"
@@ -136,7 +136,7 @@ class EditLinkedPolysTool(QObject):
         """
         # Clear selection from MCL layer to avoid confusion
         self.current_mcl = self.mcl.selectedFeatures()
-        self.mcl.setSelectedFeatures([])
+        self.mcl.selectByIds([])
 
         # Activate element layer and select features from original selection
         self.iface.setActiveLayer(self.element)
@@ -170,7 +170,7 @@ class EditLinkedPolysTool(QObject):
         linked_features = self.element.getFeatures(
             QgsFeatureRequest(QgsExpression(expr)))
         ids = [feature.id() for feature in linked_features]
-        self.element.setSelectedFeatures(ids)
+        self.element.selectByIds(ids)
 
     def populate_linked_poly_box(self, items):
         """
@@ -202,9 +202,9 @@ class EditLinkedPolysTool(QObject):
         self.linked_polys_updated.emit(linked_polys)
 
         # Return selection to MCL layer and close dialog
-        self.element.setSelectedFeatures([])
+        self.element.selectByIds([])
         self.iface.setActiveLayer(self.mcl)
-        self.mcl.setSelectedFeatures(self.current_mcl)
+        self.mcl.selectByIds(self.current_mcl)
         self.parent_dlg.showNormal()
         self.dlg.close()
 
