@@ -110,7 +110,7 @@ def remove_spatialite_layer(vlayer, iface):
     :param iface: QGIS iface instance
     """
     try:
-        QgsProject.removeMapLayer(vlayer.id())
+        QgsProject().instance().removeMapLayer(vlayer.id())
     except:
         # QGIS throws an error if you try to remove a layer that doesn't exist
         msg = "Attempted to remove layer that is not in QgsProject"

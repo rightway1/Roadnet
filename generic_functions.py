@@ -99,7 +99,7 @@ class ZoomSelectCanvas:
             q_string += '"%s" = %s OR ' % (str(field_n), str(value))
         q_string = q_string[:-3]
         # Get ref to layer
-        layer = QgsProject.mapLayersByName(layer_n)[0]
+        layer = QgsProject().instance().mapLayersByName(layer_n)[0]
         # Select ESUs (or other features) and get extent
         feats = layer.getFeatures(QgsFeatureRequest().setFilterExpression(q_string))
         return feats
@@ -112,12 +112,12 @@ class ZoomSelectCanvas:
         :param layer_name: Name of layer in TOC
         :return: qgis bounding box
         """
-        layer = QgsProject.mapLayersByName(layer_name)[0]
+        layer = QgsProject().instance().mapLayersByName(layer_name)[0]
         feat_ids = []
         for feature in feature_list:
             f_id = feature.id()
             feat_ids.append(f_id)
-        layer.setSelectedFeatures(feat_ids)
+        layer.selectByIds(feat_ids)
         bbox = layer.boundingBoxOfSelected()
         return bbox
 
