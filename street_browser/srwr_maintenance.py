@@ -2,9 +2,9 @@
 import datetime
 import operator
 
-from PyQt5.QtCore import Qt, QDate, QObject, pyqtSignal
-from PyQt5.QtWidgets import QStackedWidget, QMessageBox, QListWidgetItem
-from PyQt5.QtSql import (
+from qgis.PyQt.QtCore import Qt, QDate, QObject, pyqtSignal
+from qgis.PyQt.QtWidgets import QStackedWidget, QMessageBox, QListWidgetItem
+from qgis.PyQt.QtSql import (
     QSqlRelationalTableModel,
     QSqlTableModel,
     QSqlRelation,

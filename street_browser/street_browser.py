@@ -29,6 +29,7 @@ class StreetBrowser:
         self.model = model
         self.db = db
         self.params = params
+        self.gn_fnc = None
         self.fltr_street_rcd_dlg = FilterStreetRecordsDlg()
         # Connect db
         self.mapper = None
@@ -274,7 +275,6 @@ class StreetBrowser:
         mapper.addMapping(self.street_browser.ui.stateDateLineEdit, 18)  # street_date
         mapper.addMapping(self.street_browser.ui.usrnLineEdit, 1)  # USRN
 
-    @pyqtSlot(str)
     def disable_close(self, usrn):
         """
         disables the delete button
@@ -401,15 +401,16 @@ class ScottishRoadWorksRegister:
             self.reins_cat_tab = None
             self.maint_tab = None
             self.spec_des_tab = SpecialDesignationTable(self.street_browser, usrn, self.db,
-                                                        self.street_browser.ui.specDesTableView, self.iface, self.params)
+                                                        self.street_browser.ui.specDesTableView,
+                                                        self.iface, self.params)
             self.spec_des_tab.signals.current_usrn_links.connect(self.disable_close)
 
         elif idx == 2:
             self.maint_tab = None
             self.spec_des_tab = None
             self.reins_cat_tab = ReinstatementCategoriesTable(self.street_browser, usrn, self.db,
-                                                              self.street_browser.ui.reinstCatTableView, self.iface,
-                                                              self.params)
+                                                              self.street_browser.ui.reinstCatTableView,
+                                                              self.iface, self.params)
             self.reins_cat_tab.signals.current_usrn_links.connect(self.disable_close)
 
         else:
@@ -435,7 +436,6 @@ class ScottishRoadWorksRegister:
             except TypeError:
                 pass
 
-    @pyqtSlot(str)
     def disable_close(self, usrn):
         """
         disables the delete button

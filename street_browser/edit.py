@@ -17,12 +17,13 @@ import Roadnet.config
 __author__ = 'matthew.walsh'
 
 
-class EditRecord:
+class EditRecord(QObject):
     """
     Makes changes to forms for editing/adding records, also deals with committing edits to the db
     """
 
     def __init__(self, iface, street_browser, model, mapper, db, params):
+        QObject.__init__(self)
         self.street_browser = street_browser
         self.iface = iface
         self.model = model
@@ -104,7 +105,7 @@ class EditRecord:
             self.street_browser_modify()
             if not self.esu_layer:
                 # Set the ESU layer to read only during modification of the record
-                self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+                self.esu_layer = QgsProject().instance().mapLayersByName('ESU Graphic')[0]
             if Roadnet.config.DEBUG_MODE:
                 print("DEBUG_MODE: Setting ESU layer to read only for modify.")
             self.esu_layer.setReadOnly(True)
