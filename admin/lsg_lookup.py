@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtSql import QSqlQuery, QSqlTableModel
-from PyQt5.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtSql import QSqlQuery, QSqlTableModel
+from qgis.PyQt.QtWidgets import QMessageBox
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
@@ -130,16 +130,7 @@ class LsgLookUp:
             return
 
         # Get ID for new item
-        sql_find_max_ref = """SELECT MAX({}) AS 'max_ref'
-                                  FROM {};""".format(ref_col, table)
-        if config.DEBUG_MODE:
-            print('DEBUG_MODE: find_max_ref: {}'.format(
-                sql_find_max_ref))
-        query = QSqlQuery(sql_find_max_ref, self.db)
-        query.first()
-        max_ref = query.record().value('max_ref')
-        if max_ref.isNull():
-            max_ref = 0
+        max_ref = self.get_max_value(ref_col, table)
 
         # Create the record to insert
         row_count = self.items_model.rowCount()
@@ -338,3 +329,25 @@ class LsgLookUp:
         else:
             self.lsg_lu_dia.ui.amendButton.setEnabled(True)
             self.lsg_lu_dia.ui.addLookupLineEdit.setText(item_text)
+
+    def get_max_value(self, ref_col, table):
+        # Get ID for new item
+        sql_find_max_ref = """SELECT MAX({}) AS 'max_ref'
+                                  FROM {};""".format(ref_col, table)
+        if config.DEBUG_MODE:
+            print('DEBUG_MODE: find_max_ref: {}'.format(
+                sql_find_max_ref))
+
+        query_max = QSqlQuery(sql_find_max_ref, self.db)
+        query_max.first()
+
+        max_ref = 0
+        if query_max.isValid():
+            if not query_max.isNull('max_ref'):
+                max_ref = query_max.value('max_ref')
+
+        # cleanup
+        if query_max.isActive():
+            query_max.clear()
+
+        return max_ref
