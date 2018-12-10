@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from multiprocessing.pool import ThreadPool
 
-from PyQt5.QtSql import QSqlQuery
-from PyQt5.QtWidgets import QProgressDialog, QMessageBox
-from PyQt5.QtCore import QVariant, Qt, QByteArray
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QProgressDialog, QMessageBox
+from qgis.PyQt.QtCore import QVariant, Qt, QByteArray
 
 from qgis.core import (
     QgsField,
@@ -13,8 +13,7 @@ from qgis.core import (
     QgsFeature,
     QgsVectorFileWriter,
     QgsWkbTypes,
-    Qgis,
-    QgsFields)
+    QgsFields, QgsMessageLog)
 
 from qgis.gui import *
 import Roadnet.config
@@ -106,7 +105,7 @@ class ExportESUShapes:
 
         # Run the main query
         if Roadnet.config.DEBUG_MODE:
-            print(nsgexportsql)
+            QgsMessageLog.logMessage(nsgexportsql)
         query = QSqlQuery(self.db)
         query.setForwardOnly(True)
         query.exec_(nsgexportsql)
@@ -168,10 +167,10 @@ class ExportESUShapes:
             return False
 
         vlayer.updateExtents()
-        result = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8", vlayer.crs(),
+        error_code, error_msg = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8", vlayer.crs(),
                                                          "ESRI Shapefile")
         # checks for completed export
-        if result == 0:
+        if error_code == 0:
             self.progresswin.close()
             if Roadnet.config.DEBUG_MODE:
                 print('DEBUG_MODE: {} features exported'.format(vlayer.featureCount()))

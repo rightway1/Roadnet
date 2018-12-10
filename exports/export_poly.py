@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import QVariant, Qt, QByteArray, QDate
-from PyQt5.QtWidgets import QProgressDialog, QMessageBox
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtCore import QVariant, Qt, QByteArray, QDate
+from qgis.PyQt.QtWidgets import QProgressDialog, QMessageBox
+from qgis.PyQt.QtSql import QSqlQuery
 from qgis.core import (
     QgsField,
     QgsCoordinateReferenceSystem,
@@ -12,7 +12,7 @@ from qgis.core import (
     QgsFeature,
     QgsVectorFileWriter,
     QgsWkbTypes,
-    QgsFields)
+    QgsFields, QgsMessageLog)
 import Roadnet.config
 
 __author__ = 'matthew.bradley'
@@ -53,16 +53,16 @@ class ExportPolyShapes(QtCore.QObject):
         canvas = self.iface.mapCanvas()
         clayer = canvas.currentLayer()
         # will return 0 if none selected
-        count = clayer.selectedFeatureCount()
+        sel_count = clayer.selectedFeatureCount()
         feature_count = clayer.featureCount()
 
         # Get list of selected features
         selected_poly_ids = list()
-        if count > 0:
-            selectedfeats = clayer.selectedFeatures()
-            for feat in selectedfeats:
+        if sel_count > 0:
+            selected_feats = clayer.selectedFeatures()
+            for feat in selected_feats:
                 selected_poly_ids.append(int(feat.attribute('rd_pol_id')))
-            feature_count = clayer.selectedFeatureCount()
+            feature_count = sel_count
             self.warn_about_selected_features(feature_count)
 
         # Prepare sql query
@@ -72,7 +72,7 @@ class ExportPolyShapes(QtCore.QObject):
             polyexportsql = self.sql_queries['export_assigned_only']
 
         # SQL to filter out unselected and/or public road records
-        if count > 0:
+        if sel_count > 0:
             polyexportsql += " WHERE rd_pol_id IN ({})".format(
                 ', '.join(map(str, selected_poly_ids)))
         else:
@@ -89,7 +89,7 @@ class ExportPolyShapes(QtCore.QObject):
 
         # Run the main query
         if Roadnet.config.DEBUG_MODE:
-            print(polyexportsql)
+            QgsMessageLog.logMessage(polyexportsql, "")
         query = QSqlQuery(self.db)
         query.setForwardOnly(True)
         query.exec_(polyexportsql)
@@ -155,10 +155,11 @@ class ExportPolyShapes(QtCore.QObject):
             return False
 
         vlayer.updateExtents()
-        result = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8", None, "ESRI Shapefile")
+        error_code, error_msg = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8", vlayer.crs(),
+                                                                        "ESRI Shapefile")
 
         # checks for completed export
-        if result == 0:
+        if error_code == 0:
             self.progresswin.close()
             if Roadnet.config.DEBUG_MODE:
                 print('DEBUG_MODE: {} features exported'.format(vlayer.featureCount()))
@@ -177,7 +178,8 @@ class ExportPolyShapes(QtCore.QObject):
             field_map.append(field)
 
         writer = QgsVectorFileWriter(str(self.export_path), "utf-8", field_map,
-                                     QgsWkbTypes.MultiLineString, None, "ESRI Shapefile")
+                                     QgsWkbTypes.MultiLineString,
+                                     QgsCoordinateReferenceSystem(), "ESRI Shapefile")
         if writer.hasError() != QgsVectorFileWriter.NoError:
             file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
                                                                       "(possibly in another application).\n"
@@ -189,7 +191,8 @@ class ExportPolyShapes(QtCore.QObject):
             return True
         return False
 
-    def create_feature_from_record(self, record):
+    @staticmethod
+    def create_feature_from_record(record):
 
         """
         Create feature in temporary layer from record returned from query.
@@ -223,7 +226,8 @@ class ExportPolyShapes(QtCore.QObject):
                                ])
         return feature
 
-    def warn_about_selected_features(self, feature_count):
+    @staticmethod
+    def warn_about_selected_features(feature_count):
         """
         Pop a message box if user has selected features.
         :param feature_count: Number of selected features for export
