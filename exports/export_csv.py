@@ -6,8 +6,7 @@ import re
 
 from qgis.PyQt.QtSql import QSqlQuery
 
-from qgis.core import QgsGeometry, QgsFeature
-
+from qgis.core import QgsGeometry, QgsFeature, QgsMessageLog
 
 __author__ = 'matthew.bradley'
 
@@ -930,17 +929,17 @@ class ExportCSV:
                            start_yref=query.value(rec.indexOf("start_yref")),
                            end_xref=query.value(rec.indexOf("end_xref")),
                            end_yref=query.value(rec.indexOf("end_yref")),
-                           tolerance=query.value(rec.indexOf("tolerance")),
+                           tolerance=query.value(rec.indexOf("tolerance"))
                            )
 
             if geom is not None:
                 self.xref_esu.append(esu_id)
                 item = dict(result=0, esu_id=esu_id, start={
-                    'x': start[0],
-                    'y': start[1]
+                    'x': start.x(),
+                    'y': start.y()
                 }, end={
-                    'x': end[0],
-                    'y': end[1]
+                    'x': end.x(),
+                    'y': end.y()
                 }, length=count, attributes=afields, midpoints=mids)
             else:
                 item = dict(result=1, esu_id=esu_id, ESUXYID=int(str(esux) + str(esuy)))
@@ -1019,6 +1018,9 @@ def convert_to_title_case(text):
     :return: Text String In Title Case
     """
     text = copy.copy(str(text))
+    if len(text) == 0:
+        return text
+
     capitalized_words = [word[0].upper() + word[1:] for word in text.split(' ')]
     text_as_title = ' '.join(capitalized_words)
 

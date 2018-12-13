@@ -29,3 +29,10 @@ class TestExportCSV(unittest.TestCase):
 
         self.assertListEqual(aheader, expected.get(version), "List {} did not match expected {}"
                              .format(str(aheader), str(expected[75])))
+
+    def test_convert_to_title_case(self):
+        self.assertEqual('My Test', csv_export.convert_to_title_case('my test'))
+        self.assertEqual('A Test', csv_export.convert_to_title_case('a test'))
+        self.assertEqual('A', csv_export.convert_to_title_case('a'))
+        self.assertEqual('', csv_export.convert_to_title_case(''))
+        self.assertEqual('123', csv_export.convert_to_title_case('123'))
