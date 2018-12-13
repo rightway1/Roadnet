@@ -82,7 +82,7 @@ class ExportsThread(QThread):
                                         "{}{}".format(self.code,
                                                       file_extension))
         try:
-            csv_file = open(csv_filename, 'w')
+            csv_file = open(csv_filename, 'w', newline='')
             self.csv = csv.writer(csv_file, quoting=csv.QUOTE_NONNUMERIC)
             exp = ExportCSV(version, self.csv, self.inc_asd, self.closed_streets,
                             self.org, self.lang, self.code, self.db)
