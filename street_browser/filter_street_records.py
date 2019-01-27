@@ -286,7 +286,7 @@ class MultiFilterProxyModel(QSortFilterProxyModel):
                 # index of the cell to be filtered
                 index = self.sourceModel().index(row_num, col, parent)
                 # Text from the cell
-                txt = str(index.data(), 'utf-8')
+                txt = str(index.data())
                 # If description lineedit use find rather than equality
                 if col == 5:
                     if txt.lower().find(search_str.lower()) != -1:
