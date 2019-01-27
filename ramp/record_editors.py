@@ -657,7 +657,7 @@ class RdpolyRecordEditor(object):
         element = self.rdpoly_data(ELEMENT)
         side = self.rdpoly_data(OFFSET)
         number = self.rdpoly_data(DESC_3)
-        if isinstance(number, QPyNullVariant) or number in (0, ''):
+        if number is 'NULL' or number in (0, ''):
             label = "/{}".format(element)
             label1 = "/{}/{}".format(element, side)
         else:
@@ -882,7 +882,7 @@ def set_model_value_from_combobox(editor, model, index, code_map):
         return
 
     # Loop back through dictionary to find model key
-    for k, v in code_map.iteritems():
+    for k, v in code_map.items():
         if v == display_text:
             model_text = k
             model.setData(index, model_text)

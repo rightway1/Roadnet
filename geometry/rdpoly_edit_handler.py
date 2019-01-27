@@ -133,8 +133,9 @@ class RdpolyDatabaseHandler(DatabaseHandler):
 
     def change_geometry(self, fid, geometry):
         # Collect input data
-        feature = self.vlayer.getFeatures(
-            QgsFeatureRequest().setFilterFid(fid)).next()
+        feature = QgsFeature()
+        self.vlayer.getFeatures(
+            QgsFeatureRequest().setFilterFid(fid)).nextFeature(feature)
         rd_pol_id = feature['rd_pol_id']
         args = {'rd_pol_id': rd_pol_id}
 

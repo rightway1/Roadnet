@@ -307,8 +307,9 @@ class EsuDatabaseHandler(DatabaseHandler):
 
     def change_geometry(self, fid, geometry):
         # Collect input data
-        feature = self.vlayer.getFeatures(
-            QgsFeatureRequest().setFilterFid(fid)).next()
+        feature = QgsFeature()
+        self.vlayer.getFeatures(
+            QgsFeatureRequest().setFilterFid(fid)).nextFeature(feature)
         today = datetime.datetime.now().strftime("%Y%m%d")
         (startx, starty), (endx, endy) = self.get_start_end_xy(feature)
         esu_id = self.original_attributes[fid]['esu_id']

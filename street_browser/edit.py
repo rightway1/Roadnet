@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QDate, QObject, pyqtSignal
 from PyQt5.QtGui import QColor, QDoubleValidator
 from PyQt5.QtSql import QSqlQuery
 from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QLineEdit
-from qgis.core import QgsPoint, QgsFeatureRequest
+from qgis.core import QgsPoint, QgsFeatureRequest, QgsFeature
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 from Roadnet.street_browser.mod_validation import ValidateDescription, ValidateStreetType
@@ -824,18 +824,20 @@ class EditEsuLink(object):
         :param deselected: Items just deselected fids
         """
         prov = self.layer.dataProvider()
+        feat = QgsFeature()
         for fid in selected:
-            feat = self.layer.getFeatures(
-                QgsFeatureRequest().setFilterFid(fid)).next()
+            self.layer.getFeatures(
+                QgsFeatureRequest().setFilterFid(fid)).nextFeature(feat)
             esu_id = int(feat.attribute(self.dis_attr))
 
             if esu_id not in self.selected_dict:
                 self.selected_dict[esu_id] = QListWidgetItem(str(esu_id),
                                                              self.list_widget)
 
+        feat = QgsFeature()
         for fid in deselected:
-            feat = self.layer.getFeatures(
-                QgsFeatureRequest().setFilterFid(fid)).next()
+            self.layer.getFeatures(
+                QgsFeatureRequest().setFilterFid(fid)).nextFeature(feat)
             esu_id = int(feat.attribute(self.dis_attr))
 
             try:

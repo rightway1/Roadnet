@@ -9,7 +9,7 @@ from qgis.PyQt.QtSql import (
     QSqlTableModel,
     QSqlRelation,
     QSqlQuery)
-from qgis.core import QgsFeatureRequest
+from qgis.core import QgsFeatureRequest, QgsFeature
 
 from Roadnet.roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
 from Roadnet.street_browser.edit import EditStartEndCoords, EditEsuLink
@@ -456,7 +456,7 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
         Populate all comboboxes from db lookup tables. Combos sorted alphabetically with a 0 (default None) value at
         the top.
         """
-        for query_str, combo in self.query_lst.iteritems():
+        for query_str, combo in self.query_lst.items():
             query = QSqlQuery(query_str)
             all_items = {}
             while query.next():
@@ -751,7 +751,8 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
         :param field: field index
         """
         filter_ = '"rd_pol_id" = %s' % rdpoly_id
-        feat = self.rdpoly_layer.getFeatures(QgsFeatureRequest().setFilterExpression(filter_)).next()
+        feat = QgsFeature()
+        self.rdpoly_layer.getFeatures(QgsFeatureRequest().setFilterExpression(filter_)).nextFeature(feat)
         fid = feat.id()
         self.rdpoly_layer.dataProvider().changeAttributeValues({fid: {field: value}})
 
@@ -1148,7 +1149,7 @@ class SrwrModifyMaintenanceRecord(SrwrAddMaintenanceRecord):
         :return : True if record is dirty
         """
         new_values = self.snapshot_record_values()
-        for idx, org_value in self.before_mod_values.iteritems():
+        for idx, org_value in self.before_mod_values.items():
             if org_value != new_values[idx]:
                 return True
         adopt_new = self.view_dlg.ui.adoptDateEdit.text()

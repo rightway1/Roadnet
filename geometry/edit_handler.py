@@ -2,7 +2,7 @@
 import pprint
 from PyQt5.QtSql import QSqlQuery
 
-from qgis.core import QgsFeatureRequest, Qgis
+from qgis.core import QgsFeatureRequest, Qgis, QgsFeature
 from qgis.gui import QgsMessageBar
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
@@ -103,9 +103,10 @@ class EditHandler(object):
         """
         if config.DEBUG_MODE:
             print('Committed geometries changed in layer {}.'.format(layer_id))
+        feature = QgsFeature()
         for fid in changed_geometries:
-            feature = self.vlayer.getFeatures(
-                QgsFeatureRequest().setFilterFid(fid)).next()
+            self.vlayer.getFeatures(
+                QgsFeatureRequest().setFilterFid(fid)).nextFeature(feature)
 
             # Just update database if intersections are ignored
             if self.handle_intersect_flag is False:
@@ -248,8 +249,9 @@ class EditHandler(object):
         if config.DEBUG_MODE:
             print('DEBUG_MODE: Checking for intersections on '
                   'feature {}'.format(fid))
-        my_feature = self.vlayer.getFeatures(
-            QgsFeatureRequest().setFilterFid(fid)).next()
+        my_feature = QgsFeature()
+        self.vlayer.getFeatures(
+            QgsFeatureRequest().setFilterFid(fid)).nextFeature(my_feature)
         victims = find_intersections(my_feature, self.vlayer)
 
         if len(victims) > 0:
@@ -263,8 +265,9 @@ class EditHandler(object):
         been committed yet.
         :param fid: Feature ID
         """
-        my_feature = self.vlayer.getFeatures(
-            QgsFeatureRequest().setFilterFid(fid)).next()
+        my_feature = QgsFeature()
+        self.vlayer.getFeatures(
+            QgsFeatureRequest().setFilterFid(fid)).nextFeature(my_feature)
         if config.DEBUG_MODE:
             print("DEBUG_MODE: Checking for uncommitted victims.")
         victims = find_intersections(my_feature, self.vlayer)
@@ -446,8 +449,9 @@ class IntersectionHandler(object):
         self.vlayer = vlayer
         self.is_modify = is_modify
         self.edit_buffer = self.vlayer.editBuffer()
-        self.my_feature = self.vlayer.getFeatures(
-            QgsFeatureRequest().setFilterFid(fid)).next()
+        self.my_feature = QgsFeature()
+        self.vlayer.getFeatures(
+            QgsFeatureRequest().setFilterFid(fid)).nextFeature(self.my_feature)
         self.victims = []
         self.added_features = {}  # New feature lists, with parents as keys
         self.deleted_feature_ids = []
