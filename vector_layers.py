@@ -62,7 +62,7 @@ def set_crs_and_register(vlayer):
     """
     vlayer.setCrs(QgsCoordinateReferenceSystem(
         27700, QgsCoordinateReferenceSystem.EpsgCrsId), False)
-    QgsProject().instance().addMapLayer(vlayer)
+    QgsProject.instance().addMapLayer(vlayer)
 
 
 def apply_layer_style(vlayer, style, db_path):
@@ -110,7 +110,7 @@ def remove_spatialite_layer(vlayer, iface):
     :param iface: QGIS iface instance
     """
     try:
-        QgsProject().instance().removeMapLayer(vlayer.id())
+        QgsProject.instance().removeMapLayer(vlayer.id())
     except:
         # QGIS throws an error if you try to remove a layer that doesn't exist
         msg = "Attempted to remove layer that is not in QgsProject"

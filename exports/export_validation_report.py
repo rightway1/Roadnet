@@ -5,9 +5,9 @@ from PyQt5.QtSql import QSqlQueryModel
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtWidgets import QMessageBox, QProgressDialog
 
-from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
+from qgis.core import QgsPoint, QgsFeatureRequest
 
-# from generic_functions import ipdb_breakpoint
+from Roadnet.generic_functions import get_layer, ipdb_breakpoint
 
 __author__ = 'Alessandro Cristofori'
 
@@ -28,8 +28,10 @@ class ExportValidationReport:
         self.report_file = None
         self.start_point = QgsPoint()
         self.end_point = QgsPoint()
-        self.esu_layer = QgsProject().instance().mapLayersByName('ESU Graphic')[0]
-        self.poly_layer = QgsProject().instance().mapLayersByName('Road Polygons')[0]
+        # self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+        # self.poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
+        self.esu_layer = get_layer('ESU Graphic')
+        self.poly_layer = get_layer('Road Polygons')
         self.filter = None
         self.queries = {}
         self.headers = {}

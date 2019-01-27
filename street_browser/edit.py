@@ -10,7 +10,8 @@ from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 from Roadnet.street_browser.mod_validation import ValidateDescription, ValidateStreetType
-from Roadnet.generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint
+from Roadnet.generic_functions import ZoomSelectCanvas, MapLookupValues, SwitchStreetBrowserMode, ipdb_breakpoint, \
+    get_layer
 from Roadnet.roadnet_dialog import SaveRecordDlg, EditCoordsDlg, EditEsuLinkDlg
 import Roadnet.config
 
@@ -105,7 +106,7 @@ class EditRecord(QObject):
             self.street_browser_modify()
             if not self.esu_layer:
                 # Set the ESU layer to read only during modification of the record
-                self.esu_layer = QgsProject().instance().mapLayersByName('ESU Graphic')[0]
+                self.esu_layer = get_layer('ESU Graphic')
             if Roadnet.config.DEBUG_MODE:
                 print("DEBUG_MODE: Setting ESU layer to read only for modify.")
             self.esu_layer.setReadOnly(True)
@@ -744,7 +745,7 @@ class EditEsuLink(object):
         # Create instance of generic zoom/select functs
         self.gn_fnc = ZoomSelectCanvas(self.iface, self.street_browser, self.db)
         self.connect_buttons()
-        self.layer = QgsProject.instance().mapLayersByName(self.layer_name)[0]
+        self.layer = get_layer(self.layer_name)
         self.iface.setActiveLayer(self.layer)
         # List widget
         self.list_widget = self.esu_dlg.ui.esuLinkListWidget

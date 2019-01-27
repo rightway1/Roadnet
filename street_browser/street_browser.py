@@ -16,7 +16,8 @@ from Roadnet.street_browser.filter_street_records import PopulateFilterTableView
 from Roadnet.street_browser.edit import EditRecord
 from Roadnet.street_browser.add import AddRecord
 from Roadnet.street_browser.close import CloseRecord
-from Roadnet.generic_functions import ZoomSelectCanvas, DateMapperCustomDelegate, ShowStreetCoordinates, ipdb_breakpoint
+from Roadnet.generic_functions import ZoomSelectCanvas, DateMapperCustomDelegate, ShowStreetCoordinates, \
+    ipdb_breakpoint, get_layer
 
 __author__ = 'matthew.walsh'
 
@@ -220,8 +221,8 @@ class StreetBrowser:
         Checks if either the rd poly layer or esu layer are currently in editing state.
         :return: True if editing
         """
-        esu_layer = QgsProject().mapLayersByName("ESU Graphic")[0]
-        rdpoly_layer = QgsProject().mapLayersByName('Road Polygons')[0]
+        esu_layer = get_layer('ESU Graphic')
+        rdpoly_layer = get_layer('Road Polygons')
         if esu_layer.isEditable() or rdpoly_layer.isEditable():
             no_add_esu_layer_msg_box = QMessageBox(QMessageBox.Warning, '',
                                                    'Cannot modify street record while editing layers',

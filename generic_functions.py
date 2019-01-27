@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from qgis.core import Qgis, QgsPoint, QgsProject, QgsGeometry, QgsWkbTypes
+from qgis.core import Qgis, QgsPoint, QgsProject, QgsGeometry, QgsWkbTypes, QgsFeatureRequest
 from qgis.gui import QgsRubberBand, QgsVertexMarker
 
-from qgis.core import QgsFeatureRequest
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QPushButton, QStackedWidget, QItemDelegate
@@ -99,7 +98,8 @@ class ZoomSelectCanvas:
             q_string += '"%s" = %s OR ' % (str(field_n), str(value))
         q_string = q_string[:-3]
         # Get ref to layer
-        layer = QgsProject().instance().mapLayersByName(layer_n)[0]
+        # layer = QgsProject.instance().mapLayersByName(layer_n)[0]
+        layer = get_layer(layer_n)
         # Select ESUs (or other features) and get extent
         feats = layer.getFeatures(QgsFeatureRequest().setFilterExpression(q_string))
         return feats
@@ -112,7 +112,8 @@ class ZoomSelectCanvas:
         :param layer_name: Name of layer in TOC
         :return: qgis bounding box
         """
-        layer = QgsProject().instance().mapLayersByName(layer_name)[0]
+        # layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        layer = get_layer(layer_name)
         feat_ids = []
         for feature in feature_list:
             f_id = feature.id()
@@ -351,6 +352,10 @@ class ShowStreetCoordinates:
         self.canvas.scene().removeItem(self.rb_start)
         self.canvas.scene().removeItem(self.rb_end)
         self.canvas.scene().removeItem(self.rb_line)
+
+
+def get_layer(layer_name):
+    return QgsProject.instance().mapLayersByName(layer_name)[0]
 
 
 def ipdb_breakpoint():

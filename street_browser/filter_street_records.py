@@ -5,8 +5,9 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtSql import QSqlRelation, QSqlQuery
 from PyQt5.QtCore import Qt, QSortFilterProxyModel
 from PyQt5.QtWidgets import QComboBox, QAbstractItemView, QMessageBox
-from qgis.core import QgsProject, QgsFeatureRequest
+from qgis.core import QgsFeatureRequest
 
+from Roadnet.generic_functions import get_layer
 from Roadnet.roadnet_dialog import QuickFindDlg
 
 __author__ = 'matthew.walsh'
@@ -124,14 +125,14 @@ class PopulateFilterTableView:
                     q_string += '"esu_id" = %s OR ' % str(query.value(0))
                 q_string = q_string[:-3]
                 # Get ref to ESU layer
-                esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+                esu_layer = get_layer('ESU Graphic')
                 # Select ESU's + get extent
                 feats = esu_layer.getFeatures(QgsFeatureRequest().setFilterExpression(q_string))
                 feat_ids = []
                 for feature in feats:
                     f_id = feature.id()
                     feat_ids.append(f_id)
-                esu_layer.setSelectedFeatures(feat_ids)
+                esu_layer.selectByIds(feat_ids)
                 esu_bbox = esu_layer.boundingBoxOfSelected()
                 # Set new extent
                 esu_bbox.scale(1.1)  # Zoom out slightly for context

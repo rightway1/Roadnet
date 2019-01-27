@@ -18,7 +18,7 @@ from Roadnet.street_browser.srwr import (
     WidgetInfoObject,
     WidgetTypeEnum,
     SrwrViewRecord)
-from Roadnet.generic_functions import ZoomSelectCanvas, ShowStreetCoordinates
+from Roadnet.generic_functions import ZoomSelectCanvas, ShowStreetCoordinates, get_layer
 
 
 class MaintenanceTable(object):
@@ -178,7 +178,7 @@ class MaintenanceTable(object):
         Checks if either the rd poly layer is currently in editing state.
         :return: True if editing
         """
-        self.rdpoly_layer = QgsProject().instance().mapLayersByName('Road Polygons')[0]
+        self.rdpoly_layer = get_layer('Road Polygons')
         if self.rdpoly_layer.isEditable():
             msg_box = QMessageBox(QMessageBox.Warning, '',
                                   'Cannot modify a maintenance record while editing the Road Polygon layer',
@@ -360,7 +360,7 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
         self.query_lst = query_lst
 
         self.params = params
-        self.rdpoly_layer = QgsProject().instance().mapLayersByName('Road Polygons')[0]
+        self.rdpoly_layer = get_layer('Road Polygons')
 
         self.links = None
         self.usrn = None

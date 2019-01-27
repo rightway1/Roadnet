@@ -7,6 +7,7 @@ from qgis.gui import QgsMessageBar
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
+
 __author__ = "john.stevenson"
 
 

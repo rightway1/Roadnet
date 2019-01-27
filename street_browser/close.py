@@ -4,8 +4,7 @@ import datetime
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery
 
-from qgis.core import QgsProject
-
+from Roadnet.generic_functions import get_layer
 from Roadnet.roadnet_dialog import SaveRecordDlg
 from Roadnet.street_browser.edit import UpdateEsuSymbology
 
@@ -70,7 +69,7 @@ class CloseRecord:
         while counter < self.street_browser.ui.linkEsuListWidget.count():
             esu_list.append(self.street_browser.ui.linkEsuListWidget.item(counter).text())
             counter += 1
-        esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+        esu_layer = get_layer('ESU Graphic')
         UpdateEsuSymbology(self.db, esu_layer).update(usrn, esu_list=esu_list)
 
         # Update display

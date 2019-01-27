@@ -2,7 +2,7 @@
 from PyQt5.QtCore import Qt, QSortFilterProxyModel
 from PyQt5.QtWidgets import QDataWidgetMapper
 
-from qgis.core import QgsPoint, QgsGeometry
+from qgis.core import QgsPointXY, QgsGeometry
 
 from Roadnet.generic_functions import DateMapperCustomDelegate
 
@@ -207,7 +207,7 @@ class SrwrViewRecord(object):
         endy = self.view_dlg.ui.endYLineEdit.text()
         # Only zoom if values are present
         if startx and starty:
-            coords_f = [QgsPoint(float(startx), float(starty)), QgsPoint(float(endx), float(endy))]
+            coords_f = [QgsPointXY(float(startx), float(starty)), QgsPointXY(float(endx), float(endy))]
             geom = QgsGeometry().fromMultiPointXY(coords_f)
             bbox = geom.boundingBox()
             self.iface.mapCanvas().setExtent(bbox)

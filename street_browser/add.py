@@ -5,9 +5,7 @@ from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
 from PyQt5.QtWidgets import QMessageBox, QLineEdit, QComboBox
 from PyQt5.QtCore import Qt, QDate
 
-from qgis.core import QgsProject
-
-from Roadnet.generic_functions import SwitchStreetBrowserMode, ZoomSelectCanvas, ipdb_breakpoint
+from Roadnet.generic_functions import SwitchStreetBrowserMode, ZoomSelectCanvas, ipdb_breakpoint, get_layer
 from Roadnet.roadnet_dialog import SaveRecordDlg
 from Roadnet.street_browser.edit import EditEsuLink, EditStartEndCoords, UpdateEsuSymbology
 from Roadnet.street_browser.mod_validation import ValidateDescription, ValidateStreetType
@@ -31,7 +29,7 @@ class AddRecord:
         self.save_dlg.ui.savePushButton.clicked.connect(self.save_new_record)
         self.save_dlg.ui.revertPushButton.clicked.connect(self.cancel_new_record)
         self.save_dlg.ui.cancelPushButton.clicked.connect(lambda: self.save_dlg.close())
-        self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+        self.esu_layer = get_layer('ESU Graphic')
 
         self.lineedits = {1: self.street_browser.ui.usrnLineEdit,
                           8: self.street_browser.ui.startDateDateEdit,
@@ -224,7 +222,7 @@ class AddRecord:
             self.revert_sb_add()
             self.disconnect_esu_and_coords()
             # Update Esu Graphic symbology attribute for all linked Esu's
-            self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+            self.esu_layer = get_layer('ESU Graphic')
             UpdateEsuSymbology(self.db, self.esu_layer).update(usrn)
         else:
             self.failed_validation_msg(mandatory, unique_desc, esu_valid)

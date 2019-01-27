@@ -217,9 +217,9 @@ class EditLinkedPolysTool(QObject):
         self.linked_polys_updated.emit(self.original_selection)
 
         # Return selection to MCL layer and close dialog
-        self.element.setSelectedFeatures([])
+        self.element.selectByIds([])
         self.iface.setActiveLayer(self.mcl)
-        self.mcl.setSelectedFeatures(self.current_mcl)
+        self.mcl.selectByIds(self.current_mcl)
         self.parent_dlg.showNormal()
         self.dlg.close()
 

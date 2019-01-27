@@ -20,9 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-# import os
+import os
 
-from PyQt5.QtCore import Qt, QSettings, QUrl
+from PyQt5.QtCore import Qt, QSettings, QUrl, QCoreApplication
 from PyQt5.QtGui import QPixmap, QIcon, QDesktopServices
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlDatabase
@@ -85,6 +85,7 @@ class Roadnet:
         :param iface: QGIS interface
         :return:
         """
+
         if config.DEBUG_MODE:
             print('DEBUG_MODE: Roadnet.__init__ called')
         self.iface = iface  # Save reference to the QGIS interface

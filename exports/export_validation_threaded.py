@@ -5,8 +5,9 @@ import os
 from math import sqrt
 from PyQt5.QtSql import QSqlQueryModel, QSqlQuery
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QModelIndex
-from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
+from qgis.core import QgsPoint, QgsFeatureRequest
 from datetime import datetime
+from Roadnet.generic_functions import get_layer
 
 report_file = None
 user = ""
@@ -947,9 +948,11 @@ class InitGlobals:
         user = params["UserName"]
         # initialises layers
         global esu_layer
-        esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
+        esu_layer = get_layer('ESU Graphic')
+        #esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
         global poly_layer
-        poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
+        poly_layer = get_layer('Road Polygons')
+        #poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
         # initialises db queries
         global queries
         queries = {
