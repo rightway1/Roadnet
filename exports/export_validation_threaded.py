@@ -949,10 +949,8 @@ class InitGlobals:
         # initialises layers
         global esu_layer
         esu_layer = get_layer('ESU Graphic')
-        #esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
         global poly_layer
         poly_layer = get_layer('Road Polygons')
-        #poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
         # initialises db queries
         global queries
         queries = {

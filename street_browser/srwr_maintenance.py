@@ -9,7 +9,7 @@ from qgis.PyQt.QtSql import (
     QSqlTableModel,
     QSqlRelation,
     QSqlQuery)
-from qgis.core import QgsProject, QgsFeatureRequest
+from qgis.core import QgsFeatureRequest
 
 from Roadnet.roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
 from Roadnet.street_browser.edit import EditStartEndCoords, EditEsuLink

@@ -2,7 +2,6 @@ from mock import MagicMock, call, patch
 import os
 import unittest
 
-from PyQt5.QtWidgets import QMessageBox
 from qgis.core import QgsProject, QgsVectorLayer
 from tests.integration.roadnet_test_cases import QgisTestCase
 import vector_layers

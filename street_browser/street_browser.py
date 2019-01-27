@@ -7,7 +7,6 @@ from PyQt5.QtCore import Qt, pyqtSlot, QSortFilterProxyModel
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QDataWidgetMapper, QAbstractItemView, QListWidgetItem, QMessageBox
 
-from qgis.core import QgsProject
 from Roadnet.street_browser.srwr_maintenance import MaintenanceTable
 from Roadnet.street_browser.srwr_reinstatement_cat import ReinstatementCategoriesTable
 from Roadnet.street_browser.srwr_special_designation import SpecialDesignationTable

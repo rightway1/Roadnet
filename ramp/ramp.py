@@ -7,10 +7,8 @@ from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlQuery
 
-from qgis.core import QgsProject
-
 from Roadnet import config
-from Roadnet.generic_functions import ipdb_breakpoint
+from Roadnet.generic_functions import get_layer, ipdb_breakpoint
 from Roadnet import vector_layers
 from Roadnet.geometry.mcl_edit_handler import MclEditHandler
 from Roadnet.ramp.wdm_export_handler import WdmExportHandler
@@ -103,12 +101,10 @@ class Ramp(object):
                                           ('Element', 'rdpoly'),
                                           ('MCL', 'mcl')])
 
-        registry = QgsProject.instance()
-
         for key, vlayer in layers.items():
             pointer = key.lower()
             # Check layer isn't already loaded and visible
-            if len(registry.mapLayersByName(key)) > 0:
+            if get_layer(key) is not None:
                 if config.DEBUG_MODE:
                     print("DEBUG MODE: {} already added".format(key))
                 continue

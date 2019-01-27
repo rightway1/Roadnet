@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from qgis.core import Qgis, QgsPoint, QgsProject, QgsGeometry, QgsWkbTypes, QgsFeatureRequest
+from qgis.core import Qgis, QgsPointXY, QgsProject, QgsGeometry, QgsWkbTypes, QgsFeatureRequest
 from qgis.gui import QgsRubberBand, QgsVertexMarker
 
 from PyQt5.QtCore import Qt
@@ -98,7 +98,6 @@ class ZoomSelectCanvas:
             q_string += '"%s" = %s OR ' % (str(field_n), str(value))
         q_string = q_string[:-3]
         # Get ref to layer
-        # layer = QgsProject.instance().mapLayersByName(layer_n)[0]
         layer = get_layer(layer_n)
         # Select ESUs (or other features) and get extent
         feats = layer.getFeatures(QgsFeatureRequest().setFilterExpression(q_string))
@@ -112,7 +111,6 @@ class ZoomSelectCanvas:
         :param layer_name: Name of layer in TOC
         :return: qgis bounding box
         """
-        # layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         layer = get_layer(layer_name)
         feat_ids = []
         for feature in feature_list:
@@ -339,13 +337,13 @@ class ShowStreetCoordinates:
         start = coords[0]
         end = coords[1]
         # Create start and end points
-        start_point = QgsPoint(float(start[0]), float(start[1]))
+        start_point = QgsPointXY(float(start[0]), float(start[1]))
         self.rb_start.setCenter(start_point)
-        end_point = QgsPoint(float(end[0]), float(end[1]))
+        end_point = QgsPointXY(float(end[0]), float(end[1]))
         self.rb_end.setCenter(end_point)
         # Create line
         line_pts = [start_point, end_point]
-        line_geom = QgsGeometry().fromPolyline(line_pts)
+        line_geom = QgsGeometry().fromPolylineXY(line_pts)
         self.rb_line.setToGeometry(line_geom, None)
 
     def remove(self):

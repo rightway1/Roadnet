@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QDate, QObject, pyqtSignal
 from PyQt5.QtGui import QColor, QDoubleValidator
 from PyQt5.QtSql import QSqlQuery
 from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QLineEdit
-from qgis.core import QgsProject, QgsPoint, QgsFeatureRequest
+from qgis.core import QgsPoint, QgsFeatureRequest
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 from Roadnet.street_browser.mod_validation import ValidateDescription, ValidateStreetType

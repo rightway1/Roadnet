@@ -28,8 +28,6 @@ class ExportValidationReport:
         self.report_file = None
         self.start_point = QgsPoint()
         self.end_point = QgsPoint()
-        # self.esu_layer = QgsProject.instance().mapLayersByName('ESU Graphic')[0]
-        # self.poly_layer = QgsProject.instance().mapLayersByName('Road Polygons')[0]
         self.esu_layer = get_layer('ESU Graphic')
         self.poly_layer = get_layer('Road Polygons')
         self.filter = None
