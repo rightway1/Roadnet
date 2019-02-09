@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QDate, QObject, pyqtSignal
 from PyQt5.QtGui import QColor, QDoubleValidator
 from PyQt5.QtSql import QSqlQuery
 from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QLineEdit
-from qgis.core import QgsPoint, QgsFeatureRequest, QgsFeature
+from qgis.core import QgsPointXY, QgsFeatureRequest, QgsFeature
 from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 from Roadnet.street_browser.mod_validation import ValidateDescription, ValidateStreetType
@@ -604,7 +604,7 @@ class EditStartEndCoords(object):
         :param button: Button enum
         """
         self.selected_button = button
-        self.tool_clickPoint.canvasClicked().connect(self.canvas_clicked)
+        self.tool_clickPoint.canvasClicked.connect(self.canvas_clicked)
         self.iface.mapCanvas().setMapTool(self.tool_clickPoint)
 
     def disconnect_click_point(self):
@@ -612,7 +612,7 @@ class EditStartEndCoords(object):
         Disconnect canvasClicked signal.
         """
         try:
-            self.tool_clickPoint.canvasClicked().disconnect()
+            self.tool_clickPoint.canvasClicked.disconnect()
         except TypeError:
             pass
 
@@ -641,7 +641,7 @@ class EditStartEndCoords(object):
         """
         x, y = point[0], point[1]
         try:
-            marker.setCenter(QgsPoint(float(x), float(y)))
+            marker.setCenter(QgsPointXY(float(x), float(y)))
             self.iface.mapCanvas().refresh()
         except ValueError:
             pass
