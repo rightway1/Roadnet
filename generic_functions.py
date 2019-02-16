@@ -353,7 +353,11 @@ class ShowStreetCoordinates:
 
 
 def get_layer(layer_name):
-    return QgsProject.instance().mapLayersByName(layer_name)[0]
+    layers = QgsProject.instance().mapLayersByName(layer_name)
+    if len(layers) == 0:
+        return None
+
+    return layers[0]
 
 
 def ipdb_breakpoint():

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from PyQt5.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog
 from Roadnet import roadnet_exceptions as rn_except
 from Roadnet.roadnet_dialog import ExportCompleteDia
 from Roadnet.ramp import wdm
@@ -31,8 +31,9 @@ class WdmExportHandler(object):
         :return: String path to output directory
         """
         # Choose path to start in
-        if os.path.isdir(self.params['RAMP_output_directory']):
-            initial_dir = self.params['RAMP_output_directory']
+        param_dir = self.params['RAMP_output_directory']
+        if param_dir is not None and os.path.isdir(param_dir):
+            initial_dir = param_dir
         else:
             initial_dir = os.path.expanduser('~')
 

@@ -2,12 +2,12 @@
 
 import qgis.core  # required to get QPyNullVariant to work
 
-from PyQt5.QtSql import (
+from qgis.PyQt.QtSql import (
     QSqlQuery,
     QSqlTableModel)
-from PyQt5.QtGui import QRegExpValidator, QTextCursor
-from PyQt5.QtWidgets import QDataWidgetMapper, QDialogButtonBox, QItemDelegate
-from PyQt5.QtCore import Qt, QRegExp
+from qgis.PyQt.QtGui import QRegExpValidator, QTextCursor
+from qgis.PyQt.QtWidgets import QDataWidgetMapper, QDialogButtonBox, QItemDelegate
+from qgis.PyQt.QtCore import Qt, QRegExp
 from Roadnet.roadnet_dialog import (RampMclEditorDlg, RampRdpolyEditorDlg)
 from Roadnet.ramp import length_of_roads as lor
 from Roadnet.ramp.selector_tools import EditLinkedPolysTool

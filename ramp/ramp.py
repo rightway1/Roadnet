@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
 import weakref
 import collections
 
-from PyQt5.QtCore import Qt, QSettings
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import Qt, QSettings
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtSql import QSqlQuery
 
 from Roadnet import config
 from Roadnet.generic_functions import get_layer, ipdb_breakpoint

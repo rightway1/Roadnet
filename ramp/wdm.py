@@ -4,15 +4,15 @@ Functions to export shapefiles from RAMP for WDM.
 """
 import os
 from qgis.core import (
-    Qgis,
+    QgsWkbTypes,
     QgsCoordinateReferenceSystem,
     QgsFeature,
     QgsField,
     QgsGeometry,
     QgsVectorFileWriter,
     QgsVectorLayer)
-from PyQt5.QtCore import QVariant
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtSql import QSqlQuery
 
 from Roadnet import roadnet_exceptions as rn_except
 from Roadnet import config
@@ -176,7 +176,7 @@ def get_geometry_from_record(record):
     if wkb.isNull():
         msg = "rd_pol_id {} has NULL geometry".format(record.value('rd_pol_id'))
         raise rn_except.RdPolyNullGeometryError(msg)
-    geometry.fromWkb(str(wkb))  # Convert variant to string
+    geometry.fromWkb(wkb) 
     return geometry
 
 
@@ -223,7 +223,7 @@ def open_shapefile_writer(vlayer, shapefile_path):
 
     # Create writer
     writer = QgsVectorFileWriter(
-        shapefile_path, "utf-8", fields, Qgis.WKBMultiPolygon,
+        shapefile_path, "utf-8", fields, QgsWkbTypes.MultiPolygon,
         QgsCoordinateReferenceSystem(27700, QgsCoordinateReferenceSystem.EpsgCrsId),
         'ESRI Shapefile')
 
@@ -245,4 +245,3 @@ def prepare_filename(text):
     text = text.replace('(', '')
     text = text.replace(')', '')
     return 'RAMPEXPORT_' + text + '.shp'
-
