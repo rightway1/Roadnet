@@ -4,7 +4,7 @@ import datetime
 import os
 import re
 
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, Qt
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
@@ -532,9 +532,9 @@ class ExportLsgShp:
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setDefaultSuffix(".shp")
         esu_file_path = os.path.join(home_dir, "esu.shp")
-        self.export_path = QFileDialog.getSaveFileName(dialog, "Export LSG ",
-                                                       esu_file_path,
-                                                       filter="ESRI Shapefile (*.shp *.)")
+        self.export_path, save_extension = QFileDialog.getSaveFileName(dialog, "Export LSG ",
+                                                                       esu_file_path,
+                                                                       filter="ESRI Shapefile (*.shp *.)")
         self.export_lsg_shp_dlg.ui.fileLineEdit.setText(self.export_path[0])
 
     def submit_export(self):
@@ -612,9 +612,9 @@ class ExportPoly:
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setDefaultSuffix(".shp")
         esu_file_path = os.path.join(home_dir, "rdpoly.shp")
-        self.export_path = QFileDialog.getSaveFileName(dialog, "Export Maintenance Polygons ",
-                                                       esu_file_path,
-                                                       filter="ESRI Shapefile (*.shp *.)")
+        self.export_path, save_extension = QFileDialog.getSaveFileName(dialog, "Export Maintenance Polygons ",
+                                                                       esu_file_path,
+                                                                       filter="ESRI Shapefile (*.shp *.)")
         self.export_poly_shp_dlg.ui.fileLineEdit.setText(self.export_path[0])
 
     def submit_export(self):

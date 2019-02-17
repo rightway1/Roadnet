@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt, pyqtSlot
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import QThread, pyqtSignal, QObject, Qt
+from qgis.PyQt.QtSql import QSqlQuery
 
 from Roadnet.roadnet_dialog import SymbologyDlg
 from Roadnet.street_browser.edit import UpdateEsuSymbology
@@ -72,7 +72,6 @@ class UpdateSymbology:
         self.rdpoly_worker.signals.update_progress.connect(self.update_progress)
         self.rdpoly_worker.start()
 
-    @pyqtSlot()
     def task_started(self):
         """
         Set the dialog to its initial run state.
@@ -82,7 +81,6 @@ class UpdateSymbology:
         # self.symbology_dlg.ui.runPushButton.setText("Abort")
         self.symbology_dlg.ui.runPushButton.setEnabled(False)
 
-    @pyqtSlot()
     def task_finished(self):
         """
         Enable the 'Run' button.
@@ -98,7 +96,6 @@ class UpdateSymbology:
     #     # Change GUI back to initial state
     #     self.task_finished()
 
-    @pyqtSlot(int, int, int)
     def update_progress(self, percentage, rdpoly_count, esu_count):
         """
         Update the labels on the dialog and update the progressbar.

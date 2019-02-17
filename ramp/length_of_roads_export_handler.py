@@ -2,7 +2,7 @@
 import datetime as dt
 import os
 
-from PyQt5.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog
 from Roadnet import roadnet_exceptions as rn_except
 from Roadnet.roadnet_dialog import RampLengthOfRoadsDlg
 from Roadnet.ramp import length_of_roads as lor
@@ -106,7 +106,7 @@ class LengthOfRoadsExportHandler(object):
         title = "Save RAMP Length of Road report"
         filename_filter = ("Text or CSV files (*.txt *.csv);;Text files (*.txt)"
                            ";;CSV files (*.csv);;All files (*)")
-        file_path = QFileDialog.getSaveFileName(
+        file_path, save_extension = QFileDialog.getSaveFileName(
             None, caption=title, directory=initial_dir, filter=filename_filter)
 
         # Add .txt if suffix not specified

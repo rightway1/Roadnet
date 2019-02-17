@@ -3,8 +3,8 @@ __author__ = 'Alessandro'
 
 import os
 from math import sqrt
-from PyQt5.QtSql import QSqlQueryModel, QSqlQuery
-from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QModelIndex
+from qgis.PyQt.QtSql import QSqlQueryModel, QSqlQuery
+from qgis.PyQt.QtCore import QObject, QRunnable, pyqtSignal, QModelIndex
 from qgis.core import QgsPoint, QgsFeatureRequest
 from datetime import datetime
 from Roadnet.generic_functions import get_layer

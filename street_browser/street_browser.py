@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-from PyQt5.QtSql import QSqlQueryModel, QSqlQuery
-from PyQt5.QtCore import Qt, pyqtSlot, QSortFilterProxyModel
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtWidgets import QDataWidgetMapper, QAbstractItemView, QListWidgetItem, QMessageBox
+from qgis.PyQt.QtSql import QSqlQueryModel, QSqlQuery
+from qgis.PyQt.QtCore import Qt, QSortFilterProxyModel
+from qgis.PyQt.QtWidgets import QDataWidgetMapper, QAbstractItemView, QListWidgetItem, QMessageBox
 
 from Roadnet.street_browser.srwr_maintenance import MaintenanceTable
 from Roadnet.street_browser.srwr_reinstatement_cat import ReinstatementCategoriesTable

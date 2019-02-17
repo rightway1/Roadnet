@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
-from PyQt5.QtCore import Qt, QRegExp, QThreadPool, pyqtSlot
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QCheckBox, QProgressDialog
+from qgis.PyQt.QtCore import Qt, QRegExp, QThreadPool
+from qgis.PyQt.QtGui import QIcon, QPixmap
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QCheckBox, QProgressDialog
 from Roadnet.exports.export_validation_threaded import (
         CheckAsdCoords,
         CheckMaintReins,
@@ -195,9 +195,9 @@ class Validation:
         self.file_dialog.setFileMode(QFileDialog.ExistingFiles)
         filters = "Text files (*.txt)"
         self.file_dialog.setNameFilter(filters)
-        save_file_name = self.file_dialog.getSaveFileName(self.file_dialog, "Export Validation Report",
-                                                          self.home_dir,
-                                                          filter="Text files (*.txt)")
+        save_file_name, save_extension = self.file_dialog.getSaveFileName(self.file_dialog, "Export Validation Report",
+                                                                          self.home_dir,
+                                                                          filter="Text files (*.txt)")
         if save_file_name != "":
             self.validation_dia.ui.filePathLineEdit.setText(("{}.txt".format(save_file_name)))
         if save_file_name.endswith(".txt"):
@@ -312,7 +312,6 @@ class Validation:
         self.list_check_boxes = []
         self.check_boxes_names = []
 
-    @pyqtSlot()
     def show_finished(self):
         self.long_task.waitForDone()
         show_finished_msg_box = QMessageBox(QMessageBox.Information, " ",
@@ -322,7 +321,6 @@ class Validation:
         show_finished_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         show_finished_msg_box.exec_()
 
-    @pyqtSlot(str, int)
     def log_progress(self, task, value):
         self.progress_win.setLabelText(task)
         self.progress_win.setValue(value)
