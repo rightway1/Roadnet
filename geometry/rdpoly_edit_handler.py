@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
-from qgis.gui import QgsMessageBar
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox
+from qgis.core import Qgis, QgsFeatureRequest, QgsFeature, QgsGeometry
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QMessageBox
 
 from Roadnet.geometry.edit_handler import (EditHandler, DatabaseHandler, IntersectionHandler, IntersectionHandlerError)
 from Roadnet.generic_functions import ipdb_breakpoint
@@ -323,5 +322,5 @@ class RdpolyIntersectionHandler(IntersectionHandler):
                    )
         self.iface.messageBar().pushMessage('roadNet',
                                             message,
-                                            QgsMessageBar.CRITICAL,
-                                            0)
+                                            level=Qgis.Critical,
+                                            duration=0)

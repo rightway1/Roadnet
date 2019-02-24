@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
-from qgis.gui import QgsMessageBar
-from Roadnet.geometry.edit_handler import (EditHandler, DatabaseHandler, IntersectionHandler)
+from qgis.core import Qgis
+from Roadnet.geometry.edit_handler import (EditHandler, DatabaseHandler)
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
@@ -33,8 +32,8 @@ class MclEditHandler(EditHandler):
                    'Undo last change before continuing.')
         self.iface.messageBar().pushMessage('roadNet',
                                             warning,
-                                            QgsMessageBar.CRITICAL,
-                                            9)
+                                            level=Qgis.Critical,
+                                            duration=9)
 
 
 class MclDatabaseHandler(DatabaseHandler):
@@ -110,4 +109,3 @@ class MclDatabaseHandler(DatabaseHandler):
 
         # Run queries
         query = self.run_sql('mcl_new_feature', args)
-

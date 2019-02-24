@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import pprint
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt.QtSql import QSqlQuery
 
 from qgis.core import QgsFeatureRequest, Qgis, QgsFeature
-from qgis.gui import QgsMessageBar
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
@@ -30,9 +29,9 @@ class EditHandler(object):
         self.params = params
         self.handle_intersect_flag = handle_intersect_flag
 
-        self.node_tool = iface.actionNodeTool()
-        if self.node_tool.isChecked():
-            self.node_tool.toggle()
+        self.vertex_tool = iface.actionVertexTool()
+        if self.vertex_tool.isChecked():
+            self.vertex_tool.toggle()
 
         self.connect_eb_signals()
         self.connect_commits_signals()
@@ -57,7 +56,7 @@ class EditHandler(object):
             self.edit_buffer.featureDeleted.connect(self.feature_deleted)
             self.vlayer.beforeCommitChanges.connect(self.disconnect_eb_signals)
             self.vlayer.beforeRollBack.connect(self.disconnect_eb_signals)
-            self.node_tool.toggled.connect(self.warn_if_node_tool)
+#            self.vertex_tool.toggled.connect(self.warn_if_node_tool)
         except AttributeError:
             # Catches exceptions thrown by the Symbology update tool
             pass
@@ -214,8 +213,8 @@ class EditHandler(object):
                        'Undo last change before continuing.')
             self.iface.messageBar().pushMessage('roadNet',
                                                 warning,
-                                                QgsMessageBar.CRITICAL,
-                                                9)
+                                                level=Qgis.Critical,
+                                                duration=9)
             return
 
         # Intersection multiple times without saving is asking for trouble
@@ -226,8 +225,8 @@ class EditHandler(object):
                        'Undo last change before continuing.')
             self.iface.messageBar().pushMessage('roadNet',
                                                 warning,
-                                                QgsMessageBar.WARNING,
-                                                8)
+                                                level=Qgis.Warning,
+                                                duration=8)
             return
 
         # Intersection with existing feature is more common
@@ -237,8 +236,8 @@ class EditHandler(object):
                    'database before further edits, or undo last change.')
         self.iface.messageBar().pushMessage('roadNet',
                                             warning,
-                                            QgsMessageBar.INFO,
-                                            5)
+                                            level=Qgis.Info,
+                                            duration=5)
 
     def check_for_intersections(self, fid):
         """
@@ -307,39 +306,39 @@ class EditHandler(object):
         self.vlayer.committedGeometriesChanges.disconnect()
         self.vlayer.committedFeaturesRemoved.disconnect()
 
-    def warn_if_node_tool(self, toggle_state):
-        """
-        Show warning if node tool is used in QGIS 2.8.  Using it can cause hard crashes
-        when editing already edited features.
-        :param toggle_state: boolean sent by the signal.
-        """
-        if Qgis.QGIS_VERSION_INT > 20900:
-            # Problem doesn't affect new versions
-            return
-
-        if self.params['session_includes_edits'] is False:
-            # Problem doesn't arise until changes have been saved
-            return
-
-        if toggle_state is False:
-            # Don't warn when leaving node tool
-            return
-
-        # This section allows demonstration of disabled tool
-        disable_node_tool = False
-        if disable_node_tool:
-            self.node_tool.setDisabled(True)
-
-        warning = ('QGIS 2.8 node tool is unstable.\n\nEditing features '
-                   'created or changed in this roadNet session WILL CAUSE '
-                   'QGIS TO CRASH.\n\nLog out and log in before editing '
-                   'nodes in these features.  This bug will be fixed in QGIS '
-                   '2.14.')
-        self.iface.messageBar().pushMessage('roadNet',
-                                            warning,
-                                            QgsMessageBar.CRITICAL,
-                                            9)
-        return
+    # def warn_if_node_tool(self, toggle_state):
+    #     """
+    #     Show warning if node tool is used in QGIS 2.8.  Using it can cause hard crashes
+    #     when editing already edited features.
+    #     :param toggle_state: boolean sent by the signal.
+    #     """
+    #     if Qgis.QGIS_VERSION_INT > 20900:
+    #         # Problem doesn't affect new versions
+    #         return
+    #
+    #     if self.params['session_includes_edits'] is False:
+    #         # Problem doesn't arise until changes have been saved
+    #         return
+    #
+    #     if toggle_state is False:
+    #         # Don't warn when leaving node tool
+    #         return
+    #
+    #     # This section allows demonstration of disabled tool
+    #     disable_node_tool = False
+    #     if disable_node_tool:
+    #         self.vertex_tool.setDisabled(True)
+    #
+    #     warning = ('QGIS 2.8 node tool is unstable.\n\nEditing features '
+    #                'created or changed in this roadNet session WILL CAUSE '
+    #                'QGIS TO CRASH.\n\nLog out and log in before editing '
+    #                'nodes in these features.  This bug will be fixed in QGIS '
+    #                '2.14.')
+    #     self.iface.messageBar().pushMessage('roadNet',
+    #                                         warning,
+    #                                         level=Qgis.Critical,
+    #                                         duration=9)
+    #     return
 
 
 class DatabaseHandler(object):
