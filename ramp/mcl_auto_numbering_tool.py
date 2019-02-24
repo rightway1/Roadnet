@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from copy import copy
 
-from qgis.core import QgsFeatureRequest, QgsExpression
-from qgis.gui import QgsMessageBar
+from qgis.core import Qgis, QgsFeatureRequest, QgsExpression
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialogButtonBox
-from PyQt5.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QDialogButtonBox
+from qgis.PyQt.QtSql import QSqlQuery
 from Roadnet.roadnet_dialog import RampMclAutoNumberingDlg
 from Roadnet import roadnet_exceptions as rn_except
 from Roadnet.generic_functions import ipdb_breakpoint
@@ -173,7 +172,7 @@ class MclAutoNumberingTool(object):
             "Selection changed by {} features.  "
             "Add/remove MCLs one at a time.".format(changed_mcl_count))
         self.iface.messageBar().pushMessage('roadNet', warning,
-                                            QgsMessageBar.WARNING, 3)
+                                            level=Qgis.Warning, duration=3)
 
         # Revert selection (don't fire selection changed signal)
         self.mcl.selectionChanged.disconnect()
