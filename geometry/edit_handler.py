@@ -2,7 +2,7 @@
 import pprint
 from qgis.PyQt.QtSql import QSqlQuery
 
-from qgis.core import QgsFeatureRequest, Qgis, QgsFeature
+from qgis.core import QgsFeatureRequest, Qgis, QgsFeature, QgsApplication
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
@@ -306,40 +306,6 @@ class EditHandler(object):
         self.vlayer.committedGeometriesChanges.disconnect()
         self.vlayer.committedFeaturesRemoved.disconnect()
 
-    # def warn_if_node_tool(self, toggle_state):
-    #     """
-    #     Show warning if node tool is used in QGIS 2.8.  Using it can cause hard crashes
-    #     when editing already edited features.
-    #     :param toggle_state: boolean sent by the signal.
-    #     """
-    #     if Qgis.QGIS_VERSION_INT > 20900:
-    #         # Problem doesn't affect new versions
-    #         return
-    #
-    #     if self.params['session_includes_edits'] is False:
-    #         # Problem doesn't arise until changes have been saved
-    #         return
-    #
-    #     if toggle_state is False:
-    #         # Don't warn when leaving node tool
-    #         return
-    #
-    #     # This section allows demonstration of disabled tool
-    #     disable_node_tool = False
-    #     if disable_node_tool:
-    #         self.vertex_tool.setDisabled(True)
-    #
-    #     warning = ('QGIS 2.8 node tool is unstable.\n\nEditing features '
-    #                'created or changed in this roadNet session WILL CAUSE '
-    #                'QGIS TO CRASH.\n\nLog out and log in before editing '
-    #                'nodes in these features.  This bug will be fixed in QGIS '
-    #                '2.14.')
-    #     self.iface.messageBar().pushMessage('roadNet',
-    #                                         warning,
-    #                                         level=Qgis.Critical,
-    #                                         duration=9)
-    #     return
-
 
 class DatabaseHandler(object):
     """
@@ -416,7 +382,7 @@ class DatabaseHandler(object):
             'check_db': """SELECT * FROM sqlite_master;""",
             'check_table': """SELECT * FROM {table};"""}
 
-    def run_sql(self, query, kwargs=[]):
+    def run_sql(self, query, kwargs={}):
         """
         Run SQL query (defined with key 'query' in self.sql_queries) on the
         database.
@@ -460,15 +426,15 @@ class IntersectionHandler(object):
         Main method of class used to process the intersections.
         """
         if config.DEBUG_MODE:
-            print("DEBUG MODE: Populating list of intersections to handle.")
+            QgsApplication.messageLog().logMessage("DEBUG MODE: Populating list of intersections to handle.",)
         self.victims = find_intersections(self.my_feature, self.vlayer)
         self.handle_my_feature()
         self.handle_victims()
         if config.DEBUG_MODE:
             print('Added features from {}:'.format(self.my_feature.id()))
-            pprint.pprint(self.added_features)
+            # pprint.pprint(self.added_features)
             print('Deleted feature_ids from {}:'.format(self.my_feature.id()))
-            pprint.pprint(self.deleted_feature_ids)
+            # pprint.pprint(self.deleted_feature_ids)
 
     def handle_my_feature(self):
         """
