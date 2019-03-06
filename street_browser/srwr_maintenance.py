@@ -504,10 +504,10 @@ class SrwrAddMaintenanceRecord(SrwrViewRecord):
         max_ref_query = max_ref_query + self.street_browser.ui.usrnLineEdit.text()
         ref_query = QSqlQuery(max_ref_query, db)
         ref_query.seek(0)
-        ref = ref_query.value(0)
-        if ref.isNull():
+        if ref_query.isNull(0):
             ref_value = 1
         else:
+            ref = ref_query.value(0)
             ref_value = int(ref) + 1
 
         # Set values in gui

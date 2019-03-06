@@ -172,11 +172,11 @@ def create_feature_from_record(record, vlayer):
 
 def get_geometry_from_record(record):
     geometry = QgsGeometry()
-    wkb = record.value('geometry')
-    if wkb.isNull():
+    if record.isNull('geometry'):
         msg = "rd_pol_id {} has NULL geometry".format(record.value('rd_pol_id'))
         raise rn_except.RdPolyNullGeometryError(msg)
-    geometry.fromWkb(wkb) 
+    wkb = record.value('geometry')
+    geometry.fromWkb(wkb)
     return geometry
 
 
