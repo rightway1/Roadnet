@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from PyQt5.QtCore import Qt, QSortFilterProxyModel
-from PyQt5.QtWidgets import QDataWidgetMapper
+from qgis.PyQt.QtCore import Qt, QSortFilterProxyModel
+from qgis.PyQt.QtWidgets import QDataWidgetMapper
 
 from qgis.core import QgsPointXY, QgsGeometry
 
@@ -205,6 +205,7 @@ class SrwrViewRecord(object):
         endx = self.view_dlg.ui.endXLineEdit.text()
         starty = self.view_dlg.ui.startYLineEdit.text()
         endy = self.view_dlg.ui.endYLineEdit.text()
+
         # Only zoom if values are present
         if startx and starty:
             coords_f = [QgsPointXY(float(startx), float(starty)), QgsPointXY(float(endx), float(endy))]

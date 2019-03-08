@@ -9,7 +9,7 @@ from qgis.PyQt.QtSql import (
     QSqlTableModel,
     QSqlRelation,
     QSqlQuery)
-from qgis.core import QgsFeatureRequest, QgsFeature
+from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsPointXY
 
 from Roadnet.roadnet_dialog import SrwrMaintDlg, SaveRecordDlg
 from Roadnet.street_browser.edit import EditStartEndCoords, EditEsuLink
@@ -1177,9 +1177,37 @@ class SrwrModifyMaintenanceRecord(SrwrAddMaintenanceRecord):
         Zoom to the selected maintenance record polygons and selects them
         :return: void
         """
-        feats = self.zoom_select_canvas.get_features_from_field_value(self.rd_poly_ids, 'rd_pol_id', 'Road Polygons')
-        bbox = self.zoom_select_canvas.select_features(feats, 'Road Polygons')
+        if len(self.rd_poly_ids) > 0:
+            # If there are any selected polygons, zoom to their extent
+            bbox = self._get_bbox_for_selection()
+        else:
+            # If no selected polygons (whole road situation) zoom to extent coords
+            bbox = self._get_bbox_from_extents()
+
         self.zoom_select_canvas.zoom_to_extent(bbox)
+
+    def _get_bbox_for_selection(self):
+        # Get bounding box from selected features on Road Polygons layer
+        bbox = None
+        if len(self.rd_poly_ids) > 0:
+            feats = self.zoom_select_canvas.get_features_from_field_value(self.rd_poly_ids, 'rd_pol_id',
+                                                                          'Road Polygons')
+            bbox = self.zoom_select_canvas.select_features(feats, 'Road Polygons')
+        return bbox
+
+    def _get_bbox_from_extents(self):
+        # Create bounding box from start-end coordinates from edit form
+        bbox = None
+        startx = self.view_dlg.ui.startXLineEdit.text()
+        endx = self.view_dlg.ui.endXLineEdit.text()
+        starty = self.view_dlg.ui.startYLineEdit.text()
+        endy = self.view_dlg.ui.endYLineEdit.text()
+        # Only zoom if values are present
+        if startx and starty:
+            coords_f = [QgsPointXY(float(startx), float(starty)), QgsPointXY(float(endx), float(endy))]
+            geom = QgsGeometry().fromMultiPointXY(coords_f)
+            bbox = geom.boundingBox()
+        return bbox
 
 
 class EditMaintLink(EditEsuLink):
