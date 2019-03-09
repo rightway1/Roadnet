@@ -535,7 +535,7 @@ class ExportLsgShp:
         self.export_path, save_extension = QFileDialog.getSaveFileName(dialog, "Export LSG ",
                                                                        esu_file_path,
                                                                        filter="ESRI Shapefile (*.shp *.)")
-        self.export_lsg_shp_dlg.ui.fileLineEdit.setText(self.export_path[0])
+        self.export_lsg_shp_dlg.ui.fileLineEdit.setText(self.export_path)
 
     def submit_export(self):
         """
@@ -615,7 +615,7 @@ class ExportPoly:
         self.export_path, save_extension = QFileDialog.getSaveFileName(dialog, "Export Maintenance Polygons ",
                                                                        esu_file_path,
                                                                        filter="ESRI Shapefile (*.shp *.)")
-        self.export_poly_shp_dlg.ui.fileLineEdit.setText(self.export_path[0])
+        self.export_poly_shp_dlg.ui.fileLineEdit.setText(self.export_path)
 
     def submit_export(self):
         """
