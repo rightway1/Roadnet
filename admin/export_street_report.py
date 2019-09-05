@@ -13,17 +13,13 @@ __author__ = 'matthew.bradley'
 
 
 class StreetReportsExport:
-    def __init__(self, iface, db, export_path, options, csvBool, dia, params):
+    def __init__(self, iface, db, export_path, options, as_csv, dia, params):
         self.iface = iface
         self.db = db
         self.street_dia = dia
-        self.csv_requested = csvBool
+        self.csv_requested = as_csv
         self.export_path = export_path + ".csv" if self.csv_requested else export_path + ".txt"
         self.options = options
-        self.file = open(self.export_path, 'w')
-        if self.csv_requested:
-            self.csv = csv.writer(self.file, delimiter=',', quotechar='"',
-                                  quoting=csv.QUOTE_NONNUMERIC, lineterminator='\r')
         self.report_title = "STREET CHANGES REPORT"
         self.no_content = "\n \nNO RECORDS FOUND \n \n"
         self.parser = None
@@ -32,9 +28,9 @@ class StreetReportsExport:
         self.user = self.params['UserName']
         self.error_alert = None
         self.headers = {
-            0: ["USRN", "DESCRIPTION", "TYPE", "LOCALITY", "TOWN", "COUNTY", "START DATE", "ENTRY DATE",
-                "UPDATE DATE", "CLOSURE DATE", "UPDATED BY", "CLOSED BY"],
-            1: ["USRN", "TYPE", "DESCRIPTION", "LOCALITY", "TOWN", "COUNTY", "CATEGORY", "LOCATION_TEXT"]
+            "street_header": ["USRN", "DESCRIPTION", "TYPE", "LOCALITY", "TOWN", "COUNTY", "START DATE", "ENTRY DATE",
+                              "UPDATE DATE", "CLOSURE DATE", "UPDATED BY", "CLOSED BY"],
+            "asd_header": ["USRN", "TYPE", "DESCRIPTION", "LOCALITY", "TOWN", "COUNTY", "CATEGORY", "LOCATION_TEXT"]
         }
 
     def run_export(self):
@@ -104,21 +100,24 @@ class StreetReportsExport:
 
         avals = ["USRN", "Description", "Street_ref_type", "Locality", "Town", "County", "Category", "location_text"]
 
-        if self.csv_requested:
-            self.csv.writerow(["Street with " + str(self.options["tables"]["type"]) + " Categories in " + strselected])
-            self.csv.writerow(self.headers[1])
-            self.results_to_csv_row(avals, qrys.get(self.options["tables"]["combo"]), "srwr")
-        else:
-            self.start_report()
-            header = "Street with " + str(self.options["tables"]["type"]) + " Categories in " + strselected + "\n"
-            self.file.write(header)
-            line_length = len(header)
-            self.file.write('-' * line_length + "\n \n")
-            self.results_to_txt_row(avals, qrys.get(self.options["tables"]["combo"]), "srwr")
-            self.end_report()
+        with open(self.export_path, 'w', newline='') as output_file:
+            if self.csv_requested:
+                output_csv = self._get_csv_writer(output_file)
+                output_csv.writerow(["Street with " + str(self.options["tables"]["type"])
+                                     + " Categories in " + strselected])
+                output_csv.writerow(self.headers["asd_header"])
+                self.results_to_csv_row(avals, qrys.get(self.options["tables"]["combo"]), "srwr", output_csv)
+            else:
+                self.start_report(output_file)
+                header = "Street with " + str(self.options["tables"]["type"]) + " Categories in " + strselected + "\n"
+                output_file.write(header)
+                line_length = len(header)
+                output_file.write('-' * line_length + "\n \n")
+                self.results_to_txt_row(avals, qrys.get(self.options["tables"]["combo"]), "srwr", output_file)
+                self.end_report(output_file)
 
     def report_streets(self):
-        sqlgenericsel = "SELECT tblSTREET.USRN, tblStreet.Description,tblSTREET.Street_ref_type, " \
+        sql_get_streets = "SELECT tblSTREET.USRN, tblStreet.Description,tblSTREET.Street_ref_type, " \
                         "tlkpLOCALITY.Name AS Locality, tlkpTOWN.Name AS Town, tlkpCOUNTY.name AS County, " \
                         "tblStreet.Start_Date, tblStreet.Entry_Date, tblStreet.Update_Date, tblStreet.Closure_Date, " \
                         "tblStreet.Updated_By, tblStreet.Closed_By FROM ((tblSTREET INNER JOIN tlkpTOWN ON " \
@@ -126,53 +125,55 @@ class StreetReportsExport:
                         "tblSTREET.County_Ref = tlkpCOUNTY.county_ref) INNER JOIN tlkpLOCALITY " \
                         "ON tblSTREET.Loc_Ref = tlkpLOCALITY.Loc_Ref "
 
-        entry = sqlgenericsel + "WHERE tblStreet.Entry_Date > " + self.options["streets"]["result"] + \
+        entry = sql_get_streets + "WHERE tblStreet.Entry_Date > " + self.options["streets"]["result"] + \
                                 " AND tblStreet.currency_flag = 0"
-        closed = sqlgenericsel + "WHERE tblStreet.Closure_date > " + self.options["streets"]["result"]
-        changed = sqlgenericsel + "WHERE tblStreet.Update_date > " + self.options["streets"]["result"] + \
+        closed = sql_get_streets + "WHERE tblStreet.Closure_date > " + self.options["streets"]["result"]
+        changed = sql_get_streets + "WHERE tblStreet.Update_date > " + self.options["streets"]["result"] + \
                                   " AND tblStreet.currency_flag = 0 " \
                                   "AND tblStreet.Entry_date < " + self.options["streets"]["result"]
 
         avals = ["USRN", "Description", "Street_ref_type", "Locality", "Town", "County", "Start_Date", "Entry_Date",
                  "Update_Date", "Closure_Date", "Updated_By", "Closed_By"]
 
-        if self.csv_requested:
-            self.csv.writerow(["New Streets Since ", self.format_dates(str(self.options["streets"]["result"]))])
-            self.csv.writerow(avals)
-            self.results_to_csv_row(avals, entry, "streets")
-            self.csv.writerow(["Closed Streets Since ", self.format_dates(str(self.options["streets"]["result"]))])
-            self.csv.writerow(avals)
-            self.results_to_csv_row(avals, entry, "streets")
-            self.csv.writerow(["Updated Streets Since ", self.format_dates(str(self.options["streets"]["result"]))])
-            self.csv.writerow(avals)
-            self.results_to_csv_row(avals, entry, "streets")
+        with open(self.export_path, 'w', newline='') as output_file:
+            if self.csv_requested:
+                output_csv = self._get_csv_writer(output_file)
+                output_csv.writerow(["New Streets Since ", self.format_dates(str(self.options["streets"]["result"]))])
+                output_csv.writerow(avals)
+                self.results_to_csv_row(avals, entry, "streets", output_csv)
+                output_csv.writerow(["Closed Streets Since ", self.format_dates(str(self.options["streets"]["result"]))])
+                output_csv.writerow(avals)
+                self.results_to_csv_row(avals, entry, "streets", output_csv)
+                output_csv.writerow(["Updated Streets Since ", self.format_dates(str(self.options["streets"]["result"]))])
+                output_csv.writerow(avals)
+                self.results_to_csv_row(avals, entry, "streets", output_csv)
 
-        else:
-            self.start_report()
-            header = "New Streets Since " + self.format_dates(str(self.options["streets"]["result"])) + "\n"
-            self.file.write(header)
-            line_length = len(header)
-            self.file.write('-' * line_length + "\n \n")
-            self.results_to_txt_row(avals, entry, "streets")
-            header = "Closed Streets Since " + self.format_dates(str(self.options["streets"]["result"])) + "\n"
-            self.file.write(header)
-            line_length = len(header)
-            self.file.write('-' * line_length + "\n \n")
-            self.results_to_txt_row(avals, closed, "streets")
-            header = "Updated Streets Since " + self.format_dates(str(self.options["streets"]["result"])) + "\n"
-            self.file.write(header)
-            line_length = len(header)
-            self.file.write('-' * line_length + "\n \n")
-            self.results_to_txt_row(avals, changed, "streets")
-            self.end_report()
+            else:
+                self.start_report(output_file)
+                header = "New Streets Since " + self.format_dates(str(self.options["streets"]["result"])) + "\n"
+                output_file.write(header)
+                line_length = len(header)
+                output_file.write('-' * line_length + "\n \n")
+                self.results_to_txt_row(avals, entry, "streets", output_file)
+                header = "Closed Streets Since " + self.format_dates(str(self.options["streets"]["result"])) + "\n"
+                output_file.write(header)
+                line_length = len(header)
+                output_file.write('-' * line_length + "\n \n")
+                self.results_to_txt_row(avals, closed, "streets", output_file)
+                header = "Updated Streets Since " + self.format_dates(str(self.options["streets"]["result"])) + "\n"
+                output_file.write(header)
+                line_length = len(header)
+                output_file.write('-' * line_length + "\n \n")
+                self.results_to_txt_row(avals, changed, "streets", output_file)
+                self.end_report(output_file)
 
-    def results_to_txt_row(self, vals, sql, mode):
+    def results_to_txt_row(self, vals, sql, mode, output_file):
         query_model = QSqlQueryModel()
         query_model.setQuery(sql)
         model_index = QModelIndex()
         row_count = query_model.rowCount(model_index)
         if row_count < 1:
-            self.file.write(self.no_content)
+            output_file.write(self.no_content)
         else:
             query = QSqlQuery(self.db)
             query.exec_(sql)
@@ -184,12 +185,12 @@ class StreetReportsExport:
                          ]
                 n = 0
                 # write content
-                headers = self.headers[0]
+                headers = self.headers["street_header"]
                 while n <= len(headers) - 1:
                     if n == len(headers) - 1:
-                        self.file.write(str(headers[n]) + "\n")
+                        output_file.write(str(headers[n]) + "\n")
                     else:
-                        self.file.write(str(headers[n]) + " ")
+                        output_file.write(str(headers[n]) + " ")
                     n += 1
                 while query.next():
                     line = [query.value(avals[0]), query.value(avals[1]), query.value(avals[2]),
@@ -197,31 +198,31 @@ class StreetReportsExport:
                             query.value(avals[6]), query.value(avals[7]), query.value(avals[8]),
                             query.value(avals[9]), query.value(avals[10]), query.value(avals[11])]
 
-                    self.file.write(str(line[0]) + " , " + str(line[1]) + " , " + str(line[2]) + " , " +
-                                    str(line[3]) + " , " + str(line[4]) + " , " + str(line[5]) + " , " +
-                                    self.format_dates(str(line[6])) + " , " + self.format_dates(str(line[7])) +
-                                    " , " + self.format_dates(str(line[8])) + " , " + self.format_dates(str(line[9])) +
-                                    " , " + str(line[10]) + " " + str(line[11]) + "\n"
-                                    )
+                    output_file.write(str(line[0]) + " , " + str(line[1]) + " , " + str(line[2]) + " , " +
+                                      str(line[3]) + " , " + str(line[4]) + " , " + str(line[5]) + " , " +
+                                      self.format_dates(str(line[6])) + " , " + self.format_dates(str(line[7])) +
+                                      " , " + self.format_dates(str(line[8])) + " , " + self.format_dates(str(line[9])) +
+                                      " , " + str(line[10]) + " " + str(line[11]) + "\n"
+                                      )
             else:
                 avals = [rec.indexOf(vals[0]), rec.indexOf(vals[1]), rec.indexOf(vals[2]), rec.indexOf(vals[3]),
                          rec.indexOf(vals[4]), rec.indexOf(vals[5]), rec.indexOf(vals[6]), rec.indexOf(vals[7])]
                 m = 0
-                headers = self.headers[1]
+                headers = self.headers["asd_header"]
                 while m <= len(headers) - 1:
                     if m == len(headers) - 1:
-                        self.file.write(str(headers[m]) + "\n")
+                        output_file.write(str(headers[m]) + "\n")
                     else:
-                        self.file.write(str(headers[m]) + " ")
+                        output_file.write(str(headers[m]) + " ")
                     m += 1
                 while query.next():
                     line = [query.value(avals[0]), query.value(avals[1]), query.value(avals[2]), query.value(avals[3]),
                             query.value(avals[4]), query.value(avals[5]), query.value(avals[6]), query.value(avals[7])]
-                    self.file.write(
+                    output_file.write(
                         str(line[0]) + " , " + str(line[1]) + " , " + str(line[2]) + " , " + str(line[3]) + " , " +
                         str(line[4]) + " , " + str(line[5]) + " , " + str(line[6]) + " , " + str(line[7]) + "\n")
 
-    def results_to_csv_row(self, vals, sql, mode):
+    def results_to_csv_row(self, vals, sql, mode, output_csv):
         query = QSqlQuery(self.db)
         query.exec_(sql)
         rec = query.record()
@@ -237,7 +238,7 @@ class StreetReportsExport:
                         self.format_dates(str(query.value(avals[8]))),
                         self.format_dates(str(query.value(avals[9]))),
                         query.value(avals[10]), query.value(avals[11])]
-                self.csv.writerow(line)
+                output_csv.writerow(line)
         else:
             avals = [rec.indexOf(vals[0]), rec.indexOf(vals[1]), rec.indexOf(vals[2]), rec.indexOf(vals[3]),
                      rec.indexOf(vals[4]), rec.indexOf(vals[5]), rec.indexOf(vals[6]), rec.indexOf(vals[7])]
@@ -246,7 +247,7 @@ class StreetReportsExport:
                 line = [query.value(avals[0]), query.value(avals[1]), query.value(avals[2]), query.value(avals[3]),
                         query.value(avals[4]), query.value(avals[5]), query.value(avals[6]), query.value(avals[7])]
 
-                self.csv.writerow(line)
+                output_csv.writerow(line)
 
     @staticmethod
     def format_dates(input_date):
@@ -261,14 +262,19 @@ class StreetReportsExport:
                 output_date = ""
             return output_date
 
-    def start_report(self):
-        self.file.write(str(self.report_title) + ' for {0} \n'.format(self.org))
-        self.file.write('Created on : {0} at {1} By : {2} \n'.format(datetime.today().strftime("%d/%m/%Y"),
+    @staticmethod
+    def _get_csv_writer(file):
+        return csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\r')
+
+    def start_report(self, output_file):
+        output_file.write(str(self.report_title) + ' for {0} \n'.format(self.org))
+        output_file.write('Created on : {0} at {1} By : {2} \n'.format(datetime.today().strftime("%d/%m/%Y"),
                                                                      datetime.now().strftime("%H:%M"),
                                                                      str(self.user)))
-        self.file.write(
+        output_file.write(
             "------------------------------------------------------------------------------------------ \n \n \n \n")
 
-    def end_report(self):
-        self.file.write("\n \n \n")
-        self.file.write("---------- End of Report -----------")
+    @staticmethod
+    def end_report(output_file):
+        output_file.write("\n \n \n")
+        output_file.write("---------- End of Report -----------")

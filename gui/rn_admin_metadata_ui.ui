@@ -105,19 +105,6 @@ background-color: rgb(213, 234, 234);</string>
         <item row="2" column="1" colspan="2">
          <widget class="QLineEdit" name="terrLineEdit"/>
         </item>
-        <item row="0" column="2">
-         <spacer name="nameSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="9" column="0">
          <widget class="QLabel" name="stateLbl">
           <property name="text">
@@ -270,7 +257,7 @@ background-color: rgb(213, 234, 234);</string>
         <item row="5" column="0">
          <widget class="QLabel" name="coordLbl">
           <property name="text">
-           <string>Cordinate System:</string>
+           <string>Coordinate System:</string>
           </property>
          </widget>
         </item>
@@ -288,11 +275,11 @@ background-color: rgb(213, 234, 234);</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="5" column="1" colspan="2">
          <widget class="QLineEdit" name="coordLineEdit">
           <property name="maximumSize">
            <size>
-            <width>120</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>
@@ -307,6 +294,19 @@ background-color: rgb(213, 234, 234);</string>
            <bool>true</bool>
           </property>
          </widget>
+        </item>
+        <item row="0" column="2">
+         <spacer name="nameSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
