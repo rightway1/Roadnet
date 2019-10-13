@@ -10,7 +10,19 @@ if config.DEBUG_MODE:
     pass
 
 """
-
-__author__ = 'john.stevenson'
+from enum import Enum
+__author__ = 'john.stevenson, colin.wright'
 
 DEBUG_MODE = True
+
+
+# Enumeration for Additional Street Data tables used in SRWR
+class AsdTableEnum(Enum):
+    MAINTENANCE = 1
+    REINSTATEMENT = 2
+    SPECIAL_DESIGNATION = 3
+
+
+class RnReportFormat(Enum):
+    CSV = 1
+    TXT = 2

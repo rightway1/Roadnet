@@ -40,7 +40,7 @@ class Ui_strtAdminAlert(object):
     def retranslateUi(self, strtAdminAlert):
         _translate = QtCore.QCoreApplication.translate
         strtAdminAlert.setWindowTitle(_translate("strtAdminAlert", "Dialog"))
-        self.label_2.setText(_translate("strtAdminAlert", "Please Select an Addtional Table"))
+        self.label_2.setText(_translate("strtAdminAlert", "Please Select an Additional Table Code"))
         self.cancelPushButton.setText(_translate("strtAdminAlert", "OK"))
 
 
@@ -52,4 +52,3 @@ if __name__ == "__main__":
     ui.setupUi(strtAdminAlert)
     strtAdminAlert.show()
     sys.exit(app.exec_())
-

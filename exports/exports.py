@@ -6,6 +6,7 @@ import re
 
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtSql import QSqlQuery
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from Roadnet.exports.export_csv import ExportCSV
@@ -13,7 +14,9 @@ from Roadnet.exports.export_esu_lines import ExportESUShapes
 from Roadnet.exports.export_lor import ExportListOfRoads
 from Roadnet.exports.export_poly import ExportPolyShapes
 from Roadnet.roadnet_dialog import ExportCompleteDia, ExportExporting
+from Roadnet.admin.export_street_report import StreetReportsExport
 from Roadnet import database
+from Roadnet.config import AsdTableEnum
 from Roadnet.generic_functions import ipdb_breakpoint
 
 
@@ -130,6 +133,17 @@ def remove_quotes(match):
     return re.sub(r'"', '', match.group(0))
 
 
+def warning_message(message):
+    """
+    Generic warning message box with custom message
+    :param message: Description of warning
+    """
+    warning_msg_box = QMessageBox(QMessageBox.Warning, " ", message,
+                                  QMessageBox.Ok, None)
+    warning_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+    warning_msg_box.exec_()
+
+
 class GeneralSignals(QObject):
     """
     class handling all general signals
@@ -221,10 +235,7 @@ class ExportDTF:
         """
         path = self.export_lsg.ui.fileLineEdit.text()
         if not os.path.isdir(path):
-            path_empty_msg_box = QMessageBox(QMessageBox.Warning, " ", "A valid directory must be selected",
-                                             QMessageBox.Ok, None)
-            path_empty_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            path_empty_msg_box.exec_()
+            warning_message("A valid directory must be selected")
         else:
             inc_asd = self.export_lsg.ui.asdCheckBox.isChecked()
             closed_streets = self.export_lsg.ui.closedStreetsCheckBox.isChecked()
@@ -261,12 +272,8 @@ class ExportDTF:
         :param csv_filename: the name of the open file
         :return:
         """
-        file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
-                                                                  "(possibly in another application).  "
-                                                                  "Close the file and try again"
-                                        .format(csv_filename), QMessageBox.Ok, None)
-        file_open_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        file_open_msg_box.exec_()
+        warning_message("The file {} is already open (possibly in another application).  "
+                        "Close the file and try again".format(csv_filename))
         self.export_lsg.open()
 
 
@@ -331,10 +338,7 @@ class ExportSRWR:
         """
         export_path = self.export_srwr_dk.ui.fileLineEdit.text()
         if not os.path.isdir(export_path):
-            path_empty_msg_box = QMessageBox(QMessageBox.Warning, " ", "A valid directory must be selected",
-                                             QMessageBox.Ok, None)
-            path_empty_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            path_empty_msg_box.exec_()
+            warning_message("A valid directory must be selected")
         else:
             closed_streets = self.export_srwr_dk.ui.closedStreetsCheckBox.isChecked()
             self.export_to_srwr = ExportsThread(self.params, self.db, dtf_format="srwr", path=export_path,
@@ -365,12 +369,8 @@ class ExportSRWR:
         :param csv_filename : the name of the open file
         :return:
         """
-        file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
-                                                                  "(possibly in another application).  "
-                                                                  "Close the file and try again"
-                                        .format(csv_filename), QMessageBox.Ok, None)
-        file_open_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        file_open_msg_box.exec_()
+        warning_message("The file {} is already open (possibly in another application).  "
+                        "Close the file and try again".format(csv_filename))
         self.export_srwr_dk.open()
 
 
@@ -453,10 +453,7 @@ class ExportLOR:
         """
         export_path = self.export_lor_dlg.ui.fileLineEdit.text()
         if not os.path.isdir(export_path):
-            path_empty_msg_box = QMessageBox(QMessageBox.Warning, " ", "A valid directory must be selected",
-                                             QMessageBox.Ok, None)
-            path_empty_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            path_empty_msg_box.exec_()
+            warning_message("A valid directory must be selected")
         else:
             export = ExportListOfRoads(
                     self.export_lor_dlg.ui.publicRadioButton.isChecked(),
@@ -480,12 +477,8 @@ class ExportLOR:
                 self.export_lor_dlg.close()
                 self.complete.show()
             else:
-                file_open_msg_box = QMessageBox(QMessageBox.Warning, " ", "The file {} is already open "
-                                                                          "(possibly in another application).  "
-                                                                          "Close the file and try again"
-                                                .format(lor_filename), QMessageBox.Ok, None)
-                file_open_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-                file_open_msg_box.exec_()
+                warning_message("The file {} is already open (possibly in another application).  "
+                                "Close the file and try again".format(lor_filename))
                 self.export_lor_dlg.open()
 
 
@@ -565,10 +558,7 @@ class ExportLsgShp:
         if os.path.isdir(os.path.dirname(file_path)):
             return True
         else:
-            path_empty_msg_box = QMessageBox(QMessageBox.Warning, " ", "A valid location must be selected",
-                                             QMessageBox.Ok, None)
-            path_empty_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            path_empty_msg_box.exec_()
+            warning_message("A valid location must be selected")
             return False
 
 
@@ -638,3 +628,133 @@ class ExportPoly:
                 self.export_poly_shp_dlg.open()
                 return
             del export
+
+
+class ExportStreetReport:
+    """
+    Export Street Report from Admin menu.
+    Works with rn_admin_street_reports
+    """
+    def __init__(self, iface, db, street_dia, params):
+        self.iface = iface
+        self.db = db
+        self.street_dia = street_dia
+        self.params = params
+        self.export_path = None
+        self.csv_chx = None
+        self.report_options = None
+        app_root = os.path.dirname(os.path.dirname(__file__))
+        self.open_image = QPixmap(os.path.join(app_root,
+                                               "image",
+                                               "folder_open_icon.png"))
+        self.home_dir = os.path.expanduser('~')
+        self.street_dia.ui.fileOpenPushButton.setIcon(QIcon(self.open_image))
+        self.street_dia.ui.fileOpenPushButton.setToolTip("Select File")
+        self.model_navigation()
+
+    def model_navigation(self):
+        # handles events on widgets
+        self.street_dia.ui.fileOpenPushButton.clicked.connect(self.select_file)
+
+        self.street_dia.ui.cancelPushButton.clicked.connect(self.close_browser)
+        self.street_dia.ui.okPushButton.clicked.connect(self.submit_export)
+        self.street_dia.ui.changedStsRadioButton.pressed.connect(self.enable_streets)
+        self.street_dia.ui.tblsRadioButton.pressed.connect(self.disable_streets)
+        self.street_dia.ui.tblsComboBox.currentIndexChanged.connect(self.populate_list)
+
+    def close_browser(self):
+        # close the browser
+        self.street_dia.close()
+
+    def populate_list(self, current):
+        """
+        changes the content of the list widget according to the selected value
+        in the combo box
+        :param current: the current combo box index
+        :return: void
+        """
+        # 0 = None,  1 = maintenance, 2 = reinstatement, 3 = special designation
+        qry = {0: [],
+               1: ['SELECT * from tlkpRoad_Status', 'Description', 'Road_Status_Ref'],
+               2: ['SELECT * from tlkpREINS_CAT', 'Description', 'Reinstatement_Code'],
+               3: ['SELECT designation_code,designation_text from tlkpSPEC_DES', 'Designation_Text', 'Designation_code']
+               }
+        # if the parameter is not null change the query accordingly
+        if current != 0:
+            query = QSqlQuery(self.db)
+            query.exec_(qry.get(current)[0])
+            rec = query.record()
+            # aval are the names of the indexes columns
+            aval = [rec.indexOf(qry.get(current)[1]), rec.indexOf(qry.get(current)[2])]
+            self.street_dia.ui.listWidget.clear()
+            while query.next():
+                # adds values to widget list
+                entry = str(query.value(aval[1])) + ": " + str(query.value(aval[0]))
+                self.street_dia.ui.listWidget.addItem(entry)
+            # Select the first item
+            first_item = self.street_dia.ui.listWidget.item(0)
+            first_item.setSelected(True)
+        else:
+            self.street_dia.ui.listWidget.clear()
+
+    def select_file(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setDirectory(self.home_dir)
+        save_file_path, save_extension = dialog.getSaveFileName(dialog, "Street Report",
+                                                                os.path.join(self.home_dir, "RNStreetReport"))
+        self.street_dia.ui.fileLineEdit.setText(save_file_path)
+
+    def disable_streets(self):
+        # disable the additional tables reporting option
+        # and enable the diachronic reporting option
+        self.street_dia.ui.dateEdit.setEnabled(False)
+        self.street_dia.ui.tblsComboBox.setEnabled(True)
+        self.street_dia.ui.listWidget.setEnabled(True)
+
+    def enable_streets(self):
+        # disable the diachronic reporting option
+        # enable the additional tables reporting option
+        self.street_dia.ui.listWidget.clear()
+        self.street_dia.ui.tblsComboBox.setCurrentIndex(0)
+        self.street_dia.ui.dateEdit.setEnabled(True)
+        self.street_dia.ui.tblsComboBox.setEnabled(False)
+        self.street_dia.ui.listWidget.setEnabled(False)
+
+    def submit_export(self):
+        """
+        when the ok button is presses it runs the main export class,
+        gets all data from widgets and instantiate a StreetReportsExport class
+        :return:
+        """
+        self.export_path = self.street_dia.ui.fileLineEdit.text()
+        if self.export_path is None or self.export_path == "":
+            warning_message("You must select an export file path")
+            return
+        date = self.street_dia.ui.dateEdit.date().toPyDate()
+        if date.year < 1997:
+            warning_message("No records present before 01/01/1997")
+            return
+        if date > datetime.date.today():
+            warning_message("Change Date not valid")
+            return
+        formatted_date = date.strftime("%Y%m%d")
+
+        # dictionary containing another dictionary which keys are
+        # the option of the report format (date or optional table)
+        # and values are the values selected for each widget
+        if self.street_dia.ui.changedStsRadioButton.isChecked():
+            self.report_options = {"report": "streets", "change_date": formatted_date}
+        else:
+            self.report_options = {"report": "srwr",
+                                   "categories": self.street_dia.ui.listWidget.selectedItems(),
+                                   "table": self.street_dia.ui.tblsComboBox.currentIndex()
+                                   }
+        # optional CSV formatting option checkbox
+        self.csv_chx = self.street_dia.ui.csvCheckBox.isChecked()
+        # export class instantiation
+        export = StreetReportsExport(self.db, self.export_path,
+                                     self.report_options, self.csv_chx,
+                                     self.street_dia, self.params)
+        # run the export
+        export.run_export()
