@@ -7,7 +7,7 @@
                               -------------------
         begin                : 2014-12-09
         git sha              : $Format:%H$
-        copyright            : (C) 2014-2018 by thinkWhere
+        copyright            : (C) 2014-2019 by thinkWhere
         email                : support@thinkwhere.com
  ***************************************************************************/
 
@@ -20,14 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
-
-from PyQt5.QtCore import Qt, QSettings, QUrl, QCoreApplication
+from PyQt5.QtCore import Qt, QSettings, QUrl
 from PyQt5.QtGui import QPixmap, QIcon, QDesktopServices
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlDatabase
 from qgis.utils import *
-from qgis.core import *
+from qgis.core import QgsGeometry
 
 from Roadnet.esu_selector_tool import EsuSelectorTool
 from Roadnet.roadnet_dialog import (
@@ -50,8 +48,8 @@ from Roadnet.exports.exports import (
     ExportSRWR,
     ExportLOR,
     ExportLsgShp,
-    ExportPoly)
-from Roadnet.admin.admin_menu import ExportStreetReport
+    ExportPoly,
+    ExportStreetReport)
 from Roadnet.admin.metadata import Metadata
 from Roadnet.admin.lsg_lookup import LsgLookUp
 from Roadnet.admin.srwr_lookup import SrwrLookup
@@ -451,13 +449,14 @@ class Roadnet:
         self.clean_rdpoly = UpdateSymbology(self.db, self.rdpoly, self.esu)
         self.clean_rdpoly.show_symbology_dlg()
 
-    def run_help(self):
+    @staticmethod
+    def run_help():
         """
         Open the help pdf in the default web browser
         """
-        help = QDesktopServices()
+        help_service = QDesktopServices()
         help_url = QUrl("http://www.thinkwhere.com/index.php/download_file/240/")
-        if not help.openUrl(help_url):
+        if not help_service.openUrl(help_url):
             no_browser_msg_box = QMessageBox(QMessageBox.Warning, " ", "roadNet cannot find a web browser "
                                                                        "to open the help page", QMessageBox.Ok, None)
             no_browser_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
@@ -577,4 +576,3 @@ class Roadnet:
             if g.deletePart(1):
                 esu_ids.append(f['esu_id'])
         return esu_ids
-
