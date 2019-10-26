@@ -2,9 +2,7 @@
 import csv
 from datetime import datetime
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery
-from PyQt5.QtWidgets import QMessageBox
 
 from Roadnet import database
 from Roadnet.config import AsdTableEnum, RnReportFormat
@@ -14,9 +12,8 @@ __author__ = 'matthew.bradley'
 
 
 class StreetReportsExport:
-    def __init__(self, db, export_path, options, as_csv, dia, params):
+    def __init__(self, db, export_path, options, as_csv, params):
         self.db = db
-        self.street_dia = dia
         self.report_type = RnReportFormat.CSV if as_csv else RnReportFormat.TXT  # Text or CSV enum
         self.export_path = export_path + ".csv" if as_csv else export_path + ".txt"
         self.options = options
@@ -37,16 +34,13 @@ class StreetReportsExport:
             if len(self.options["categories"]) == 0:
                 # Please select a category from an additional table
                 self._show_alert()
-                return
+                return False
             else:
                 self.report_srwr()
         elif self.options['report'] == 'streets':
             self.report_streets()
 
-        self.street_dia.close()
-
-        # shows a confirmation window when finished
-        self._show_completion_msg()
+        return True
 
     def report_srwr(self):
 
@@ -141,7 +135,7 @@ class StreetReportsExport:
              'query': changed_sql}
         ]
 
-        formatted_date = self._format_dates(str(changes_since))
+        formatted_date = self._format_date(str(changes_since))
 
         with open(self.export_path, 'w', newline='') as out_file:
             if self.report_type is RnReportFormat.CSV:
@@ -185,10 +179,10 @@ class StreetReportsExport:
                 # write street content
                 line = [query.value(field_ids[0]), query.value(field_ids[1]), query.value(field_ids[2]),
                         query.value(field_ids[3]), query.value(field_ids[4]), query.value(field_ids[5]),
-                        self._format_dates(str(query.value(field_ids[6]))),
-                        self._format_dates(str(query.value(field_ids[7]))),
-                        self._format_dates(str(query.value(field_ids[8]))),
-                        self._format_dates(str(query.value(field_ids[9]))),
+                        self._format_date(str(query.value(field_ids[6]))),
+                        self._format_date(str(query.value(field_ids[7]))),
+                        self._format_date(str(query.value(field_ids[8]))),
+                        self._format_date(str(query.value(field_ids[9]))),
                         query.value(field_ids[10]), query.value(field_ids[11])]
             else:
                 # write srwr content
@@ -215,10 +209,10 @@ class StreetReportsExport:
             while query.next():
                 line = [query.value(field_ids[0]), query.value(field_ids[1]), query.value(field_ids[2]),
                         query.value(field_ids[3]), query.value(field_ids[4]), query.value(field_ids[5]),
-                        self._format_dates(str(query.value(field_ids[6]))),
-                        self._format_dates(str(query.value(field_ids[7]))),
-                        self._format_dates(str(query.value(field_ids[8]))),
-                        self._format_dates(str(query.value(field_ids[9]))),
+                        self._format_date(str(query.value(field_ids[6]))),
+                        self._format_date(str(query.value(field_ids[7]))),
+                        self._format_date(str(query.value(field_ids[8]))),
+                        self._format_date(str(query.value(field_ids[9]))),
                         query.value(field_ids[10]), query.value(field_ids[11])]
                 output_csv.writerow(line)
         else:
@@ -267,7 +261,7 @@ class StreetReportsExport:
             output_file.write("---------- End of Report ----------- \n")
 
     @staticmethod
-    def _format_dates(input_date):
+    def _format_date(input_date):
         if input_date is "NULL" or input_date == "0":
             output_date = ""
             return output_date
@@ -302,9 +296,10 @@ class StreetReportsExport:
         # Build a list of selected values from the listWidget
         list_selected = list()
 
-        for item in selected_options:
-            sep = str(item.text()).find(":", 0, len(item.text()))
-            list_selected.append(item.text()[:sep])
+        # Extract option id from option text e.g. "1: option one"
+        for opt in selected_options:
+            sep = str(opt).find(":", 0, len(opt))
+            list_selected.append(opt[:sep])
             list_selected.sort()
 
         # create comma sep list of values for query from an array
@@ -317,11 +312,3 @@ class StreetReportsExport:
         error_alert = StreetReportsAlert()
         error_alert.ui.cancelPushButton.clicked.connect(error_alert.close)
         error_alert.exec_()
-
-    @staticmethod
-    def _show_completion_msg():
-        street_reports_export_msg_box = QMessageBox(QMessageBox.Information, " ",
-                                                    "Export Street Reports Complete",
-                                                    QMessageBox.Ok, None)
-        street_reports_export_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        street_reports_export_msg_box.exec_()

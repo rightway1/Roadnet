@@ -14,7 +14,7 @@ from Roadnet.exports.export_esu_lines import ExportESUShapes
 from Roadnet.exports.export_lor import ExportListOfRoads
 from Roadnet.exports.export_poly import ExportPolyShapes
 from Roadnet.roadnet_dialog import ExportCompleteDia, ExportExporting
-from Roadnet.admin.export_street_report import StreetReportsExport
+from Roadnet.admin.street_report import StreetReportsExport
 from Roadnet import database
 from Roadnet.config import AsdTableEnum
 from Roadnet.generic_functions import ipdb_breakpoint
@@ -747,7 +747,8 @@ class ExportStreetReport:
             self.report_options = {"report": "streets", "change_date": formatted_date}
         else:
             self.report_options = {"report": "srwr",
-                                   "categories": self.street_dia.ui.listWidget.selectedItems(),
+                                   "categories": list(map(lambda sel: sel.text(),
+                                                          self.street_dia.ui.listWidget.selectedItems())),
                                    "table": self.street_dia.ui.tblsComboBox.currentIndex()
                                    }
         # optional CSV formatting option checkbox
@@ -755,6 +756,20 @@ class ExportStreetReport:
         # export class instantiation
         export = StreetReportsExport(self.db, self.export_path,
                                      self.report_options, self.csv_chx,
-                                     self.street_dia, self.params)
-        # run the export
-        export.run_export()
+                                     self.params)
+
+        # run the export; returns false if not all options selected
+        result = export.run_export()
+
+        # Close dialog and show completion message if exported
+        if result is True:
+            self.street_dia.close()
+            self._show_completion_msg()
+
+    @staticmethod
+    def _show_completion_msg():
+        street_reports_export_msg_box = QMessageBox(QMessageBox.Information, " ",
+                                                    "Export Street Reports Complete",
+                                                    QMessageBox.Ok, None)
+        street_reports_export_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        street_reports_export_msg_box.exec_()
