@@ -187,5 +187,6 @@ def get_lor_ref_2_values(db):
         data.append(record.value('lor_ref_2'))
     return data
 
+
 if __name__ == '__main__':
     unittest.main()

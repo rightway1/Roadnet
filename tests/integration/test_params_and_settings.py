@@ -2,7 +2,7 @@ from textwrap import dedent
 import unittest
 import xml.etree.ElementTree as ETree
 
-from mock import call, patch, MagicMock, mock_open, sentinel
+from mock import call, patch, MagicMock, mock_open
 
 from tests.integration.roadnet_test_cases import QgisTestCase
 import params_and_settings as p_and_s
@@ -144,7 +144,7 @@ class TestSettingsDialogHandler(QgisTestCase):
     @patch.object(p_and_s, 'SettingsDlg')
     def test_settings_dialog_created(self, mock_dlg):
         params = {'test': 123}
-        settings_dialog_handler = p_and_s.SettingsDialogHandler(params)
+        p_and_s.SettingsDialogHandler(params)
         mock_dlg.assert_called_once_with()
 
     @patch.object(p_and_s.SettingsDialogHandler,

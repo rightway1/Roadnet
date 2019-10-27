@@ -206,5 +206,6 @@ def get_ogr_output_feature_count(shapefile_path):
             return int(count)
     raise RuntimeError('Feature Count line not found in {}'.format(shapefile_path))
 
+
 if __name__ == '__main__':
     unittest.main()

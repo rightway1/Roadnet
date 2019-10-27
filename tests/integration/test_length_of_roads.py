@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from mock import patch
 import os
-import pprint
 import shutil
-import subprocess
 import unittest
 
 from textwrap import dedent

@@ -6,8 +6,8 @@ from PyQt5.QtSql import QSqlRelation, QSqlQuery
 from Roadnet.roadnet_dialog import SrwrSpecialDesDlg
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet.street_browser.srwr import WidgetInfoObject, WidgetTypeEnum, SrwrViewRecord
-from Roadnet.street_browser.srwr_maintenance import MaintenanceTable, SrwrAddMaintenanceRecord, SrwrModifyMaintenanceRecord, \
-    SrwrDeleteMaintenanceRecord
+from Roadnet.street_browser.srwr_maintenance import MaintenanceTable, SrwrAddMaintenanceRecord, \
+    SrwrModifyMaintenanceRecord, SrwrDeleteMaintenanceRecord
 
 
 class SpecialDesignationTable(MaintenanceTable):

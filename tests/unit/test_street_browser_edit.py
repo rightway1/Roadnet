@@ -1,5 +1,5 @@
 import unittest
-from mock import patch, Mock, MagicMock, sentinel
+from mock import MagicMock
 from qgis.core import QgsVectorLayer
 from PyQt5.QtSql import QSqlDatabase
 from street_browser.edit import UpdateEsuSymbology

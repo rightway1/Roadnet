@@ -423,10 +423,10 @@ class ScottishRoadWorksRegister:
             except TypeError:
                 pass
         if self.spec_des_tab:
-                try:
-                    self.spec_des_tab.disconnect_buttons()
-                except TypeError:
-                    pass
+            try:
+                self.spec_des_tab.disconnect_buttons()
+            except TypeError:
+                pass
         if self.reins_cat_tab:
             try:
                 self.reins_cat_tab.disconnect_buttons()

@@ -1258,7 +1258,7 @@ class EditMaintLink(EditEsuLink):
                 rd_pol_list.append(rd_pol)
             self.original_selection = rd_pol_list
             for esu in rd_pol_list:
-                        self.selected_dict[int(esu)] = QListWidgetItem(str(esu), self.esu_dlg.ui.esuLinkListWidget)
+                self.selected_dict[int(esu)] = QListWidgetItem(str(esu), self.esu_dlg.ui.esuLinkListWidget)
 
         # Select the rd polygons
         feats = self.gn_fnc.get_features_from_field_value(self.original_selection, 'rd_pol_id', 'Road Polygons')

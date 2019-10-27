@@ -245,7 +245,7 @@ class StreetReportsExport:
 
     def write_report_header(self, output_file, file_format):
         # Only have a header for text format for now
-        if file_format is RnReportFormat.TXT:
+        if file_format.name == RnReportFormat.TXT.name:
             output_file.write(str(self.report_title) + ' for {0} \n'.format(self.org))
             output_file.write('Created on : {0} at {1} By : {2} \n'.format(datetime.today().strftime("%d/%m/%Y"),
                                                                            datetime.now().strftime("%H:%M"),
@@ -256,7 +256,7 @@ class StreetReportsExport:
     @staticmethod
     def write_report_footer(output_file, file_format):
         # Only have a report footer for text format for now
-        if file_format is RnReportFormat.TXT:
+        if file_format.name == RnReportFormat.TXT.name:
             output_file.write("\n \n \n")
             output_file.write("---------- End of Report ----------- \n")
 
