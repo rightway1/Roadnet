@@ -167,8 +167,8 @@ class StreetReportsExport:
             self.write_report_footer(output_file, self.report_type)
 
     def report_results(self, mode, report_field_ids, query, output_file, report_type):
-        if report_type is RnReportFormat.CSV:
-            self.results_to_csv_row(report_field_ids, query, mode, output_file)
+        if report_type.name is RnReportFormat.CSV.name:
+            self.results_to_csv_row(report_field_ids, mode, query, output_file)
         else:
             self.results_to_txt_row(report_field_ids, mode, query, output_file)
 
@@ -203,7 +203,7 @@ class StreetReportsExport:
         if not has_rows:
             output_file.write(self.no_content)
 
-    def results_to_csv_row(self, field_ids, query, mode, output_csv):
+    def results_to_csv_row(self, field_ids, mode, query, output_csv):
         if mode == "streets":
             # write street content
             while query.next():
@@ -226,22 +226,23 @@ class StreetReportsExport:
     @staticmethod
     def write_column_headers(headers, output_file, file_format):
         # write column header row
-        if file_format is RnReportFormat.CSV:
+        if file_format.name is RnReportFormat.CSV.name:
             output_file.writerow(headers)
         else:
+            header_line = ""
             for head in headers:
-                output_file.write(head + " ")
-            output_file.write("\n")
+                header_line += head + " "
+            output_file.write(header_line + "\n")
 
     @staticmethod
     def write_sub_report_headings(heading, formatted_date, output_file, report_type):
-        if report_type is RnReportFormat.CSV:
+        if report_type.name == RnReportFormat.CSV.name:
             output_file.writerow([heading, formatted_date])
         else:
             header = heading + formatted_date
             output_file.write(header + "\n")
             line_length = len(header)
-            output_file.write('-' * line_length + "\n \n")
+            output_file.write('-' * line_length + "\n\n")
 
     def write_report_header(self, output_file, file_format):
         # Only have a header for text format for now

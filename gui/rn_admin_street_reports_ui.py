@@ -96,7 +96,7 @@ class Ui_streetreports(object):
         self.listWidget.setEnabled(False)
         self.listWidget.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.listWidget.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-        self.listWidget.setAlternatingRowColors(True)
+        self.listWidget.setAlternatingRowColors(False)
         self.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.listWidget.setObjectName("listWidget")
         self.horizontalLayout_2.addWidget(self.listWidget)
