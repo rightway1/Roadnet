@@ -65,9 +65,9 @@ class ValidationSummary:
         # get the number of rows
         n_rows = len(content_list)
         # if we have no results we keep the headers
-        if n_rows is not 1:
+        if n_rows != 1:
             n_rows = len(content_list) - 1
-            if table_id is 2 or table_id is 3:
+            if table_id == 2 or table_id == 3:
                 self.write_subtitles(table_id)
         # iterate through each row
         header_list = str(content_list[0][0]).split(',')

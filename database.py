@@ -137,7 +137,7 @@ def connect_and_open(db_file_path, connection_name):
 def get_model(db):
     """
     Create and populate the model used for all tblSTREET operations.
-    
+
     :param db: Open QSqlDatabase object
     :return model: QSqlRelationalTableModel instance
     """

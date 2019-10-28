@@ -344,8 +344,8 @@ class Validation:
             self.validation_dk.setWindowFlags(Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
             rn_icon = QIcon()
             rn_icon.addPixmap(QPixmap(os.path.join(self.app_root,
-                                                         "image",
-                                                         "rn_logo_v2.png")))
+                                                   "image",
+                                                   "rn_logo_v2.png")))
             self.validation_dk.setWindowIcon(rn_icon)
         # instantiate the class handler (functions to create and format the screen report)
         # include the window in the instantiation

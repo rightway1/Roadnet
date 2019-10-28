@@ -92,7 +92,7 @@ class StreetReportsExport:
         report_field_ids = self._get_report_field_ids(report_fields, rec)
 
         with open(self.export_path, 'w', newline='') as out_file:
-            if self.report_type is RnReportFormat.CSV:
+            if self.report_type.value == RnReportFormat.CSV.value:
                 output_file = self._get_csv_writer(out_file)
             else:
                 output_file = out_file
@@ -263,7 +263,7 @@ class StreetReportsExport:
 
     @staticmethod
     def _format_date(input_date):
-        if input_date is "NULL" or input_date == "0":
+        if input_date == "NULL" or input_date == "0":
             output_date = ""
             return output_date
         else:

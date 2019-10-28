@@ -24,7 +24,7 @@ from PyQt5.QtCore import Qt, QSettings, QUrl
 from PyQt5.QtGui import QPixmap, QIcon, QDesktopServices
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtSql import QSqlDatabase
-from qgis.utils import *
+from qgis.utils import os, QCoreApplication
 from qgis.core import QgsGeometry
 
 from Roadnet.esu_selector_tool import EsuSelectorTool

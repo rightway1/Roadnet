@@ -16,8 +16,7 @@ from Roadnet.exports.export_poly import ExportPolyShapes
 from Roadnet.roadnet_dialog import ExportCompleteDia, ExportExporting
 from Roadnet.admin.street_report import StreetReportsExport
 from Roadnet import database
-from Roadnet.config import AsdTableEnum
-from Roadnet.generic_functions import ipdb_breakpoint
+# from Roadnet.generic_functions import ipdb_breakpoint
 
 
 class ExportsThread(QThread):
