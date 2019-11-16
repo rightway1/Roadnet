@@ -4,7 +4,7 @@ import re
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
 from PyQt5.QtWidgets import QMessageBox
-from Roadnet.generic_functions import ipdb_breakpoint
+# from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
 __author__ = 'Alessandro Cristofori'
@@ -50,6 +50,7 @@ class SrwrLookup:
         # Setup initial view
         self.srwr_lu_dia.ui.desRadioButton.setChecked(True)
         self.populate_list(0)
+        self.selection_handler()
 
     def connect_buttons(self):
         """
@@ -63,7 +64,7 @@ class SrwrLookup:
         self.srwr_lu_dia.ui.desRadioButton.pressed.connect(lambda: self.populate_list(0))
         self.srwr_lu_dia.ui.reinsRadioButton.pressed.connect(lambda: self.populate_list(1))
         self.srwr_lu_dia.ui.statRadioButton.pressed.connect(lambda: self.populate_list(2))
-        self.srwr_lu_dia.ui.itemsListView.pressed.connect(lambda: self.selection_handler())
+        self.srwr_lu_dia.ui.itemsListView.pressed.connect(self.selection_handler)
 
     def close_browser(self):
         # close the dialog window
@@ -121,18 +122,16 @@ class SrwrLookup:
         :return: void
         """
         ui = self.srwr_lu_dia.ui
+        table_id = 0
         if ui.desRadioButton.isChecked():
             table_id = 0
-            table = self.tables[table_id]
-            ref_col = self.columns[0]
         elif ui.reinsRadioButton.isChecked():
             table_id = 1
-            table = self.tables[table_id]
-            ref_col = self.columns[1]
         elif ui.statRadioButton.isChecked():
             table_id = 2
-            table = self.tables[table_id]
-            ref_col = self.columns[2]
+
+        table = self.tables[table_id]
+        ref_col = self.columns[table_id]
 
         # format text and numbers
         add_desc = str(ui.typeDescLineEdit.text()).strip()
@@ -171,9 +170,7 @@ class SrwrLookup:
 
         # Avoid duplicate insertion by checking database
         sql_find_duplicates = """SELECT {0} FROM {1}
-                                 WHERE {0} IS '{2}'""".format(ref_col,
-                                                              table,
-                                                              add_code)
+                                 WHERE {0} IS '{2}'""".format(ref_col, table, add_code)
         if config.DEBUG_MODE:
             print('DEBUG_MODE: find_duplicates: {}'.format(
                 sql_find_duplicates))
@@ -223,15 +220,21 @@ class SrwrLookup:
         """
         # print all selected list items to the text box
         sel_model = self.srwr_lu_dia.ui.itemsListView.selectionModel()
-        sel_items = sel_model.selectedIndexes()[0]
-        item_data = str(sel_items.data())
-        # split text from the code number
-        p = re.compile(r"\:(.*)")
-        src = p.search(item_data)
-        item_text = str(src.group(1)[1:])
-        p = re.compile(r"([0-9]{1,3})(?=\s:)")
-        src = p.search(item_data)
-        item_id = int(src.group(1))
+        if sel_model.hasSelection() is False:
+            item_id = 0
+            item_text = ""
+            buttons_enabled = False
+        else:
+            buttons_enabled = True
+            sel_items = sel_model.selectedIndexes()[0]
+            item_data = str(sel_items.data())
+            # split text from the code number
+            src_list = re.split(r'\s:\s', item_data)
+            item_id = int(src_list[0])
+            item_text = str(src_list[1])
+
+        self.srwr_lu_dia.ui.amendButton.setEnabled(buttons_enabled)
+        self.srwr_lu_dia.ui.removeButton.setEnabled(buttons_enabled)
         self.srwr_lu_dia.ui.typeNoSpinBox.setValue(item_id)
         self.srwr_lu_dia.ui.typeDescLineEdit.setText(item_text)
 
@@ -243,31 +246,26 @@ class SrwrLookup:
         :return: void
         """
         ui = self.srwr_lu_dia.ui
-        table = None
         table_id = None
-        ref_col = None
         sql_usrns = ""
         if ui.desRadioButton.isChecked():
             table_id = 0
-            table = self.tables[table_id]
-            ref_col = self.columns[0]
             sql_usrns = "SELECT usrn FROM tblSPEC_DES WHERE " \
                         "(designation_code = {0} AND currency_flag=0);" \
                         .format(str(ui.typeNoSpinBox.value()))
         elif ui.reinsRadioButton.isChecked():
             table_id = 1
-            table = self.tables[table_id]
-            ref_col = self.columns[1]
             sql_usrns = "SELECT usrn FROM tblREINS_CAT WHERE " \
                         "(reinstatement_code = {0} AND currency_flag=0);" \
                         .format(str(ui.typeNoSpinBox.value()))
         elif ui.statRadioButton.isChecked():
             table_id = 2
-            table = self.tables[table_id]
-            ref_col = self.columns[2]
             sql_usrns = "SELECT usrn FROM tblMaint WHERE " \
                         "(road_status_ref = {0} AND currency_flag=0);" \
                         .format(str(ui.typeNoSpinBox.value()))
+
+        table = self.tables[table_id]
+        ref_col = self.columns[table_id]
 
         data_model = self.data_model
         item_text = ui.typeDescLineEdit.text()

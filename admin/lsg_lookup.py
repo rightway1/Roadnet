@@ -3,7 +3,7 @@
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtSql import QSqlQuery, QSqlTableModel
 from qgis.PyQt.QtWidgets import QMessageBox
-from Roadnet.generic_functions import ipdb_breakpoint
+# from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
 __author__ = 'Alessandro Cristofori'
@@ -25,6 +25,7 @@ class LsgLookUp:
         self.model_navigation()
         self.item_value = None
         self.changes_made = False
+        self.selection_handler()
 
     def model_navigation(self):
         """
@@ -38,7 +39,7 @@ class LsgLookUp:
         self.lsg_lu_dia.ui.locRadioButton.pressed.connect(lambda: self.populate_list(0))
         self.lsg_lu_dia.ui.townRadioButton.pressed.connect(lambda: self.populate_list(1))
         self.lsg_lu_dia.ui.countyRadioButton.pressed.connect(lambda: self.populate_list(2))
-        self.lsg_lu_dia.ui.itemsListView.pressed.connect(lambda: self.selection_handler())
+        self.lsg_lu_dia.ui.itemsListView.pressed.connect(self.selection_handler)
 
     def close_browser(self):
         # close the dialog window
@@ -319,15 +320,17 @@ class LsgLookUp:
     def selection_handler(self):
         # print all selected list items to the text box
         sel_model = self.lsg_lu_dia.ui.itemsListView.selectionModel()
-        sel_items = sel_model.selectedIndexes()[0]
-        item_text = str(sel_items.data())
-        self.item_value = sel_items.row()
-        # if the selected value is <none> set read only
-        if item_text == "<none>" or self.item_value == 0:
+
+        # if no selected items set read only
+        if sel_model.hasSelection() is False:
             self.lsg_lu_dia.ui.addLookupLineEdit.setText("")
             self.lsg_lu_dia.ui.amendButton.setEnabled(False)
+            self.lsg_lu_dia.ui.removeButton.setEnabled(False)
         else:
+            sel_item = sel_model.selectedIndexes()[0]
+            item_text = str(sel_item.data())
             self.lsg_lu_dia.ui.amendButton.setEnabled(True)
+            self.lsg_lu_dia.ui.removeButton.setEnabled(True)
             self.lsg_lu_dia.ui.addLookupLineEdit.setText(item_text)
 
     def get_max_value(self, ref_col, table):
