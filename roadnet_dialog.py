@@ -21,8 +21,6 @@
  ***************************************************************************/
 """
 
-# from PyQt5.QtCore import QtGui, QtCore
-# from PyQt5.QtWidgets import QDialog, QDockWidget
 from PyQt5.QtCore import QEvent, QObject, Qt, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QWidget
 

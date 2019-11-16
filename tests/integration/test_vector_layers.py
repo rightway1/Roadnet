@@ -1,4 +1,4 @@
-from mock import MagicMock, call, patch
+from mock import MagicMock, patch
 import os
 import unittest
 
@@ -21,7 +21,7 @@ class TestVectorLayers(QgisTestCase):
         roadnet_dir = os.path.dirname(os.path.abspath(vector_layers.__file__))
         db_path = os.path.join(roadnet_dir, 'database_files', 'roadnet_demo.sqlite')
 
-        vl = vector_layers.add_styled_spatialite_layer(
+        vector_layers.add_styled_spatialite_layer(
             vlayer_name='esu',
             display_name=display_name,
             db_path=db_path,
@@ -43,7 +43,7 @@ class TestVectorLayers(QgisTestCase):
         roadnet_dir = os.path.dirname(os.path.abspath(vector_layers.__file__))
         db_path = os.path.join(roadnet_dir, 'database_files', 'roadnet_demo.sqlite')
 
-        vl = vector_layers.add_styled_spatialite_layer(
+        vector_layers.add_styled_spatialite_layer(
             vlayer_name='esu',
             display_name=display_name,
             db_path=db_path,
@@ -64,7 +64,7 @@ class TestVectorLayers(QgisTestCase):
 
         # Act
         with self.assertRaises(rn_except.InvalidLayerPopupError):
-            vl = vector_layers.add_styled_spatialite_layer(
+            vector_layers.add_styled_spatialite_layer(
                 vlayer_name='this does not exist',
                 display_name=display_name,
                 db_path=db_path,

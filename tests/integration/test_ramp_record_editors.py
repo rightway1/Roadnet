@@ -271,15 +271,15 @@ class TestRampMclRecordEditor(QgisTestCase):
         mre.get_items_from_linked_poly_box.return_value = ['27100', '27180']
 
         expected_rdpoly_data = [
-            (21473L, 11L, 27100L, u'SSTRIP', u'SS', None, None, None, u'S', 1L,
-             1L, None, u'U-631571/10', u'/SSTRIP/1', u'/SSTRIP/S/1', None,
-             None, 11111L),
-            (26619L, 11L, 27104L, None, None, None, None, None, None, None,
+            (21473, 11, 27100, u'SSTRIP', u'SS', None, None, None, u'S', 1,
+             1, None, u'U-631571/10', u'/SSTRIP/1', u'/SSTRIP/S/1', None,
+             None, 11111),
+            (26619, 11, 27104, None, None, None, None, None, None, None,
              None, None, None, None, None, None,
              None, None),
-            (26625L, 11L, 27180L, None, None, None, None, None, None, None,
+            (26625, 11, 27180, None, None, None, None, None, None, None,
              None, None, 'F-5470/60', None, None, None, None,
-             11111L)]
+             11111)]
 
         # Act
         mre.update_db_linked_polys()
@@ -412,10 +412,10 @@ class TestRampRdpolyRecordEditor(QgisTestCase):
                    'speed': rdpre.dlg.ui.speedLineEdit.text,
                    'usrn': rdpre.dlg.ui.usrnLineEdit.text}
 
-        expected = [21473L, 11L, 27100L, u'CGWAY', u'LR', QPyNullVariant(int),
-                    QPyNullVariant(int), QPyNullVariant(int), u'N', 1L, 1L,
+        expected = [21473, 11, 27100, u'CGWAY', u'LR', QPyNullVariant(int),
+                    QPyNullVariant(int), QPyNullVariant(int), u'N', 1, 1,
                     QPyNullVariant(int), u'U-631571/10', u'/CGWAY/1', u'/CGWAY/N/1',
-                    QPyNullVariant(int), QPyNullVariant(int), 11111L]
+                    QPyNullVariant(int), QPyNullVariant(int), 11111]
 
         # Act
         rdpre.select_record("27100")
@@ -470,10 +470,10 @@ class TestRampRdpolyRecordEditor(QgisTestCase):
                    'speed': rdpre.dlg.ui.speedLineEdit.text,
                    'usrn': rdpre.dlg.ui.usrnLineEdit.text}
 
-        expected = [21473L, 11L, 27100L, u'SSTRIP', u'SS', QPyNullVariant(int),
-                    QPyNullVariant(int), QPyNullVariant(int), u'S', 1L, 1L,
+        expected = [21473, 11, 27100, u'SSTRIP', u'SS', QPyNullVariant(int),
+                    QPyNullVariant(int), QPyNullVariant(int), u'S', 1, 1,
                     QPyNullVariant(int), u'U-631571/10', u'/SSTRIP/1', u'/SSTRIP/S/1',
-                    QPyNullVariant(int), QPyNullVariant(int), 11111L]
+                    QPyNullVariant(int), QPyNullVariant(int), 11111]
 
         # Act
         rdpre.select_record("27100")
@@ -533,6 +533,7 @@ def get_table(table, db):
         row = [record.value(i) for i in range(record.count() - 1)]
         data.append(tuple(row))
     return data
+
 
 if __name__ == '__main__':
     unittest.main()

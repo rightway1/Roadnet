@@ -101,7 +101,7 @@ def write_content(query_id, header_id, header_no_content_id, columns_name_id, in
     parent_model_index = QModelIndex()
     # if the path is not specified sends data to function creating a list
     if report_file is None:
-        content_to_screen(content_list=None, query_model=query_model,columns_name_id=columns_name_id,
+        content_to_screen(content_list=None, query_model=query_model, columns_name_id=columns_name_id,
                           no_content_id=header_no_content_id)
     else:
         # get number of rows and columns
@@ -345,7 +345,7 @@ class DupStreetDesc(QRunnable):
         self.progress = 16.6
 
     def run(self):
-        self.signals.result.emit(self.task,self.progress)
+        self.signals.result.emit(self.task, self.progress)
         if report_file is None:
             write_content(0, 0, 0, 0)
             global passing_list
@@ -626,10 +626,10 @@ class CheckStartEnd(QRunnable):
                         report_file.write(column_names[5][k])
                     k += 1
                 for content in start_end_content:
-                    l = 0
-                    while l <= len(content) - 1:
-                        report_file.write(str(content[l]))
-                        l += 1
+                    m = 0
+                    while m <= len(content) - 1:
+                        report_file.write(str(content[m]))
+                        m += 1
                 report_file.write("\n" + "TOTAL : " + str(count) + "\n \n \n")
             else:
                 start_end_content.insert(0, column_names[5])
@@ -823,7 +823,7 @@ class CheckMaintReins(QRunnable):
             results_list.append(passing_list)
             write_content(11, 12, 12, 6)
             results_list.append(passing_list)
-            self.signals.list.emit(results_list,'notMaintReinsCheckBox')
+            self.signals.list.emit(results_list, 'notMaintReinsCheckBox')
         else:
             # check for maintenance
             write_content(10, 11, 11, 6)

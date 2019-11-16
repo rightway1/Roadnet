@@ -349,7 +349,7 @@ class SrwrLookup:
                                             Qt.WindowTitleHint)
             db_error_msg_box.exec_()
         return
-    
+
     def amend_lookup(self):
         """
         change the value of existing lookup items, this time are used db queries

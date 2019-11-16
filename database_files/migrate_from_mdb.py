@@ -19,7 +19,7 @@ except ImportError:
 from database_files.sql_scripts import populate_layer_styles, populate_lookup_tables
 
 OUTPUT_DB_PATH = 'roadnet_migrated.sqlite'
-INPUT_DB_PATH = 'C:\dev\Roadnet.mdb'
+INPUT_DB_PATH = 'C:/dev/Roadnet.mdb'
 
 
 def main():
@@ -977,8 +977,8 @@ class MdbMigrator(object):
         self.open_sqlite_connection_and_cursor()
         print('Running custom SQL for {}'.format(council))
         for sql in self.custom_table_amendments[council]:
-                print(dedent(sql))
-                self.sqlite_cursor.execute(sql)
+            print(dedent(sql))
+            self.sqlite_cursor.execute(sql)
         self.commit_and_close_sqlite()
 
     def print_row_count(self, table):

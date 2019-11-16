@@ -29,5 +29,6 @@ class TestRamp(RoadnetTestCase):
         # Assert
         self.rn.iface.setActiveLayer.assert_not_called()
 
+
 if __name__ == '__main__':
     unittest.main()

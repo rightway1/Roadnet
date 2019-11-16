@@ -4,10 +4,8 @@ nosetests -q -s tests.integration.test_geometry_handling
 """
 import unittest
 
-from qgis.core import QgsGeometry, QgsPointXY, QgsFeature, QgsVectorLayer, QgsField
-from PyQt5.QtCore import QVariant
+from qgis.core import QgsGeometry, QgsPointXY, QgsFeature, QgsVectorLayer
 
-from Roadnet.geometry.esu_edit_handler import EsuIntersectionHandler
 from Roadnet.geometry.rdpoly_edit_handler import RdpolyIntersectionHandler, IntersectionHandlerError
 from Roadnet.geometry import edit_handler
 from Roadnet.tests.integration.roadnet_test_cases import QgisTestCase

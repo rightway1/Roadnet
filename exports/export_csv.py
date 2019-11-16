@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import copy
 import datetime
-import math
-import re
 
 from qgis.PyQt.QtSql import QSqlQuery
 
-from qgis.core import QgsGeometry, QgsFeature, QgsMessageLog
+from qgis.core import QgsGeometry, QgsFeature
 
 __author__ = 'matthew.bradley'
 
@@ -303,7 +301,7 @@ class ExportCSV:
                                     query.value(aval[23]),
                                     language])
             }
-            if self.version is 6:
+            if self.version == 6:
                 streets = self.clean_street(opts.get(self.version), query.value(aval[2]))
                 streets = format_floats_and_strings(streets)
                 self.csv.writerow(streets)
@@ -852,13 +850,13 @@ class ExportCSV:
         town = street_list[town_idx]
 
         # clean up the description text
-        if street_type is 3:
+        if street_type == 3:
             descarr = desc.split(" ")
             datac = descarr[0][0]
-            if datac is "C" or datac is "U":
+            if datac == "C" or datac == "U":
                 desc = "Z" + desc
                 desc = "Z" + desc
-        if street_type is 3 or street_type is 1:
+        if street_type == 3 or street_type == 1:
             desc.replace('(', '').replace(')', '')
         desc.replace('*', '').replace(' ', '')
         street_list[desc_idx] = desc

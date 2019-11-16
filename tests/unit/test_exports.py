@@ -1,6 +1,5 @@
 import datetime
 import unittest
-from mock import patch, Mock
 
 import exports.export_csv as csv_export
 

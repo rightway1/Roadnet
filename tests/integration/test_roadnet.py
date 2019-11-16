@@ -13,5 +13,6 @@ class TestRoadnet(RoadnetTestCase):
     def test_roadnet_loaded(self):
         self.assertEqual(hasattr(self.rn, 'roadnet_started'), True)
 
+
 if __name__ == '__main__':
     unittest.main()

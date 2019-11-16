@@ -3,7 +3,7 @@ from multiprocessing.pool import ThreadPool
 
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QProgressDialog, QMessageBox
-from qgis.PyQt.QtCore import QVariant, Qt, QByteArray
+from qgis.PyQt.QtCore import QVariant, Qt, QByteArray, pyqtSignal
 
 from qgis.core import (
     QgsField,
@@ -15,7 +15,6 @@ from qgis.core import (
     QgsWkbTypes,
     QgsFields, QgsMessageLog)
 
-from qgis.gui import *
 import Roadnet.config
 # from generic_functions import ipdb_breakpoint
 
@@ -39,7 +38,7 @@ class ExportESUShapes:
     """
     Class handling the exports of ESUs to lines sahpefiles
     """
-    progress = QtCore.pyqtSignal(float)
+    progress = pyqtSignal(float)
 
     def __init__(self, iface, db, unassigned, export_path):
         self.killed = False
@@ -168,7 +167,7 @@ class ExportESUShapes:
 
         vlayer.updateExtents()
         error_code, error_msg = QgsVectorFileWriter.writeAsVectorFormat(vlayer, self.export_path, "utf-8", vlayer.crs(),
-                                                         "ESRI Shapefile")
+                                                                        "ESRI Shapefile")
         # checks for completed export
         if error_code == 0:
             self.progresswin.close()

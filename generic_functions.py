@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from qgis.core import Qgis, QgsPointXY, QgsProject, QgsGeometry, QgsWkbTypes, QgsFeatureRequest
+from qgis.core import QgsPointXY, QgsProject, QgsGeometry, QgsWkbTypes, QgsFeatureRequest
 from qgis.gui import QgsRubberBand, QgsVertexMarker
 
 from PyQt5.QtCore import Qt
@@ -362,10 +362,10 @@ def get_layer(layer_name):
 
 def ipdb_breakpoint():
     """
-    Drops code into IPython debugger when QGIS is run from command line.  
+    Drops code into IPython debugger when QGIS is run from command line.
     Otherwise returns an error.  Press 'c' to *continue* running code.
     """
-    import ipdb 
+    import ipdb
     from PyQt5.QtCore import pyqtRemoveInputHook
     pyqtRemoveInputHook()
     ipdb.set_trace()

@@ -77,7 +77,6 @@ class TestUpdateSymbologyRdPolySymbology(unittest.TestCase):
         self.p_init_data.stop()
         self.update_symbology = None
 
-
     def test_calculate_rdpoly_symbology_value_unassigned(self):
         maint_ids = MAINT_IDS_LIST['unassigned']
         symbol = self.update_symbology.calculate_rdpoly_symbology_value(maint_ids)
@@ -101,6 +100,7 @@ class TestUpdateSymbologyRdPolySymbology(unittest.TestCase):
         symbol = self.update_symbology.calculate_rdpoly_symbology_value(maint_ids)
         self.assertEqual(symbol, 2,
                          "Polygon with multiple links did not get symbol 2 {}.".format(symbol))
+
 
 class TestUpdateSymbologyGetRoadStatusRef(unittest.TestCase):
     def setUp(self):
