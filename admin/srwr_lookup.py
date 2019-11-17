@@ -4,7 +4,7 @@ import re
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
 from PyQt5.QtWidgets import QMessageBox
-from Roadnet.generic_functions import ipdb_breakpoint
+# from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
 __author__ = 'Alessandro Cristofori'
@@ -50,6 +50,7 @@ class SrwrLookup:
         # Setup initial view
         self.srwr_lu_dia.ui.desRadioButton.setChecked(True)
         self.populate_list(0)
+        self.selection_handler()
 
     def connect_buttons(self):
         """
@@ -63,7 +64,7 @@ class SrwrLookup:
         self.srwr_lu_dia.ui.desRadioButton.pressed.connect(lambda: self.populate_list(0))
         self.srwr_lu_dia.ui.reinsRadioButton.pressed.connect(lambda: self.populate_list(1))
         self.srwr_lu_dia.ui.statRadioButton.pressed.connect(lambda: self.populate_list(2))
-        self.srwr_lu_dia.ui.itemsListView.pressed.connect(lambda: self.selection_handler())
+        self.srwr_lu_dia.ui.itemsListView.pressed.connect(self.selection_handler)
 
     def close_browser(self):
         # close the dialog window
@@ -121,32 +122,23 @@ class SrwrLookup:
         :return: void
         """
         ui = self.srwr_lu_dia.ui
+        table_id = 0
         if ui.desRadioButton.isChecked():
             table_id = 0
-            table = self.tables[table_id]
-            ref_col = self.columns[0]
         elif ui.reinsRadioButton.isChecked():
             table_id = 1
-            table = self.tables[table_id]
-            ref_col = self.columns[1]
         elif ui.statRadioButton.isChecked():
             table_id = 2
-            table = self.tables[table_id]
-            ref_col = self.columns[2]
+
+        table = self.tables[table_id]
+        ref_col = self.columns[table_id]
 
         # format text and numbers
         add_desc = str(ui.typeDescLineEdit.text()).strip()
         add_desc.replace("'", "''")
         add_code = ui.typeNoSpinBox.value()
         if add_desc == "" or add_code is None:
-            desc_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                             " ",
-                                             "You must enter the code AND description",
-                                             QMessageBox.Ok,
-                                             None)
-            desc_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                              Qt.WindowTitleHint)
-            desc_error_msg_box.exec_()
+            self._show_warning("You must enter the code AND description")
             return
 
         # avoid duplicate insertion on double click on 'Add' button
@@ -159,32 +151,18 @@ class SrwrLookup:
             src = p.search(item_data)
             item_id = int(src.group(1))
             if item_id == add_code:
-                dups_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                                 " ",
-                                                 "Cannot add duplicate values",
-                                                 QMessageBox.Ok,
-                                                 None)
-                dups_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                                  Qt.WindowTitleHint)
-                dups_error_msg_box.exec_()
+                self._show_warning("Cannot add duplicate values")
                 return
 
         # Avoid duplicate insertion by checking database
         sql_find_duplicates = """SELECT {0} FROM {1}
-                                 WHERE {0} IS '{2}'""".format(ref_col,
-                                                              table,
-                                                              add_code)
+                                 WHERE {0} IS '{2}'""".format(ref_col, table, add_code)
         if config.DEBUG_MODE:
             print('DEBUG_MODE: find_duplicates: {}'.format(
                 sql_find_duplicates))
         query = QSqlQuery(sql_find_duplicates, self.db)
         if query.first():  # False unless value already found in table
-            dup_values_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                             "Cannot add duplicate values",
-                                             QMessageBox.Ok, None)
-            dup_values_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                              Qt.WindowTitleHint)
-            dup_values_msg_box.exec_()
+            self._show_warning("Cannot add duplicate values")
             return
 
         # create the record to insert
@@ -204,14 +182,7 @@ class SrwrLookup:
             ui.itemsListView.setCurrentIndex(index)
             self.changes_made = True
         else:
-            db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                           " ",
-                                           "Error: {}".format(
-                                               self.data_model.lastError().text()),
-                                           QMessageBox.Ok,
-                                           None)
-            db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            db_error_msg_box.exec_()
+            self._show_warning("Error: {}".format(self.data_model.lastError().text()))
             return
 
     def selection_handler(self, table_id=None):
@@ -223,15 +194,21 @@ class SrwrLookup:
         """
         # print all selected list items to the text box
         sel_model = self.srwr_lu_dia.ui.itemsListView.selectionModel()
-        sel_items = sel_model.selectedIndexes()[0]
-        item_data = str(sel_items.data())
-        # split text from the code number
-        p = re.compile(r"\:(.*)")
-        src = p.search(item_data)
-        item_text = str(src.group(1)[1:])
-        p = re.compile(r"([0-9]{1,3})(?=\s:)")
-        src = p.search(item_data)
-        item_id = int(src.group(1))
+        if sel_model.hasSelection() is False:
+            item_id = 0
+            item_text = ""
+            buttons_enabled = False
+        else:
+            buttons_enabled = True
+            sel_items = sel_model.selectedIndexes()[0]
+            item_data = str(sel_items.data())
+            # split text from the code number
+            src_list = re.split(r'\s:\s', item_data)
+            item_id = int(src_list[0])
+            item_text = str(src_list[1])
+
+        self.srwr_lu_dia.ui.amendButton.setEnabled(buttons_enabled)
+        self.srwr_lu_dia.ui.removeButton.setEnabled(buttons_enabled)
         self.srwr_lu_dia.ui.typeNoSpinBox.setValue(item_id)
         self.srwr_lu_dia.ui.typeDescLineEdit.setText(item_text)
 
@@ -243,31 +220,26 @@ class SrwrLookup:
         :return: void
         """
         ui = self.srwr_lu_dia.ui
-        table = None
         table_id = None
-        ref_col = None
         sql_usrns = ""
         if ui.desRadioButton.isChecked():
             table_id = 0
-            table = self.tables[table_id]
-            ref_col = self.columns[0]
             sql_usrns = "SELECT usrn FROM tblSPEC_DES WHERE " \
                         "(designation_code = {0} AND currency_flag=0);" \
                         .format(str(ui.typeNoSpinBox.value()))
         elif ui.reinsRadioButton.isChecked():
             table_id = 1
-            table = self.tables[table_id]
-            ref_col = self.columns[1]
             sql_usrns = "SELECT usrn FROM tblREINS_CAT WHERE " \
                         "(reinstatement_code = {0} AND currency_flag=0);" \
                         .format(str(ui.typeNoSpinBox.value()))
         elif ui.statRadioButton.isChecked():
             table_id = 2
-            table = self.tables[table_id]
-            ref_col = self.columns[2]
             sql_usrns = "SELECT usrn FROM tblMaint WHERE " \
                         "(road_status_ref = {0} AND currency_flag=0);" \
                         .format(str(ui.typeNoSpinBox.value()))
+
+        table = self.tables[table_id]
+        ref_col = self.columns[table_id]
 
         data_model = self.data_model
         item_text = ui.typeDescLineEdit.text()
@@ -282,14 +254,7 @@ class SrwrLookup:
         if table_id == 0 or table_id == 2:
             if item_text == "-none-" or item_ref == 0:
                 # not_remove_message = self.srwr_lu_dia.ui.removeButton
-                remove_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                                   " ",
-                                                   "This item cannot be removed",
-                                                   QMessageBox.Ok,
-                                                   None)
-                remove_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                                    Qt.WindowTitleHint)
-                remove_error_msg_box.exec_()
+                self._show_warning("This item cannot be removed")
                 return
 
         # Check for USRNs that use this item
@@ -306,14 +271,7 @@ class SrwrLookup:
                 usrns_string += ' and more...'
             long_message = message + usrns_string
             # Display warning message in box, then exit
-            item_not_deletable_msg_box = QMessageBox(QMessageBox.Warning,
-                                                     " ",
-                                                     long_message,
-                                                     QMessageBox.Ok,
-                                                     None)
-            item_not_deletable_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                                      Qt.WindowTitleHint)
-            item_not_deletable_msg_box.exec_()
+            self._show_warning(long_message)
             return
 
         # Remove selected row and clear the line edit
@@ -339,15 +297,7 @@ class SrwrLookup:
             self.selection_handler(table_id)
             self.changes_made = True
         else:
-            db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                           " ",
-                                           "Error: {}".format(data_model.lastError.text()),
-                                           QMessageBox.Ok,
-                                           None
-                                           )
-            db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                            Qt.WindowTitleHint)
-            db_error_msg_box.exec_()
+            self._show_warning("Error: {}".format(data_model.lastError.text()))
         return
 
     def amend_lookup(self):
@@ -361,20 +311,16 @@ class SrwrLookup:
         item_id = self.srwr_lu_dia.ui.typeNoSpinBox.value()
         selection_model = self.srwr_lu_dia.ui.itemsListView.selectionModel()
         selection_indexes = selection_model.selectedIndexes()
+
         # if nothing is selects exit the function
         if not selection_indexes:
             return
         selection_index = selection_indexes[0]
         if selection_index.data() == "0 : -none-":
             # if the selected value is -none- fire an alert
-            not_edit_msg_box = QMessageBox(QMessageBox.Warning,
-                                           " ",
-                                           "This item cannot be edited",
-                                           QMessageBox.Ok,
-                                           None)
-            not_edit_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            not_edit_msg_box.exec_()
+            self._show_warning("This item cannot be edited")
             return
+
         # changes the values directly onto the db
         des_radio_btn = self.srwr_lu_dia.ui.desRadioButton
         reins_radio_btn = self.srwr_lu_dia.ui.reinsRadioButton
@@ -384,39 +330,27 @@ class SrwrLookup:
             table_id = 0
             format_query = self.amend_queries[0].format(self.srwr_lu_dia.ui.typeDescLineEdit.text(), item_id)
             if not amend_query.exec_(format_query):
-                db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                               " ",
-                                               "Error: {}".format(
-                                                   amend_query.lastError().text()),
-                                               QMessageBox.Ok,
-                                               None)
-                db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-                db_error_msg_box.exec_()
+                self._show_warning("Error: {}".format(amend_query.lastError().text()))
         if reins_radio_btn.isChecked():
             table_id = 1
             format_query = self.amend_queries[1].format(self.srwr_lu_dia.ui.typeDescLineEdit.text(), item_id)
             if not amend_query.exec_(format_query):
-                db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                               " ",
-                                               "Error: {}".format(
-                                                   amend_query.lastError().text()),
-                                               QMessageBox.Ok,
-                                               None)
-                db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-                db_error_msg_box.exec_()
+                self._show_warning("Error: {}".format(amend_query.lastError().text()))
         if stat_radio_btn.isChecked():
             table_id = 2
             format_query = self.amend_queries[2].format(self.srwr_lu_dia.ui.typeDescLineEdit.text(), item_id)
             if not amend_query.exec_(format_query):
-                db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                               " ",
-                                               "Error: {}".format(
-                                                   amend_query.lastError().text()),
-                                               QMessageBox.Ok,
-                                               None)
-                db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-                db_error_msg_box.exec_()
+                self._show_warning("Error: {}".format(amend_query.lastError().text()))
         # closes the query and repopulate the list
         self.changes_made = True
         amend_query.clear()
         self.populate_list(table_id)
+
+    @staticmethod
+    def _show_warning(message):
+        lookup_msg_box = QMessageBox(QMessageBox.Warning, " ",
+                                     message,
+                                     QMessageBox.Ok, None
+                                     )
+        lookup_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        lookup_msg_box.exec_()

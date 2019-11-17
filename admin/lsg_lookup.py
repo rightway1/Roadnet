@@ -3,7 +3,7 @@
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtSql import QSqlQuery, QSqlTableModel
 from qgis.PyQt.QtWidgets import QMessageBox
-from Roadnet.generic_functions import ipdb_breakpoint
+# from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
 __author__ = 'Alessandro Cristofori'
@@ -25,6 +25,7 @@ class LsgLookUp:
         self.model_navigation()
         self.item_value = None
         self.changes_made = False
+        self.selection_handler()
 
     def model_navigation(self):
         """
@@ -38,7 +39,7 @@ class LsgLookUp:
         self.lsg_lu_dia.ui.locRadioButton.pressed.connect(lambda: self.populate_list(0))
         self.lsg_lu_dia.ui.townRadioButton.pressed.connect(lambda: self.populate_list(1))
         self.lsg_lu_dia.ui.countyRadioButton.pressed.connect(lambda: self.populate_list(2))
-        self.lsg_lu_dia.ui.itemsListView.pressed.connect(lambda: self.selection_handler())
+        self.lsg_lu_dia.ui.itemsListView.pressed.connect(self.selection_handler)
 
     def close_browser(self):
         # close the dialog window
@@ -83,17 +84,19 @@ class LsgLookUp:
         :return: void
         """
         ui = self.lsg_lu_dia.ui
-        table = None
-        ref_col = None
+        category = None
         if ui.locRadioButton.isChecked():
-            table = self.tables[0]
-            ref_col = self.columns[0]
+            category = 0
         elif ui.townRadioButton.isChecked():
-            table = self.tables[1]
-            ref_col = self.columns[1]
+            category = 1
         elif ui.countyRadioButton.isChecked():
-            table = self.tables[2]
-            ref_col = self.columns[2]
+            category = 2
+
+        if category is None:
+            return
+
+        table = self.tables[category]
+        ref_col = self.columns[category]
         new_item = ui.addLookupLineEdit.text().strip()
         if new_item == "":
             return
@@ -104,12 +107,7 @@ class LsgLookUp:
             current_item = selection_model.selectedIndexes()[0]
             current_item_text = str(current_item.data())
             if current_item_text == new_item:
-                dup_values_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                                 "Cannot add duplicate values",
-                                                 QMessageBox.Ok, None)
-                dup_values_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                                  Qt.WindowTitleHint)
-                dup_values_msg_box.exec_()
+                self._show_warning("Cannot add duplicate values")
                 return
 
         # Avoid duplicate insertion by checking database
@@ -121,12 +119,7 @@ class LsgLookUp:
                 sql_find_duplicates))
         query = QSqlQuery(sql_find_duplicates, self.db)
         if query.first():  # False unless value already found in table
-            dup_values_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                             "Cannot add duplicate values",
-                                             QMessageBox.Ok, None)
-            dup_values_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                              Qt.WindowTitleHint)
-            dup_values_msg_box.exec_()
+            self._show_warning("Cannot add duplicate values")
             return
 
         # Get ID for new item
@@ -147,12 +140,7 @@ class LsgLookUp:
             ui.itemsListView.setCurrentIndex(index)
             self.changes_made = True
         else:
-            db_error_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                           "Error: {} ".format(self.items_model.lastError().text()),
-                                           QMessageBox.Ok, None)
-            db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                            Qt.WindowTitleHint)
-            db_error_msg_box.exec_()
+            self._show_warning("Error: {} ".format(self.items_model.lastError().text()))
             return
 
     def remove_lookup(self):
@@ -187,12 +175,7 @@ class LsgLookUp:
         # (<none> cannot be either removed or modified)
         selection_index = selection_index[0]
         if item_text == "" and selection_index.row() == 0:
-            not_remove_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                             "This item cannot be removed",
-                                             QMessageBox.Ok, None)
-            not_remove_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                              Qt.WindowTitleHint)
-            not_remove_msg_box.exec_()
+            self._show_warning("This item cannot be removed")
             return
 
         # Get list of USRNs attached to record; get item_ref first
@@ -226,14 +209,7 @@ class LsgLookUp:
                 usrns_string += ' and more...'
             long_message = message + usrns_string
             # Display warning message in box, then exit
-            item_not_deletable_msg_box = QMessageBox(QMessageBox.Warning,
-                                                     " ",
-                                                     long_message,
-                                                     QMessageBox.Ok,
-                                                     None)
-            item_not_deletable_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                                      Qt.WindowTitleHint)
-            item_not_deletable_msg_box.exec_()
+            self._show_warning(long_message)
             return
 
         # No attached records, so delete the row
@@ -253,13 +229,7 @@ class LsgLookUp:
             self.selection_handler()
             self.changes_made = True
         else:
-            db_error_msg_box = QMessageBox(QMessageBox.Warning,
-                                           " ",
-                                           "Error: {}".format(table_model.lastError.text()),
-                                           QMessageBox.Ok,
-                                           None)
-            db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            db_error_msg_box.exec_()
+            self._show_warning("Error: {}".format(table_model.lastError.text()))
 
     def amend_lookup(self):
         """
@@ -278,13 +248,7 @@ class LsgLookUp:
         selection_index = selection_index[0]
         if item_text == "<none>":
             # if the selected value is <none> fire an alert
-            not_edit_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                           "This item cannot be edited",
-                                           QMessageBox.Ok,
-                                           None)
-            not_edit_msg_box.setWindowFlags(Qt.CustomizeWindowHint |
-                                            Qt.WindowTitleHint)
-            not_edit_msg_box.exec_()
+            self._show_warning("This item cannot be edited")
             return
         rows = table_model.rowCount()
         i = 1
@@ -292,12 +256,7 @@ class LsgLookUp:
             table_index = self.lsg_lu_dia.ui.itemsListView.model().createIndex(i, 2)
             i += 1
             if item_text == str(table_index.data()):
-                dup_item_name_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                                    "An item with this name already exists",
-                                                    QMessageBox.Ok,
-                                                    None)
-                dup_item_name_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-                dup_item_name_msg_box.exec_()
+                self._show_warning("An item with this name already exists")
                 return
         if table_model.setData(selection_index, item_text, Qt.EditRole):
             if table_model.submitAll():
@@ -308,27 +267,25 @@ class LsgLookUp:
                 self.changes_made = True
             return
         else:
-            db_error_msg_box = QMessageBox(QMessageBox.Warning, " ",
-                                           "Error: {}".format(table_model.lastError.text()),
-                                           QMessageBox.Ok,
-                                           None)
-            db_error_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-            db_error_msg_box.exec_()
+            self._show_warning("Error: {}".format(table_model.lastError.text()))
             return
 
     def selection_handler(self):
         # print all selected list items to the text box
         sel_model = self.lsg_lu_dia.ui.itemsListView.selectionModel()
-        sel_items = sel_model.selectedIndexes()[0]
-        item_text = str(sel_items.data())
-        self.item_value = sel_items.row()
-        # if the selected value is <none> set read only
-        if item_text == "<none>" or self.item_value == 0:
+
+        # if no selected items set read only
+        if sel_model.hasSelection() is False:
+            buttons_enabled = False
             self.lsg_lu_dia.ui.addLookupLineEdit.setText("")
-            self.lsg_lu_dia.ui.amendButton.setEnabled(False)
         else:
-            self.lsg_lu_dia.ui.amendButton.setEnabled(True)
+            sel_item = sel_model.selectedIndexes()[0]
+            item_text = str(sel_item.data())
             self.lsg_lu_dia.ui.addLookupLineEdit.setText(item_text)
+            buttons_enabled = True
+
+        self.lsg_lu_dia.ui.amendButton.setEnabled(buttons_enabled)
+        self.lsg_lu_dia.ui.removeButton.setEnabled(buttons_enabled)
 
     def get_max_value(self, ref_col, table):
         # Get ID for new item
@@ -351,3 +308,12 @@ class LsgLookUp:
             query_max.clear()
 
         return max_ref
+
+    @staticmethod
+    def _show_warning(message):
+        lookup_msg_box = QMessageBox(QMessageBox.Warning, " ",
+                                     message,
+                                     QMessageBox.Ok, None
+                                     )
+        lookup_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        lookup_msg_box.exec_()
